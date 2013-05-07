@@ -9,12 +9,14 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	long delay;
 	long animation = 0;
 	
-	protected double dx; //horizontale Veränderung
-	protected double dy; //vertikale Veränderung
+	protected double dx; //horizontale Veränderung, bzw. Position
+	protected double dy; //vertikale Veränderung, bzw. Position
 	
 	GamePanel parent;
 	BufferedImage[] pics;
 	int currentpic = 0;
+	
+	
 	
 	public Sprite(BufferedImage[] i, double x, double y, long delay, GamePanel p ){
 		pics = i;
@@ -72,5 +74,6 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		this.dy = dy;
 	}
 	
+
 	public abstract boolean collidedWith(Sprite s);
 }

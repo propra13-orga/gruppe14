@@ -1,6 +1,5 @@
 .project
 .metadata
-bin/**
 tmp/**
 tmp/**/*
 .settings/

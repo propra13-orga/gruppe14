@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 import java.util.Vector;
 import java.net.URL;
 import javax.swing.JFrame;
@@ -38,6 +39,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	int x = 0;
 	int y = 0;
 	
+	BufferedImage mauer;
+	BufferedImage [] spieler;
+	BufferedImage gras;
+
+	int [][] tilemap = new int [50][50];
+	
+	Sprite [][] spritearray = new Sprite [8][4];
+	
+		 //Beinhaltet alle Sprites
+	static int rows, columns;
+	
 	BufferedImage background;
 	//Main-Methode
 	public static void main(String[] args){
@@ -66,17 +78,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		last = System.nanoTime();
 		background = loadPics("pics/background.jpg", 1) [0];
 		actors = new Vector<Sprite>();
-		BufferedImage[] spieler = loadPics("pics/player.gif", 1); //Datein in Bin, nicht source!!!!!!!!!!!!!
-		BufferedImage[] mauer = loadPics("pics/wall.gif", 1);	
+		spieler = loadPics("pics/player.gif", 1); //Datein in Bin, nicht source!!!!!!!!!!!!!
+		mauer = loadPics("pics/wall.gif", 1) [0];
+		gras = loadPics("pics/gras.gif", 1) [0];
+		
+		rows = tilemap.length;
+		columns = tilemap[1].length;	
 		player = new Player(spieler, 50, 50, 100, this);
-		for(int i = 0; i < 27; i++){
-			mauer2[i] = new Wall(mauer, i*30, 0, 100, this);
-			actors.add(mauer2[i]);
-		}
-		
-		
-		
-		actors.add(player);
+		actors.add(player); //Spieler nicht im Vordergrund
 		
 		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
 			once = true;
@@ -84,6 +93,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			t.start();
 		}
 		
+		Random r = new Random();
+		for (int i = 0; i < rows; i++){
+			for (int j = 0; j < columns; j++){
+				tilemap[i][j] = r.nextInt(2); //generiert zufällige Map mit Gras und Mauern
+			}
+		}
 	}
 
 	
@@ -125,9 +140,26 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
 		
-		if(actors!=null){
+		/*if(actors!=null){
 			for(Drawable draw:actors){
 				draw.drawObjects(g);
+			}
+		}*/
+		
+		for (int i = 0; i < rows; i++){
+			for (int j = 0; j < columns; j++){
+				
+				int mod_i = 40*i;
+				int mod_j = 40*j;
+				
+				switch (tilemap[i][j]) {
+				case 0:
+					g.drawImage(mauer, mod_i, mod_j, this);
+				break;
+				case 1:
+					g.drawImage(gras, mod_i, mod_j, this);
+				break;
+				}
 			}
 		}
 	
@@ -191,6 +223,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				Sprite s2 = actors.elementAt(n);
 				
 				s1.collidedWith(s2);
+								
 			}
 		}
 	}
