@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
 import java.util.Vector;
 import java.net.URL;
 import javax.swing.JFrame;
@@ -68,14 +67,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private void doInitializations(){
 		
 		last = System.nanoTime();
-		background = loadPics("pics/background.jpg", 1) [0];
 		actors = new Vector<Sprite>();
 		
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("pics/player.gif", 1, 1), 50, 50, 100, this);
 		actors.add(player);
 		
-		map = new MapDisplay("level/TileMap.txt", "pics/tiles_2.gif", "pics/shadow.png", 1, 1, this);
+		map = new MapDisplay("level/TileMap.txt", "pics/tiles.gif", "pics/shadow.png", 2, 1, this);
 
 		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
 			once = true;
@@ -152,23 +150,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			}
 		}
 	
-	}
-	
-	private BufferedImage[] loadPics(String path, int pics){
-		
-		BufferedImage[] anim = new BufferedImage[pics];
-		BufferedImage source = null;
-		URL pic_url = getClass().getClassLoader().getResource(path);
-		
-		try {
-			source = ImageIO.read(pic_url); //null-Exception oO
-		} catch (IOException e) {}
-		
-		for(int x=0;x < pics;x++){
-			anim[x] = source.getSubimage(x*source.getWidth()/pics, 0, source.getWidth()/pics, source.getHeight());
-		}
-		
-		return anim;
 	}
 	
     public boolean isStarted(){
