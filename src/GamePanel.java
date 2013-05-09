@@ -20,9 +20,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	long last = 0;
 	long fps = 0;
 	
+	SpriteLib lib;
 	Player player;
+	MapDisplay map;
 	
-	Wall [] mauer2 = new Wall[27];
 	Vector<Sprite> actors;
 
 	
@@ -38,16 +39,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	int speed = 80;
 	int x = 0;
 	int y = 0;
-	
-	BufferedImage mauer;
-	BufferedImage [] spieler;
-	BufferedImage gras;
 
-	int [][] tilemap = new int [50][50];
-	
-	Sprite [][] spritearray = new Sprite [8][4];
-	
-		 //Beinhaltet alle Sprites
 	static int rows, columns;
 	
 	BufferedImage background;
@@ -78,27 +70,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		last = System.nanoTime();
 		background = loadPics("pics/background.jpg", 1) [0];
 		actors = new Vector<Sprite>();
-		spieler = loadPics("pics/player.gif", 1); //Datein in Bin, nicht source!!!!!!!!!!!!!
-		mauer = loadPics("pics/wall.gif", 1) [0];
-		gras = loadPics("pics/gras.gif", 1) [0];
 		
-		rows = tilemap.length;
-		columns = tilemap[1].length;	
-		player = new Player(spieler, 50, 50, 100, this);
-		actors.add(player); //Spieler nicht im Vordergrund
+		lib = SpriteLib.getInstance();
+		player = new Player(lib.getSprite("pics/player.gif", 1, 1), 50, 50, 100, this);
+		actors.add(player);
 		
+		map = new MapDisplay("level/TileMap.txt", "pics/tiles_2.gif", "pics/shadow.png", 1, 1, this);
+
 		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
 			once = true;
 			Thread t = new Thread(this);
 			t.start();
 		}
 		
-		Random r = new Random();
-		for (int i = 0; i < rows; i++){
-			for (int j = 0; j < columns; j++){
-				tilemap[i][j] = r.nextInt(2); //generiert zufällige Map mit Gras und Mauern
-			}
-		}
 	}
 
 	
@@ -140,12 +124,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
 		
-		/*if(actors!=null){
-			for(Drawable draw:actors){
-				draw.drawObjects(g);
-			}
-		}*/
-		
+		/*
 		for (int i = 0; i < rows; i++){
 			for (int j = 0; j < columns; j++){
 				
@@ -160,6 +139,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 					g.drawImage(gras, mod_i, mod_j, this);
 				break;
 				}
+			}
+		}*/ //gehört hier nicht hin und verlangsamt ungemein!
+		
+
+		if(actors!=null){
+			for(Drawable draw:actors){
+				map.drawVisibleMap(g); //Erst Karte, dann Objekte!
+				draw.drawObjects(g);
+				
+				//g.drawImage(ImageControl.getInstance().getImageAt(0), 300, 50, this); //nur zum Testen - Tile wird korrekt dargestellt!
 			}
 		}
 	
@@ -191,7 +180,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
     }
 	
 	private void checkKeys(){
-		//was passiert, wenn Tasteneingaben durch KeyListener abgefangen wurden?
+	
 		if(left){
 			player.setHorizontalSpeed(-speed);
 		}
@@ -293,5 +282,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				pressCount++;
 			}
 		}
+	}
+	
+	public MapDisplay getMap(){
+		return map;
 	}
 }
