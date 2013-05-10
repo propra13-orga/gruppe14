@@ -17,11 +17,11 @@ public class SpriteLib {
 		return single;
 	}
 	
-	private SpriteLib(){
-		sprites = new HashMap<URL, BufferedImage>();
+	private SpriteLib(){//Konstruktor
+		sprites = new HashMap<URL, BufferedImage>(); 
 	}
 	
-	public BufferedImage getSprite(String path){
+	public BufferedImage getSprite(String path){//liest aus URL Bild aus und speichert es in pic
 		BufferedImage pic = null;
 		URL location = getURLfromResource(path);
 		pic = (BufferedImage) sprites.get(location);
@@ -42,7 +42,7 @@ public class SpriteLib {
 		return pic;
 	}
 	
-	public BufferedImage [] getSprite(String path, int column, int row){
+	public BufferedImage [] getSprite(String path, int column, int row){//liest aus URL Bild bzw. Animation aus und speichert es in pics
 		BufferedImage source = null;
 		URL location = getURLfromResource(path);
 		source = (BufferedImage) sprites.get(location);
@@ -74,6 +74,6 @@ public class SpriteLib {
 	}
 	
 	public URL getURLfromResource(String path){
-		return getClass().getClassLoader().getResource(path);
+		return getClass().getClassLoader().getResource(path); 
 	}
 }

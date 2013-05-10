@@ -40,7 +40,7 @@ public class MapDisplay extends Rectangle{
 				if(line == null){
 					continue;
 				}
-				
+				//TODO: Eingabeformat einfacher gestalten, Länge und Breite kann wegen Standarisierung rausgeschmissen werden - s. Max' Version
 				String[] split = line.split("/"); //Seperation der einzelnen Informationen
 				int posx = Integer.parseInt(split[0]); 
 				int posy = Integer.parseInt(split[1]);
@@ -80,7 +80,7 @@ public class MapDisplay extends Rectangle{
 		}
 	}
 	
-	public Color getColorForPoint(Point p){
+	public Color getColorForPoint(Point p){//TODO: Finale Version schaffen
 		for(Tile t:tiles){
 			double dx = t.x - display.getX();
 			double dy = t.y - display.getY();
@@ -93,7 +93,6 @@ public class MapDisplay extends Rectangle{
 				int py = (int) (p.y - dy);
 				
 				Color c = new Color(ImageControl.getInstance().getShadowImageAt(t.getImageNumber()).getRGB(px, py));
-				System.out.println(c.toString());
 				return c;
 			//}
 		}

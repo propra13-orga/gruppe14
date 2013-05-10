@@ -31,6 +31,7 @@ public class Player extends Sprite {
 			y = parent.getHeight()-getHeight();
 		}
 		
+		//Mittels der Abfrage der Farbe kann festgestellt werden, auf welchem Tile sich der Spieler zurzeit befindet, Stichwort: ShadowMap
 		Color col1 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)getY()));
 		Color col2= parent.getMap().getColorForPoint(new Point((int)(getX()+getWidth()/2), (int)getY()));
 		Color col3 = parent.getMap().getColorForPoint(new Point((int)(getX()+getWidth()), (int)getY()));	
@@ -42,21 +43,15 @@ public class Player extends Sprite {
 
 	private void checkColor(Color col){
 		if(col.equals(Color.gray)){
-			System.out.println("braun");
+			//Wenn Spieler auf Mauer, soll er nicht weitergehen können -> Manipulation der Geschwindigkeit?
 		}
 		
 		if(col.equals(Color.green)){
-			System.out.println("grün");
 		}
+		//Denkbar: Wenn Spieler auf...Asphalt oder ähnlichem erhöht sich Grundgeschwindigkeit
 	}
 	@Override
 	public boolean collidedWith(Sprite s) {
-		/*if(this.intersects(s)){
-			System.out.println("Kollision Player");
-			setHorizontalSpeed(0);
-			setVerticalSpeed(0);
-			return true;
-		}*/
 		return false;
 	}
 }

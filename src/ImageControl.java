@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 public class ImageControl {
 	
 	BufferedImage[] tiles; //Array aus BufferedImages zum Speichern der Bilddateien
-	BufferedImage[] shadow;
+	BufferedImage[] shadow; //Array aus BufferedImages zum Speichern der Shadow-Bilddateien
 	private static ImageControl instance;
 	
 	public static ImageControl getInstance(){

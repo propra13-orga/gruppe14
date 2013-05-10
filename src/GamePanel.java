@@ -3,13 +3,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Vector;
-import java.net.URL;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.imageio.ImageIO;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private static final long serialVersionUID = 1L;
@@ -41,8 +38,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 
 	static int rows, columns;
 	
-	BufferedImage background;
-	//Main-Methode
+
 	public static void main(String[] args){
 		new GamePanel(800,600);
 	}
@@ -58,7 +54,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		frame.setVisible(true);
 		frame.setResizable(false);
 		frame.addKeyListener(this);
-		doInitializations();
+		//doInitializations();
 		
 		Thread t = new Thread(this);
 		t.start();
@@ -113,40 +109,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	public void paintComponent(Graphics g){ //paintComponent-Methode überschreiben
 		super.paintComponent(g);
 		
-		g.drawImage(background, 0, 0, this); //liegt ganz hinten, alles andere wird darüber gezeichnet
-		
 		g.setColor(Color.red);
 		g.drawString("FPS " + Long.toString(fps), 20, 10); //Zur Überprüfung des fllüssigen Spiellaufs
 		
 		if(!isStarted()){
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
-		
-		/*
-		for (int i = 0; i < rows; i++){
-			for (int j = 0; j < columns; j++){
-				
-				int mod_i = 40*i;
-				int mod_j = 40*j;
-				
-				switch (tilemap[i][j]) {
-				case 0:
-					g.drawImage(mauer, mod_i, mod_j, this);
-				break;
-				case 1:
-					g.drawImage(gras, mod_i, mod_j, this);
-				break;
-				}
-			}
-		}*/ //gehört hier nicht hin und verlangsamt ungemein!
-		
 
 		if(actors!=null){
 			for(Drawable draw:actors){
 				map.drawVisibleMap(g); //Erst Karte, dann Objekte!
 				draw.drawObjects(g);
-				
-				//g.drawImage(ImageControl.getInstance().getImageAt(0), 300, 50, this); //nur zum Testen - Tile wird korrekt dargestellt!
 			}
 		}
 	
@@ -186,16 +159,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		for(Movable mov:actors){
 			mov.doLogic(delta);
 		}
-		
-		for(int i = 0; i < actors.size(); i++){
-			for(int n = i+1; n < actors.size(); n++){
-				Sprite s1 = actors.elementAt(i);
-				Sprite s2 = actors.elementAt(n);
-				
-				s1.collidedWith(s2);
-								
-			}
-		}
 	}
 	
 	private void moveObjects(){
@@ -207,43 +170,42 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	
 	public void keyPressed(KeyEvent e){
 		
-		//Eleganter wäre ein Switch
 		if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
 			left = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT){ //rechte Pfeiltaste
 			right = true;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_UP){ //Pfeil nach oben
+		if (e.getKeyCode() == KeyEvent.VK_UP){ //obere Pfeiltaste
 			up = true;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_DOWN){//Pfeil nach unten
+		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = true;
 		}
 	}
 	//Taste wieder losgelassen?
 	public void keyReleased(KeyEvent e){
 				
-		if (e.getKeyCode() == KeyEvent.VK_LEFT){
+		if (e.getKeyCode() == KeyEvent.VK_LEFT){//linke Pfeiltaste
 			left = false;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT){//rechte Pfeiltaste
 			right = false;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_UP){
+		if (e.getKeyCode() == KeyEvent.VK_UP){//obere Pfeiltaste
 			up = false;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_DOWN){
+		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = false;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_ENTER){
+		if (e.getKeyCode() == KeyEvent.VK_ENTER){//Enter zum starten
 			if(!isStarted()){
 				doInitializations();
 				setStarted(true);
 			}
 		}
 		
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum schließen
 			if(isStarted()){
 				setStarted(false);
 			}else {
@@ -266,6 +228,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	}
 	
 	public MapDisplay getMap(){
-		return map;
+		return map; //gibt die Karte zurück
 	}
 }
