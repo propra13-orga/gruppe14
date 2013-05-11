@@ -15,6 +15,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	long delta = 0;
 	long last = 0;
 	long fps = 0;
+	long gameover = 0;
 	
 	SpriteLib lib;
 	Player player;
@@ -22,7 +23,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	
 	Vector<Sprite> actors;
 
-	
 	boolean up;
 	boolean down;
 	boolean left;
@@ -63,14 +63,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private void doInitializations(){
 		
 		last = System.nanoTime();
+		gameover = 0;
+		
 		actors = new Vector<Sprite>();
 		
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("pics/player.gif", 1, 1), 50, 50, 100, this);
 		actors.add(player);
 		
-		map = new MapDisplay("level/TileMap.txt", "pics/tiles.gif", "pics/shadow.png", 2, 1, this);
-
+		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
+		map = new MapDisplay("level/TileMap.txt", "pics/tiles.gif", "pics/shadow.png", 4, 1, this);
+	
 		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
 			once = true;
 			Thread t = new Thread(this);
@@ -89,10 +92,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				checkKeys(); //Tastaturabfrage
 				doLogic(); //Ausführung
 				moveObjects(); //Bewegen von Objekten
+				
+			}else{
+				System.out.println("Das Spiel ist leider beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
 			}
 			
+			repaint(); //Von Component geerbt, stößt Neuzeichnen an, gehört vllt. auch hinter die Schleife?
 			
-			repaint(); //Von Component geerbt, stößt Neuzeichnen an
 			try{
 				Thread.sleep(10);
 			}catch (InterruptedException e){}
@@ -122,6 +128,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				draw.drawObjects(g);
 			}
 		}
+		
+		
 	
 	}
 	
@@ -159,6 +167,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		for(Movable mov:actors){
 			mov.doLogic(delta);
 		}
+		
+		//hier Kollisionsabfrage?
+		
+		if(gameover == 1){
+			if(System.currentTimeMillis() -gameover > 3000){
+				stopGame();
+			}
+		}
 	}
 	
 	private void moveObjects(){
@@ -167,7 +183,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 	
+	private void stopGame(){
+		setStarted(false);
+		//TODO: Sinnvolle Ausgabe und Möglichkeit des Neustarts
+	}
 	
+	public MapDisplay getMap(){
+		return map; //gibt die Karte zurück
+	}
+	
+	//Tastaturabfragen zur Steuerung
 	public void keyPressed(KeyEvent e){
 		
 		if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
@@ -205,10 +230,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			}
 		}
 		
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum schließen
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B
 			if(isStarted()){
-				setStarted(false);
+				stopGame();
 			}else {
+				//hier auch stopGame()?
 				setStarted(false);
 				System.exit(0);
 			}
@@ -227,7 +253,4 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 	
-	public MapDisplay getMap(){
-		return map; //gibt die Karte zurück
-	}
 }

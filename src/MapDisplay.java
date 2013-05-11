@@ -118,7 +118,7 @@ public class MapDisplay extends Rectangle{
 		}
 	}
 	
-	public Color getColorForPoint(Point p){//TODO: Finale Version schaffen
+	public Color getColorForPoint(Point p){//TODO: Finale Version schaffen, gibt leider noch Abweichungen!
 		for(Tile t:tiles){
 			double dx = t.x - display.getX();
 			double dy = t.y - display.getY();

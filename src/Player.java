@@ -42,11 +42,24 @@ public class Player extends Sprite {
 	}
 
 	private void checkColor(Color col){
-		if(col.equals(Color.gray)){
+		if(col.equals(Color.gray)){ //grau = 128, 128, 128
+			System.out.println("Mauer");
 			//Wenn Spieler auf Mauer, soll er nicht weitergehen können -> Manipulation der Geschwindigkeit?
 		}
 		
-		if(col.equals(Color.green)){
+		if(col.equals(Color.green)){ //grün = 0, 255, 0
+			System.out.println("Wiese");
+		}
+		
+		if(col.equals(Color.red)){ //rot = 255, 0, 0
+			System.out.println("Tod!");//Tod durch Feuer!
+			parent.setStarted(false); //Spiel wird beendet, jedoch unschön - ohne Ausgabe und Neustartmöglichkeit
+			//TODO: Spielbeendigung und entsprechende Ausgabe oder Verlust von Lebenspunkten
+		}
+		
+		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
+			System.out.print("Bravo, du hast den Ausgang gefunden!");
+			//TODO: Level wechseln
 		}
 		//Denkbar: Wenn Spieler auf...Asphalt oder ähnlichem erhöht sich Grundgeschwindigkeit
 	}
