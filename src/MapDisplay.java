@@ -33,8 +33,10 @@ public class MapDisplay extends Rectangle{
 			BufferedReader bufread = new BufferedReader(isr);
 			
 			String line = null;
+			String delimiters = " ";
+			String[] tokens;
 			
-			do{ //Einlesen der Leveldaten
+			/*do{ //Einlesen der Leveldaten
 				line = bufread.readLine();
 				
 				if(line == null){
@@ -59,7 +61,43 @@ public class MapDisplay extends Rectangle{
 				Tile t = new Tile(posx, posy, width, height, num);
 				tiles.add(t);
 				
-			} while (line!= null);
+			} while (line!= null);*/
+			
+			line = bufread.readLine();
+			int height= Integer.parseInt(line);
+			line = bufread.readLine();
+			int width = Integer.parseInt(line);
+			line = bufread.readLine();
+			int tile_height = Integer.parseInt(line);
+			line = bufread.readLine();
+			int tile_width = Integer.parseInt(line);
+			
+			int posx;
+			int posy;
+			int num;
+
+			for (int row = 0; row < height; row++){
+				
+				line = bufread.readLine();
+				if(line == null){
+					continue;
+				}
+				tokens = line.split(delimiters);
+				for (int col = 0; col < width; col++){
+					posx = col*tile_width;
+					posy = row*tile_height;
+					num = Integer.parseInt(tokens[col]);
+					
+					if((posx + tile_width) > this.width){
+						this.width = posx + tile_width;
+					}
+					if((posy + tile_height) > this.height){
+						this.height = posy + tile_height;
+					}
+					Tile t = new Tile (posx, posy, tile_width, tile_height, num);
+					tiles.add(t);					
+				}
+			}
 		
 			bufread.close(); //Reader wieder schlieﬂen
 			isr.close();
