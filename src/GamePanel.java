@@ -1,10 +1,13 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -30,7 +33,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	boolean waitingForKeyPress;
 	boolean game_running = true;
 	boolean started = false;
-	boolean once = false; //bei Neustart keinen neuen Thread
+	boolean once = false; //bei Neustart keinen neuen Thread - wie muss once am Anfang sein, false oder true?
 	int pressCount;
 	int speed = 80;
 	int x = 0;
@@ -54,10 +57,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		frame.setVisible(true);
 		frame.setResizable(false);
 		frame.addKeyListener(this);
-		//doInitializations();
 		
 		Thread t = new Thread(this);
-		t.start();
+		t.start(); //ruft run auf
 	}
 	
 	private void doInitializations(){
@@ -68,7 +70,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		actors = new Vector<Sprite>();
 		
 		lib = SpriteLib.getInstance();
-		player = new Player(lib.getSprite("pics/player.gif", 1, 1), 50, 50, 100, this);
+		player = new Player(lib.getSprite("pics/player.gif", 1, 1), 40, 40, 100, this);
 		actors.add(player);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
@@ -80,6 +82,36 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			t.start();
 		}
 		
+	}
+	
+	public void doInitializations2(){
+		map = new MapDisplay("level/TileMap_2.txt", "pics/tiles.gif", "pics/shadow.png", 4, 1, this); //auch entsprechend angepasste ShadowMap muss geladen werden! Man könnte auch verschiedene TileSets übergeben
+		
+	}
+	
+	private void paintMenu(){ //Wird bisher noch nicht angesprochen, da Methode buggt (ArrayIndexOutOfBoundsException in MapDisplay.getColorForPoint)
+		JButton b1 = new JButton("Spiel starten");
+		
+		JButton b2 = new JButton("Beenden");
+		
+		b1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+				doInitializations();
+				setStarted(true);
+			}
+		});
+		b2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+				System.exit(0);
+			}
+			
+		});
+		
+		frame.add(b1);
+		frame.pack();
+		frame.add(b2);
+
+		frame.setVisible(true);
 	}
 
 	
@@ -100,7 +132,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			repaint(); //Von Component geerbt, stößt Neuzeichnen an, gehört vllt. auch hinter die Schleife?
 			
 			try{
-				Thread.sleep(10);
+				Thread.sleep(5);
 			}catch (InterruptedException e){}
 		}	
 	}
@@ -124,7 +156,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 
 		if(actors!=null){
 			for(Drawable draw:actors){
-				map.drawVisibleMap(g); //Erst Karte, dann Objekte!
+				map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte muss nicht jedes mal neu gezeichnet werden - woandershin auslagern?
 				draw.drawObjects(g);
 			}
 		}
@@ -171,7 +203,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		//hier Kollisionsabfrage?
 		
 		if(gameover == 1){
-			if(System.currentTimeMillis() -gameover > 3000){
+			if(System.currentTimeMillis() - gameover > 3000){
 				stopGame();
 			}
 		}
@@ -185,7 +217,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	
 	private void stopGame(){
 		setStarted(false);
+		gameover = 1;
 		//TODO: Sinnvolle Ausgabe und Möglichkeit des Neustarts
+		//Oder Gamerunning auf false?
 	}
 	
 	public MapDisplay getMap(){
@@ -232,7 +266,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B
 			if(isStarted()){
-				stopGame();
+				stopGame(); //oder gamerunning = false?
 			}else {
 				//hier auch stopGame()?
 				setStarted(false);
@@ -241,7 +275,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 	
-	public void keyTyped(KeyEvent e){
+	public void keyTyped(KeyEvent e){ //???
 		if (waitingForKeyPress){
 			if (pressCount == 1){
 				waitingForKeyPress = false;
@@ -252,5 +286,5 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			}
 		}
 	}
-	
+
 }

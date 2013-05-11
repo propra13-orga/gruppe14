@@ -118,21 +118,24 @@ public class MapDisplay extends Rectangle{
 		}
 	}
 	
-	public Color getColorForPoint(Point p){//TODO: Finale Version schaffen, gibt leider noch Abweichungen!
-		for(Tile t:tiles){
-			double dx = t.x - display.getX();
-			double dy = t.y - display.getY();
-			//double dx = t.x;
-			//double dy = t.y;
-			//Rectangle temp2 = new Rectangle((int)dx, (int)dy, (int)t.getWidth(), (int)t.getHeight());
+	public Color getColorForPoint(Point p){//TODO: Finale Version schaffen + Problem mit ArrayIndexOutOfBounds
+		//
+		for(Tile t:tiles){ //alle Tiles werden überprüft
+			//double dx = t.x - display.getX(); //Wir bewegen display gar nicht, also hier wohl unnötig
+			//double dy = t.y - display.getY();
+			double dx = t.x;
+			double dy = t.y;
+			//Erstellt Rechteck von der Größe eines Tiles
+			Rectangle temp = new Rectangle((int)dx, (int)dy, (int)t.getWidth(), (int)t.getHeight()); //oder:
+			//Rectangle temp = new Rectangle((t.x, t.y, (int)t.getWidth(), (int)t.getHeight());
 			
-			/*if(temp2.contains(p)){*/
-				int px = (int) (p.x - dx);
-				int py = (int) (p.y - dy);
+			if(temp.contains(p)){ //Wenn Tile gefunden, welches p beinhaltet:
+				//int px = (int) (p.x - dx); //Was hat diese Änderung zu bedeuten?
+				//int py = (int) (p.y - dy);
 				
-				Color c = new Color(ImageControl.getInstance().getShadowImageAt(t.getImageNumber()).getRGB(px, py));
+				Color c = new Color(ImageControl.getInstance().getShadowImageAt(t.getImageNumber()).getRGB((int)dx, (int)dy));
 				return c;
-			//}
+			}
 		}
 				
 		return null;
