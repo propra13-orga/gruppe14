@@ -12,23 +12,23 @@ public class Player extends Sprite {
 	public void doLogic(long delta)	{
 		super.doLogic(delta);
 		//Überprüfen der Ränder, damit Player nicht darüber hinaus kann
-		if(getX()<0){
+		if(getX() < 0){
 			setHorizontalSpeed(0);
 			x = 0;
 		}
-		if(getY()<0){
+		if(getY() < 0){
 			setHorizontalSpeed(0);
 			y = 0;
 		}
 		
-		if(getX()+getWidth()>parent.getWidth()){
+		if(getX()+getWidth() > parent.getWidth()){
 			setVerticalSpeed(0);
-			x = parent.getWidth()-getWidth();
+			x = parent.getWidth() - getWidth();
 		}
 		
-		if(getY()+getHeight()>parent.getHeight()){
+		if(getY()+getHeight() > parent.getHeight()){
 			setVerticalSpeed(0);
-			y = parent.getHeight()-getHeight();
+			y = parent.getHeight() - getHeight();
 		}
 		
 		//System.out.println(getX());
@@ -45,10 +45,16 @@ public class Player extends Sprite {
 	}
 
 	private void checkColor(Color col){
-		//Wenn nur eine Kachel, wie eine Tür, gecheckt wird, funktioniert die Abfrage meistens nicht -> Toleranzen einsetzen?
 		if(col.equals(Color.gray)){ //grau = 128, 128, 128
 			System.out.println("Mauer");
-			//Wenn Spieler auf Mauer, soll er nicht weitergehen können -> Manipulation der Geschwindigkeit?
+			if (getVerticalSpeed() > 0){
+				setVerticalSpeed(0);
+			}
+			if (getHorizontalSpeed() > 0){
+				setHorizontalSpeed(0);
+			}
+			
+			//TODO: Bei Kollision mit Mauer Stoppen des Spielers
 		}
 		
 		if(col.equals(Color.green)){ //grün = 0, 255, 0
@@ -63,8 +69,18 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
 			System.out.println("Bravo, du hast den Ausgang gefunden!");
-			parent.doInitializations2();
+			if (parent.getLevel() == 1){
+				
+				parent.doInitializations2();
+			}
+			if (parent.getLevel() == 2){
+				parent.doInitializations3();
+			}
 			//TODO: Level wechseln (s. gray)
+		}
+		
+		if(col.equals(Color.blue)){
+			System.out.println("Sieg!");
 		}
 		//Denkbar: Wenn Spieler auf...Asphalt oder ähnlichem erhöht sich Grundgeschwindigkeit
 	}

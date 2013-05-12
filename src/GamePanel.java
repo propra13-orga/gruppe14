@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	int speed = 80;
 	int x = 0;
 	int y = 0;
+	int level;
 
 	static int rows, columns;
 	
@@ -64,6 +65,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	
 	private void doInitializations(){
 		
+		level = 1;
 		last = System.nanoTime();
 		gameover = 0;
 		
@@ -85,8 +87,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	}
 	
 	public void doInitializations2(){
+		level = 2;
+		//Player muss neu platziert werden
 		map = new MapDisplay("level/TileMap_2.txt", "pics/tiles.gif", "pics/shadow.png", 4, 1, this); //auch entsprechend angepasste ShadowMap muss geladen werden! Man könnte auch verschiedene TileSets übergeben
 		
+	}
+	
+	public void doInitializations3(){
+		level = 3;
+		//Player muss neu platziert werden
+		map = new MapDisplay("level/TileMap_3.txt", "pics/tiles.gif", "pics/shadow.png", 4, 1, this);
 	}
 	
 	private void paintMenu(){ //Wird bisher noch nicht angesprochen, da Methode buggt (ArrayIndexOutOfBoundsException in MapDisplay.getColorForPoint)
@@ -222,6 +232,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		//Oder Gamerunning auf false?
 	}
 	
+	public void setLevel(int level){
+		this.level = level;
+	}
+	
+	public int getLevel(){
+		return level;
+	}
 	public MapDisplay getMap(){
 		return map; //gibt die Karte zurück
 	}
