@@ -31,6 +31,8 @@ public class Player extends Sprite {
 			y = parent.getHeight()-getHeight();
 		}
 		
+		//System.out.println(getX());
+		//System.out.println(getY());
 		//Mittels der Abfrage der Farbe kann festgestellt werden, auf welchem Tile sich der Spieler zurzeit befindet, Stichwort: ShadowMap
 		//Denkbar: Weitere Punkte überprüfen, um höhere Genauigkeit zu erreichen, hängt von Ausarbeitung der ShadowMap ab
 		Color col1 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)getY())); //Ecke oben links
@@ -46,7 +48,6 @@ public class Player extends Sprite {
 		//Wenn nur eine Kachel, wie eine Tür, gecheckt wird, funktioniert die Abfrage meistens nicht -> Toleranzen einsetzen?
 		if(col.equals(Color.gray)){ //grau = 128, 128, 128
 			System.out.println("Mauer");
-			parent.doInitializations2();
 			//Wenn Spieler auf Mauer, soll er nicht weitergehen können -> Manipulation der Geschwindigkeit?
 		}
 		
@@ -62,8 +63,8 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
 			System.out.println("Bravo, du hast den Ausgang gefunden!");
-			
-			//TODO: Level wechseln
+			parent.doInitializations2();
+			//TODO: Level wechseln (s. gray)
 		}
 		//Denkbar: Wenn Spieler auf...Asphalt oder ähnlichem erhöht sich Grundgeschwindigkeit
 	}

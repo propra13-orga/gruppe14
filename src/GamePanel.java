@@ -126,7 +126,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				moveObjects(); //Bewegen von Objekten
 				
 			}else{
-				System.out.println("Das Spiel ist leider beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
+				System.out.println("Das Spiel ist nocht nicht gestartet bzw. beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
 			}
 			
 			repaint(); //Von Component geerbt, stößt Neuzeichnen an, gehört vllt. auch hinter die Schleife?
