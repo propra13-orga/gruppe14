@@ -72,7 +72,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		this.setBackground(Color.darkGray);
 		frame = new JFrame("Dungeon MYS");
 		frame.setLocation(300,50);
-		//frame.setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(this);
 		frame.pack();
 		//frame.setIgnoreRepaint(true);	//Wird für den Pufferwechsel benötigt
@@ -218,7 +218,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				
 				
 			}else{
-				System.out.println("Das Spiel ist nocht nicht gestartet bzw. beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
+				//System.out.println("Das Spiel ist nocht nicht gestartet bzw. beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
 			}
 			
 			//testtime = System.nanoTime();

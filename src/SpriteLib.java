@@ -25,8 +25,8 @@ public class SpriteLib {
 	
 	private SpriteLib(){//Konstruktor
 		
-		ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+		//ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		//gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 		sprites = new HashMap<URL, BufferedImage>(); 
 	}
 	

@@ -85,11 +85,10 @@ public class MapDisplay extends Rectangle{
 		
 		for(ListIterator<Tile> it = tiles.listIterator();it.hasNext();){
 			t = it.next();
-			if(t.intersects(display)){
-				//double dx = t.x - display.getX();
-				//double dy = t.y-display.getY();
-				g.drawImage((Image)(control.getImageAt(t.getImageNumber())), (int) t.x, (int) t.y, null);
-			}
+			//double dx = t.x - display.getX();
+			//double dy = t.y-display.getY();
+			g.drawImage((Image)(control.getImageAt(t.getImageNumber())), (int) t.x, (int) t.y, null);
+			
 		}
 	}
 	
@@ -105,7 +104,7 @@ public class MapDisplay extends Rectangle{
 			//Rectangle temp = new Rectangle((int)dx, (int)dy, (int)t.getWidth(), (int)t.getHeight());
 			
 			if(t.contains(p)){
-				int px = (int) (p.x - t.x); //Was hat diese Änderung zu bedeuten?
+				int px = (int) (p.x - t.x); //Hier werden px und py auf die jeweiligen tile-bezogenen Koordinaten gesetzt (x und y Koordinate innerhalb des Tiles)
 				int py = (int) (p.y - t.y);
 				Color c = new Color(ImageControl.getInstance().getShadowImageAt(t.getImageNumber()).getRGB(px, py));
 				return c;

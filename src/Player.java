@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Sprite {
 	private static final long serialVersionUID = 1L;
+	
+	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 	}
@@ -48,7 +50,7 @@ public class Player extends Sprite {
 		
 		
 	}
-
+	
 	private void checkColor(Color col){
 		if(col.equals(Color.gray)){ //grau = 128, 128, 128
 			//System.out.println("Mauer");
@@ -92,6 +94,16 @@ public class Player extends Sprite {
 	@Override
 	public boolean collidedWith(Sprite s) {
 		return false;
+	}
+	@Override
+	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
+		if(dx != 0){
+			x = x + dx*(delta/1e9);
+			
+		}
+		if(dy != 0){
+			y = y + dy*(delta/1e9);
+		}
 	}
 }
 
