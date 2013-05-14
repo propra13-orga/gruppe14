@@ -17,12 +17,12 @@ public class Player extends Sprite {
 			x = 0;
 		}
 		if(getY() < 0){
-			setHorizontalSpeed(0);
+			setVerticalSpeed(0);
 			y = 0;
 		}
 		
 		if(getX()+getWidth() > parent.getWidth()){
-			setVerticalSpeed(0);
+			setHorizontalSpeed(0);
 			x = parent.getWidth() - getWidth();
 		}
 		
@@ -35,18 +35,23 @@ public class Player extends Sprite {
 		//System.out.println(getY());
 		//Mittels der Abfrage der Farbe kann festgestellt werden, auf welchem Tile sich der Spieler zurzeit befindet, Stichwort: ShadowMap
 		//Denkbar: Weitere Punkte überprüfen, um höhere Genauigkeit zu erreichen, hängt von Ausarbeitung der ShadowMap ab
-		Color col1 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)getY())); //Ecke oben links
-		Color col2= parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)(getY() + 40))); //Ecke unten rechts, 40 = Höhe/Breite der Tiles
-		Color col3= parent.getMap().getColorForPoint(new Point((int)(getX()), (int)(getY() + 40))); //Ecke unten links
+		
+		Color col1 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)getY())); 					//Ecke oben links
+		Color col2= parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)(getY() + 40))); 		//Ecke unten rechts, 40 = Höhe/Breite der Tiles
+		Color col3= parent.getMap().getColorForPoint(new Point((int)(getX()), (int)(getY() + 40))); 			//Ecke unten links
+		Color col4= parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)getY()));				//Ecke oben rechts
 		
 		checkColor(col1);
 		checkColor(col2);
 		checkColor(col3);
+		checkColor(col4);
+		
+		
 	}
 
 	private void checkColor(Color col){
 		if(col.equals(Color.gray)){ //grau = 128, 128, 128
-			System.out.println("Mauer");
+			//System.out.println("Mauer");
 			/*if (getVerticalSpeed() > 0){
 				setVerticalSpeed(0);
 			}
@@ -58,7 +63,7 @@ public class Player extends Sprite {
 		}
 		
 		if(col.equals(Color.green)){ //grün = 0, 255, 0
-			System.out.println("Wiese");
+			//System.out.println("Wiese");
 		}
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0

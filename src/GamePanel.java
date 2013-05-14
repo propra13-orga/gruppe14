@@ -1,19 +1,29 @@
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferStrategy;
+import java.awt.image.VolatileImage;
+import java.util.ListIterator;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener{
+public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
+	
+	long testtime = 0;
 	
 	long delta = 0;
 	long last = 0;
@@ -24,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	Player player;
 	MapDisplay map;
 	
-	Vector<Sprite> actors;
+	CopyOnWriteArrayList<Sprite> actors;
 
 	boolean up;
 	boolean down;
@@ -39,6 +49,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	int x = 0;
 	int y = 0;
 	int level;
+	
+	//VolatileImage als hardwarebeschleunigte Render-Methode verwendet einen 2fach Puffer, der zwischen aktuell berechnetem und altem Bild hin und her schaltet
+	VolatileImage backbuffer;	//Der aktuelle Puffer
+	GraphicsEnvironment ge;		//Umgebungsvariablen
+	GraphicsConfiguration gc;	
+	BufferStrategy strategy;	//Der 2Fach Puffer
 
 	static int rows, columns;
 	
@@ -48,28 +64,39 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	}
 	
 	public GamePanel(int w, int h){
+		
+		ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+		
 		this.setPreferredSize(new Dimension(w,h));
 		this.setBackground(Color.darkGray);
 		frame = new JFrame("Dungeon MYS");
 		frame.setLocation(300,50);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
 		frame.add(this);
 		frame.pack();
+		//frame.setIgnoreRepaint(true);	//Wird für den Pufferwechsel benötigt
+		//createBufferStrategy(2);		//2Fach Puffer-Strategy wird angelegt
+		//strategy = getBufferStrategy();	//Unser Puffer
 		frame.setVisible(true);
+		
 		frame.setResizable(false);
 		frame.addKeyListener(this);
 		
 		Thread t = new Thread(this);
 		t.start(); //ruft run auf
+		run();
 	}
 	
 	private void doInitializations(){
+		
+		//createBackbuffer();		//Ein Puffer wird angelegt
 		
 		level = 1;
 		last = System.nanoTime();
 		gameover = 0;
 		
-		actors = new Vector<Sprite>();
+		actors = new CopyOnWriteArrayList<Sprite>();
 		
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("pics/player.gif", 1, 1), 40, 40, 100, this);
@@ -77,7 +104,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
 		map = new MapDisplay("level/TileMap.txt", "pics/tiles.gif", "pics/shadow.png", 4, 1, this);
-	
+		
+		
 		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
 			once = true;
 			Thread t = new Thread(this);
@@ -86,6 +114,55 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		
 	}
 	
+	/*Methoden für die Volatile-Images Variante*/
+	/*
+	private void createBackbuffer(){
+		if(backbuffer != null){
+			backbuffer.flush();
+			backbuffer = null;
+		}
+		ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+		backbuffer = gc.createCompatibleVolatileImage(getWidth(), getHeight());
+	}
+	
+	
+	private void doPainting(){	//Neue Zeichenmethode basierend auf dem 2fach Puffer
+		checkBackbuffer();		//Ist der Puffer da? (Volatile Images können verloren gehen, daher immer prüfen!)
+		
+		Graphics g = backbuffer.getGraphics();	//Graphics-Objekt vom Volatile Image holen
+		render(g);								//Es wird ins Volatile-Image gezeichnet
+		g.dispose();							//Graphics-Objekt wird nicht mehr benötigt
+		
+		Graphics g2 = strategy.getDrawGraphics();	//Graphics-Objekt von der Strategy holen
+		g2.drawImage(backbuffer, 0, 0, this);		//Das backbuffer V.Image in die Strategy reinmalen
+		g2.dispose();								//Graphics-Objekt wird nicht mehr benötigt
+		
+		strategy.show();							//Den aktuellen Puffer zeigen (Flip)
+		
+	}
+	
+	private void checkBackbuffer(){
+		if(backbuffer == null){
+			createBackbuffer();	
+		}
+		if(backbuffer.validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE){
+			createBackbuffer();
+		}
+	}
+	//Render-Methode für die Volatile-Image, 2Fach-Puffer - Methode
+	public void render(Graphics g){
+		if(isStarted()){
+			map.drawVisibleMap(g);
+			player.drawObjects(g);
+		}else{
+			g.setColor(Color.red);
+			g.drawString("Press Enter!", 50, 50);
+		}
+		g.setColor(Color.red);
+		g.drawString(Long.toString(fps), 20, 20);
+	}
+	*/
 	public void doInitializations2(){
 		level = 2;
 		//Player muss neu platziert werden
@@ -132,18 +209,32 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			//Erst Methoden abarbeiten, wenn Spiel gestartet ist
 			if(isStarted()){
 				checkKeys(); //Tastaturabfrage
-				doLogic(); //Ausführung
+				
+				
+				doLogic(); //Ausführung der Logik
+				
+				
 				moveObjects(); //Bewegen von Objekten
+				
 				
 			}else{
 				System.out.println("Das Spiel ist nocht nicht gestartet bzw. beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
 			}
 			
-			repaint(); //Von Component geerbt, stößt Neuzeichnen an, gehört vllt. auch hinter die Schleife?
+			//testtime = System.nanoTime();
+			repaint();
+			//doPainting();
+			//System.out.println((System.nanoTime() - testtime)/1000);
+			
+			//repaint(); //Von Component geerbt, stößt Neuzeichnen an, gehört vllt. auch hinter die Schleife?
 			
 			try{
-				Thread.sleep(5);
+				
+				//Thread.sleep((last - System.nanoTime() + 1000000000)/1000000);	
+				Thread.sleep(40);
+				
 			}catch (InterruptedException e){}
+			
 		}	
 	}
 	
@@ -153,23 +244,26 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		
 		fps = ((long) 1e9)/delta; //Errechnen der Framerate
 	}
-	
+	@Override
 	public void paintComponent(Graphics g){ //paintComponent-Methode überschreiben
 		super.paintComponent(g);
 		
-		g.setColor(Color.red);
-		g.drawString("FPS " + Long.toString(fps), 20, 10); //Zur Überprüfung des fllüssigen Spiellaufs
+		
 		
 		if(!isStarted()){
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
-
+		
 		if(actors!=null){
-			for(Drawable draw:actors){
+			for(ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
+				Sprite draw = it.next();
 				map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte muss nicht jedes mal neu gezeichnet werden - woandershin auslagern?
 				draw.drawObjects(g);
 			}
 		}
+		g.setColor(Color.red);
+		g.drawString("FPS " + Long.toString(fps), 20, 10); //Zur Überprüfung des flüssigen Spiellaufs
+		
 		
 		
 	
@@ -197,17 +291,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		if(up){
 			player.setVerticalSpeed(-speed);
 		}
-		if(!up&&!down){ //wenn weder up noch down gedrückt
+		if(!up&&!down){ 						//wenn weder up noch down gedrückt
 			player.setVerticalSpeed(0);
 		}
-		if(!left&&!right){ //wenn weder left noch rechts gedrückt
+		if(!left&&!right){ 						//wenn weder left noch rechts gedrückt
 			player.setHorizontalSpeed(0);
 		}
 	}
 	
 	private void doLogic(){
+		/*
 		for(Movable mov:actors){
 			mov.doLogic(delta);
+		}*/
+		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
+		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
+			Sprite r = it.next();
+			r.doLogic(delta);
 		}
 		
 		//hier Kollisionsabfrage?
@@ -220,8 +320,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	}
 	
 	private void moveObjects(){
+		/*
 		for(Movable mov:actors){
 			mov.move(delta);
+		}
+		*/
+		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
+		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
+			Sprite r = it.next();
+			r.move(delta);
 		}
 	}
 	
@@ -293,6 +400,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	}
 	
 	public void keyTyped(KeyEvent e){ //???
+		/*
 		if (waitingForKeyPress){
 			if (pressCount == 1){
 				waitingForKeyPress = false;
@@ -302,6 +410,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				pressCount++;
 			}
 		}
+		*/
 	}
 
 }

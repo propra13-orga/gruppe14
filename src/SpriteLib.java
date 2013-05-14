@@ -1,3 +1,7 @@
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -7,6 +11,8 @@ import javax.imageio.ImageIO;
 
 public class SpriteLib {
 	private static SpriteLib single;
+	private static GraphicsEnvironment ge;
+	private static GraphicsConfiguration gc;
 	private static HashMap<URL, BufferedImage>sprites; //speichert unsere Bilder ab
 	
 	public static SpriteLib getInstance(){
@@ -18,6 +24,9 @@ public class SpriteLib {
 	}
 	
 	private SpriteLib(){//Konstruktor
+		
+		ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 		sprites = new HashMap<URL, BufferedImage>(); 
 	}
 	
@@ -36,9 +45,14 @@ public class SpriteLib {
 			System.out.println("Fehler beim Image laden: " +e1);
 			return null;
 		}
+		//Methoden für die Volatile-Images Variante
+		//BufferedImage better = gc.createCompatibleImage(pic.getWidth(),pic.getHeight(), Transparency.BITMASK);
+		//Graphics g = better.getGraphics();
+		//g.drawImage(pic, 0, 0, null);
 		
-		sprites.put(location, pic); //speichern des Bildes in HashMap
+		sprites.put(location, pic); //speichern des Bildes in HashMap (hier better statt pic für V.Images nehmen)
 		
+		//System.out.println("getSprite1");
 		return pic;
 	}
 	
@@ -57,6 +71,12 @@ public class SpriteLib {
 			
 			sprites.put(location, source);
 		}
+		//Methoden für die Volatile-Images Variante
+		//BufferedImage better = gc.createCompatibleImage(source.getWidth(),source.getHeight(), Transparency.BITMASK);
+		//Graphics g = better.getGraphics();
+		//g.drawImage(source, 0, 0, null);
+		
+		
 		int width = source.getWidth() / column;
 		int height = source.getHeight()/row;
 		
@@ -70,6 +90,7 @@ public class SpriteLib {
 			}
 		}
 		
+		//System.out.println("getSprite2");
 		return pics;
 	}
 	

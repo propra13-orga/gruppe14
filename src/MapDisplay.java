@@ -13,6 +13,7 @@ public class MapDisplay extends Rectangle{
 	ImageControl control;
 	Vector<Tile> tiles;
 	Rectangle2D display;
+	private Tile t;
 	
 	
 	public MapDisplay(String level, String picpath, String shadowpath, int column, int row, GamePanel p){
@@ -82,7 +83,8 @@ public class MapDisplay extends Rectangle{
 	
 	public void drawVisibleMap(Graphics g){
 		
-		for(Tile t:tiles){
+		for(ListIterator<Tile> it = tiles.listIterator();it.hasNext();){
+			t = it.next();
 			if(t.intersects(display)){
 				//double dx = t.x - display.getX();
 				//double dy = t.y-display.getY();
@@ -93,23 +95,40 @@ public class MapDisplay extends Rectangle{
 	
 	public Color getColorForPoint(Point p){//TODO: Finale Version schaffen + Problem mit ArrayIndexOutOfBounds (ab x = 160)
 		//
-		for(Tile t:tiles){ //alle Tiles werden überprüft
+		for(ListIterator<Tile> it = tiles.listIterator();it.hasNext();){ //alle Tiles werden überprüft
+			t = it.next();
 			//double dx = t.x - display.getX(); //Wir bewegen display gar nicht, also hier wohl unnötig
 			//double dy = t.y - display.getY();
-			double dx = t.x; //x-Variable des Tiles
-			double dy = t.y; //y-Variable des Tiles
+			//double dx = t.x; //x-Variable des Tiles
+			//double dy = t.y; //y-Variable des Tiles
 			//Erstellt Rechteck von der Größe eines Tiles
-			Rectangle temp = new Rectangle((int)dx, (int)dy, (int)t.getWidth(), (int)t.getHeight());
+			//Rectangle temp = new Rectangle((int)dx, (int)dy, (int)t.getWidth(), (int)t.getHeight());
 			
+			if(t.contains(p)){
+				int px = (int) (p.x - t.x); //Was hat diese Änderung zu bedeuten?
+				int py = (int) (p.y - t.y);
+				Color c = new Color(ImageControl.getInstance().getShadowImageAt(t.getImageNumber()).getRGB(px, py));
+				return c;
+			}
+			/*
+			if((p.x >= t.x) && (p.x < t.x + t.width) && (p.y >= t.y) && (p.y < t.y + t.height)){
+				int px = (int) (p.x - t.x);
+				int py = (int) (p.y - t.y);
+				Color c = new Color(ImageControl.getInstance().getShadowImageAt(t.getImageNumber()).getRGB(px, py));
+				return c;
+			}
+			*/
 			
-			if(temp.contains(p)){ //Wenn Tile gefunden, welches p beinhaltet:
+			/*
+			 * if(temp.contains(p)){ //Wenn Tile gefunden, welches p beinhaltet:
 				int px = (int) (p.x - dx); //Was hat diese Änderung zu bedeuten?
 				int py = (int) (p.y - dy);
 				Color c = new Color(ImageControl.getInstance().getShadowImageAt(t.getImageNumber()).getRGB(px, py));
 				return c;
 			}
+			*/
 		}
 				
-		return null;
+		return Color.gray;
 	}
 }
