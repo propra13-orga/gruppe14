@@ -53,13 +53,16 @@ public class Player extends Sprite {
 	
 	private void checkColor(Color col){
 		if(col.equals(Color.gray)){ //grau = 128, 128, 128
-			//System.out.println("Mauer");
-			/*if (getVerticalSpeed() > 0){
+			//System.out.println("Mauer"
+			if(parent.up || parent.down){
 				setVerticalSpeed(0);
+				y = y + 1;
+				
 			}
-			if (getHorizontalSpeed() > 0){
+			if(parent.left || parent.right){
 				setHorizontalSpeed(0);
-			}*/
+				x = x + 1;
+			}
 			
 			//TODO: Bei Kollision mit Mauer Stoppen des Spielers
 		}
