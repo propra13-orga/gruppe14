@@ -246,8 +246,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 			try{
 				
-				//Thread.sleep((last - System.nanoTime() + 1000000000)/1000000);	
-				Thread.sleep(40);
+				Thread.sleep((System.nanoTime() - last + 1000000000)/60000000);	
+				//Thread.sleep(40);
 				
 			}catch (InterruptedException e){}
 			
