@@ -4,18 +4,16 @@ FunktionalitÃ¤t zurzeit:
 - Erkennung des Untergrunds
 - Tod bei Betreten des Feuers (sinnvolle Ausgabe und Möglichkeit zum Neustart fehlt)
 - Betreten eines neuen Levels bei Erreichen der Tür
+- Sieg durch Erreichen der Trophäe
+- Bewegung durch Mauer nicht mehr möglich, Methode aber noch n bisschen verbuggt
 - Einlesen der Karte aus txt.Datei
+- Menüführung mit zwei Buttons, funktioniert bei Neustart noch nicht
 
 TODO:
 
 
-- Spieler darf nicht durch Wände laufen können
-- Menüführung
-- Eintreten in andere Level
-- Probleme mit ArrayIndexOutOfBounds bei ColorDetection ausmerzen.
-- Ziel im letzten Raum und entsprechende Ausgabe
 - schönere Bilder
-- flüssigere Bewegungen (teilweise ruckelt das ganze schon ziemlich stark)
+- flüssigere Bewegungen (teilweise ruckelt es immer noch)
 - Ausarbeitung von Leveln
-- schönere Bilder
-- flüssigere Bewegungen (teilweise ruckelt das ganze schon ziemlich stark)
+- Items
+- Gegner?
