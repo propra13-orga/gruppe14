@@ -91,8 +91,18 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame2.setLocation(600,350);
 		paintMenu();
 		
+		/*
 		Thread t = new Thread(this);
 		t.start(); //ruft run auf
+		run();
+		*/
+	}
+	private void start(){	
+		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
+			once = true;
+			Thread t = new Thread(this);
+			t.start();
+		}
 		run();
 	}
 	
@@ -114,11 +124,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		map = new MapDisplay("level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		
-		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
-			once = true;
-			Thread t = new Thread(this);
-			t.start();
-		}
+		
 		
 	}
 	
@@ -191,9 +197,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
-				doInitializations();
 				setStarted(true);
+				doInitializations();
+				frame2.setVisible(false);
 				frame2.dispose();
+				start();
+				run();
 			}
 		});
 		b2.addActionListener(new ActionListener(){
