@@ -231,7 +231,9 @@ public class Player extends Sprite {
 		}
 		
 		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
+			
 			if (parent.getLevel() == 2){
+				
 				parent.doInitializations3();
 			}
 			if (parent.getLevel() == 1){

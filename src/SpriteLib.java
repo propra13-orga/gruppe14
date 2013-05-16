@@ -3,6 +3,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -33,14 +34,14 @@ public class SpriteLib {
 	public BufferedImage getSprite(String path){//liest aus URL Bild aus und speichert es in pic
 		BufferedImage pic = null;
 		URL location = getURLfromResource(path);
-		pic = (BufferedImage) sprites.get(location);
+		pic = (BufferedImage) sprites.get(path);
 		
 		if(pic != null){
 			return pic;
 		}
 		
 		try{
-			pic = ImageIO.read(location); //Über ImageIO das Bild lesen
+			pic = ImageIO.read(new File(path)); //Über ImageIO das Bild lesen
 		} catch (IOException e1){
 			System.out.println("Fehler beim Image laden: " +e1);
 			return null;
@@ -59,11 +60,11 @@ public class SpriteLib {
 	public BufferedImage [] getSprite(String path, int column, int row){//liest aus URL Bild bzw. Animation aus und speichert es in pics
 		BufferedImage source = null;
 		URL location = getURLfromResource(path);
-		source = (BufferedImage) sprites.get(location);
+		source = (BufferedImage) sprites.get(path);
 		
 		if(source == null){
 			try{
-				source = ImageIO.read(location); //Über ImageIO das Bild lesen
+				source = ImageIO.read(new File(path)); //Über ImageIO das Bild lesen
 			} catch (IOException e1){
 				System.out.println("Fehler beim Image laden: " +e1);
 				return null;

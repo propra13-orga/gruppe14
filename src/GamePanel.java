@@ -99,11 +99,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors = new CopyOnWriteArrayList<Sprite>();
 		
 		lib = SpriteLib.getInstance();
-		player = new Player(lib.getSprite("pics/player.gif", 1, 1), 40, 40, 100, this);
+		player = new Player(lib.getSprite("resources/pics/player.gif", 1, 1), 40, 40, 100, this);
 		actors.add(player);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
-		map = new MapDisplay("level/TileMap.txt", "pics/tiles.gif", "pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		
 		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
@@ -166,14 +166,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	public void doInitializations2(){
 		level = 2;
 		//Player muss neu platziert werden
-		map = new MapDisplay("level/TileMap_2.txt", "pics/tiles.gif", "pics/shadow.png", 5, 1, this); //auch entsprechend angepasste ShadowMap muss geladen werden! Man könnte auch verschiedene TileSets übergeben
+		map = new MapDisplay("level/TileMap_2.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this); //auch entsprechend angepasste ShadowMap muss geladen werden! Man könnte auch verschiedene TileSets übergeben
 		
 	}
 	
 	public void doInitializations3(){
 		level = 3;
 		//Player muss neu platziert werden
-		map = new MapDisplay("level/TileMap_3.txt", "pics/tiles.gif", "pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("level/TileMap_3.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 	}
 	
 	private void paintMenu(){ //Wird bisher noch nicht angesprochen, da Methode buggt (ArrayIndexOutOfBoundsException in MapDisplay.getColorForPoint)

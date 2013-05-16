@@ -30,6 +30,7 @@ public class MapDisplay extends Rectangle{
 
 	private void loadLevelData(String level){
 		try{
+			
 			InputStreamReader isr = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(level));
 			BufferedReader bufread = new BufferedReader(isr);
 			
