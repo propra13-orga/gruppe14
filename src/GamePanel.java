@@ -1,11 +1,9 @@
-import java.awt.Canvas;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,17 +11,18 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.VolatileImage;
 import java.util.ListIterator;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
 	JFrame frame2;
+	JFrame frame3;
 	
 	long testtime = 0;
 	
@@ -46,6 +45,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean game_running = true;
 	boolean started = false;
 	boolean once = false; //bei Neustart keinen neuen Thread - wie muss once am Anfang sein, false oder true?
+	boolean gamewon;
 	int pressCount;
 	int speed = 80;
 	int x = 0;
@@ -87,15 +87,13 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame.setResizable(false);
 		frame.addKeyListener(this);
 		
-		frame2 = new JFrame("Dungeon MYS");
-		frame2.setLocation(600,350);
-		paintMenu();
 		
+		paintMenu();
 				
 		
-		/*Thread t = new Thread(this);
+		Thread t = new Thread(this);
 		t.start(); //ruft run auf
-		run();*/
+		run();
 		
 	}
 	private void start(){	
@@ -107,7 +105,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		run();
 	}
 	
-	private void doInitializations(){
+	private void doInitializations(JFrame menu){
 		
 		//createBackbuffer();		//Ein Puffer wird angelegt
 		
@@ -125,6 +123,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		map = new MapDisplay("level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 		frame.setVisible(true);
 		frame.add(this);
+		menu.dispose();
 
 		
 		
@@ -193,31 +192,70 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	
 	private void paintMenu(){ //Wird bisher noch nicht angesprochen, da Methode buggt (ArrayIndexOutOfBoundsException in MapDisplay.getColorForPoint)
-		JButton b1 = new JButton("Spiel starten");
-		
-		JButton b2 = new JButton("Beenden");
-		
-		b1.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
-				setStarted(true);
-				doInitializations();
-				frame2.setVisible(false);
-				frame2.dispose();
-				start();
-				run();
-				
-			}
-		});
-		b2.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
-				System.exit(0);
-			}
+		if(gamewon == false){
+			frame3 = new JFrame("Neustart?");
+			frame3.setLocation(650,300);
+			frame3.setSize(100, 100);
+			JButton b1 = new JButton("Spiel starten");
+			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
+			b1.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+					
+					doInitializations(frame3);
+					setStarted(true);
+					
+				}
+			});
 			
-		});
+			JButton b2 = new JButton("Beenden");
+			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
+			b2.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+					System.exit(0);
+				}
+				
+			});
+			frame3.add(BorderLayout.NORTH, b1);
+			frame3.add(BorderLayout.SOUTH, b2);
+			frame3.pack();
+			frame3.setVisible(true);
+			
+		}
 		
-		frame2.add(b1);
-		frame2.pack();
-		frame2.setVisible(true);
+		if(gamewon == true){
+			frame2 = new JFrame("Menü");
+			frame2.setLocation(650,300);
+			frame2.setSize(100, 100);
+			JLabel label = new JLabel("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
+			frame2.add(BorderLayout.NORTH, label);
+			JButton b1 = new JButton("Ich möchte nocheinmal spielen");
+			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
+			b1.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+					gamewon = false;
+					setStarted(true);
+					frame2.dispose();
+					run();
+					
+				}
+			});
+			
+			JButton b2 = new JButton("Es reicht mir...");
+			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
+			b2.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+					System.exit(0);
+				}
+				
+			});
+			frame2.add(BorderLayout.CENTER, b1);
+			frame2.add(BorderLayout.SOUTH, b2);
+			frame2.pack();
+			frame2.setVisible(true);
+			gamewon = false;
+		}
+		
+	
 	}
 
 	
@@ -360,6 +398,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 	public void wonGame(){
 		System.out.println("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
+		started = false;
+		game_running = false;
+		gamewon = true;
 		paintMenu();
 	}
 	
@@ -405,12 +446,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = false;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_ENTER){//Enter zum starten
+		/*if (e.getKeyCode() == KeyEvent.VK_ENTER){//Enter zum starten
 			if(!isStarted()){
 				doInitializations();
 				setStarted(true);
 			}
-		}
+		}*/
 		
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B
 			if(isStarted()){

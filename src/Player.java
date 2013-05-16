@@ -79,7 +79,6 @@ public class Player extends Sprite {
 					//x = x - 1;
 				}
 			
-				//TODO: Bei Kollision mit Mauer Stoppen des Spielers
 			}
 		case 2:
 			if(col.equals(Color.gray)){
@@ -145,7 +144,7 @@ public class Player extends Sprite {
 				}
 				
 			}
-			System.out.println(corner);
+
 		}
 
 		if(col.equals(Color.green)){ //grün = 0, 255, 0
@@ -154,8 +153,8 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
 			//Tod durch Feuer!
-			parent.setStarted(false); //Spiel wird beendet, jedoch unschön - ohne Ausgabe und Neustartmöglichkeit
-			//TODO: Spielbeendigung und entsprechende Ausgabe oder Verlust von Lebenspunkten
+			parent.setStarted(false); 
+			
 		}
 		
 		if(col.equals(Color.blue)){ //gelb = 255, 255, 0
@@ -169,7 +168,6 @@ public class Player extends Sprite {
 				parent.doInitializations2();
 			}
 			
-			//TODO: Level wechseln (s. gray)
 		}
 		
 		if(col.equals(Color.yellow)){
