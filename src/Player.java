@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Sprite {
 	private static final long serialVersionUID = 1L;
+	int edge;
 	
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
@@ -37,191 +38,114 @@ public class Player extends Sprite {
 		//System.out.println(getY());
 		//Mittels der Abfrage der Farbe kann festgestellt werden, auf welchem Tile sich der Spieler zurzeit befindet, Stichwort: ShadowMap
 		//Denkbar: Weitere Punkte überprüfen, um höhere Genauigkeit zu erreichen, hängt von Ausarbeitung der ShadowMap ab
-		
+		edge = 1;
 		Color col1 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)getY())); //Ecke oben links
+		edge = 2;
 		Color col2 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)(getY() + 40))); //Ecke unten rechts, 40 = Höhe/Breite der Tiles
+		edge = 3;
 		Color col3 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)(getY() + 40))); //Ecke unten links
+		edge = 4;
 		Color col4 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)getY())); //Ecke oben rechts
 		
 		checkColor(col1);
-		checkColor_2(col2);
-		checkColor_3(col3);
-		checkColor_4(col4);
+		checkColor(col2);
+		checkColor(col3);
+		checkColor(col4);
 		
 		
-	}
-	
-	private void checkColor_4(Color col){ //Unterschiedliche Klassen für Punkten oben und unten
-		if(col.equals(Color.gray)){
-			
-			if(parent.up){
-				setVerticalSpeed(0);
-				y = y + 1;
-			}
-			if(parent.down){
-				//setVerticalSpeed(0);
-				//y = y - 1;
-			}
-			if(parent.left){
-				//setHorizontalSpeed(0);
-				//x = x + 1;
-			}
-			if(parent.right){
-				setHorizontalSpeed(0);
-				x = x - 1;
-			}
-			
-		}
-		
-		if(col.equals(Color.green)){ //grün = 0, 255, 0
-			
-		}
-		
-		if(col.equals(Color.red)){ //rot = 255, 0, 0
-			//Tod durch Feuer!
-			parent.setStarted(false); //Spiel wird beendet, jedoch unschön - ohne Ausgabe und Neustartmöglichkeit
-			//TODO: Spielbeendigung und entsprechende Ausgabe oder Verlust von Lebenspunkten
-		}
-		
-		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
-			if (parent.getLevel() == 2){
-				parent.doInitializations3();
-			}
-			
-			if (parent.getLevel() == 1){
-				
-				parent.doInitializations2();
-			}
-			
-			//TODO: Level wechseln (s. gray)
-		}
-		
-		if(col.equals(Color.blue)){
-			//Sieg
-		}
-	}
-	
-	private void checkColor_3(Color col){ //Unterschiedliche Klassen für Punkten oben und unten
-		if(col.equals(Color.gray)){
-			
-			if(parent.up){
-				//setVerticalSpeed(0);
-				//y = y + 1;
-			}
-			if(parent.down){
-				setVerticalSpeed(0);
-				y = y - 1;
-			}
-			if(parent.left){
-				setHorizontalSpeed(0);
-				x = x + 1;
-			}
-			if(parent.right){
-				//setHorizontalSpeed(0);
-				//x = x - 1;
-			}
-			
-		}
-		
-		if(col.equals(Color.green)){ //grün = 0, 255, 0
-			
-		}
-		
-		if(col.equals(Color.red)){ //rot = 255, 0, 0
-			//Tod durch Feuer!
-			parent.setStarted(false); //Spiel wird beendet, jedoch unschön - ohne Ausgabe und Neustartmöglichkeit
-			//TODO: Spielbeendigung und entsprechende Ausgabe oder Verlust von Lebenspunkten
-		}
-		
-		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
-			if (parent.getLevel() == 2){
-				parent.doInitializations3();
-			}
-			if (parent.getLevel() == 1){
-				
-				parent.doInitializations2();
-			}
-			
-			//TODO: Level wechseln (s. gray)
-		}
-		
-		if(col.equals(Color.blue)){
-			//Sieg
-		}
-	}
-	private void checkColor_2(Color col){ //Unterschiedliche Klassen für Punkten oben und unten
-		if(col.equals(Color.gray)){
-			
-			if(parent.up){
-				//setVerticalSpeed(0);
-				//y = y + 1;
-			}
-			if(parent.down){
-				setVerticalSpeed(0);
-				y = y - 1;
-			}
-			if(parent.left){
-				//setHorizontalSpeed(0);
-				//x = x + 1;
-			}
-			if(parent.right){
-				setHorizontalSpeed(0);
-				x = x - 1;
-			}
-			
-		}
-		
-		if(col.equals(Color.green)){ //grün = 0, 255, 0
-			
-		}
-		
-		if(col.equals(Color.red)){ //rot = 255, 0, 0
-			//Tod durch Feuer!
-			parent.setStarted(false); //Spiel wird beendet, jedoch unschön - ohne Ausgabe und Neustartmöglichkeit
-			//TODO: Spielbeendigung und entsprechende Ausgabe oder Verlust von Lebenspunkten
-		}
-		
-		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
-			if (parent.getLevel() == 2){
-				parent.doInitializations3();
-			}
-			if (parent.getLevel() == 1){
-				
-				parent.doInitializations2();
-			}
-			
-			//TODO: Level wechseln (s. gray)
-		}
-		
-		if(col.equals(Color.blue)){
-			//Sieg
-		}
 	}
 	private void checkColor(Color col){
-		if(col.equals(Color.gray)){ //grau = 128, 128, 128
-		
-			if(parent.up){
-				setVerticalSpeed(0);
-				y = y + 1;
+		switch(edge){
+		case 1:
+			if(col.equals(Color.gray)){ //grau = 128, 128, 128
+				
+				if(parent.up){
+					setVerticalSpeed(0);
+					y = y + 1;
+				}
+				if(parent.down){
+					//setVerticalSpeed(0);
+					//y = y - 1;
+				}
+				if(parent.left){
+					setHorizontalSpeed(0);
+					x = x + 1;
+				}
+				if(parent.right){
+					//setHorizontalSpeed(0);
+					//x = x - 1;
+				}
+			
+				//TODO: Bei Kollision mit Mauer Stoppen des Spielers
 			}
-			if(parent.down){
-				//setVerticalSpeed(0);
-				//y = y - 1;
+		case 2:
+			if(col.equals(Color.gray)){
+				
+				if(parent.up){
+					//setVerticalSpeed(0);
+					//y = y + 1;
+				}
+				if(parent.down){
+					setVerticalSpeed(0);
+					y = y - 1;
+				}
+				if(parent.left){
+					//setHorizontalSpeed(0);
+					//x = x + 1;
+				}
+				if(parent.right){
+					setHorizontalSpeed(0);
+					x = x - 1;
+				}
+				
 			}
-			if(parent.left){
-				setHorizontalSpeed(0);
-				x = x + 1;
+			
+		case 3:
+			if(col.equals(Color.gray)){
+				
+				if(parent.up){
+					//setVerticalSpeed(0);
+					//y = y + 1;
+				}
+				if(parent.down){
+					setVerticalSpeed(0);
+					y = y - 1;
+				}
+				if(parent.left){
+					setHorizontalSpeed(0);
+					x = x + 1;
+				}
+				if(parent.right){
+					//setHorizontalSpeed(0);
+					//x = x - 1;
+				}
+				
 			}
-			if(parent.right){
-				//setHorizontalSpeed(0);
-				//x = x - 1;
+		case 4:
+			if(col.equals(Color.gray)){
+				
+				if(parent.up){
+					setVerticalSpeed(0);
+					y = y + 1;
+				}
+				if(parent.down){
+					//setVerticalSpeed(0);
+					//y = y - 1;
+				}
+				if(parent.left){
+					//setHorizontalSpeed(0);
+					//x = x + 1;
+				}
+				if(parent.right){
+					setHorizontalSpeed(0);
+					x = x - 1;
+				}
+				
 			}
-		
-			//TODO: Bei Kollision mit Mauer Stoppen des Spielers
 		}
-		
+
 		if(col.equals(Color.green)){ //grün = 0, 255, 0
-	
+			
 		}
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
@@ -230,12 +154,12 @@ public class Player extends Sprite {
 			//TODO: Spielbeendigung und entsprechende Ausgabe oder Verlust von Lebenspunkten
 		}
 		
-		if(col.equals(Color.yellow)){ //gelb = 255, 255, 0
+		if(col.equals(Color.blue)){ //gelb = 255, 255, 0
 			
 			if (parent.getLevel() == 2){
-				
 				parent.doInitializations3();
 			}
+			
 			if (parent.getLevel() == 1){
 				
 				parent.doInitializations2();
@@ -244,10 +168,9 @@ public class Player extends Sprite {
 			//TODO: Level wechseln (s. gray)
 		}
 		
-		if(col.equals(Color.blue)){
-			//Sieg
+		if(col.equals(Color.yellow)){
+			parent.wonGame();
 		}
-		//Denkbar: Wenn Spieler auf...Asphalt oder ähnlichem erhöht sich Grundgeschwindigkeit
 	}
 	
 	public boolean collidedWith(Sprite s) {

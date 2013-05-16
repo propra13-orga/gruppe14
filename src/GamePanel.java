@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -22,6 +23,7 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
+	JFrame frame2;
 	
 	long testtime = 0;
 	
@@ -68,6 +70,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 		
+		
+		//frame.setIgnoreRepaint(true);	//Wird für den Pufferwechsel benötigt
+		//createBufferStrategy(2);		//2Fach Puffer-Strategy wird angelegt
+		//strategy = getBufferStrategy();	//Unser Puffer
+		
 		this.setPreferredSize(new Dimension(w,h));
 		this.setBackground(Color.darkGray);
 		frame = new JFrame("Dungeon MYS");
@@ -75,13 +82,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(this);
 		frame.pack();
-		//frame.setIgnoreRepaint(true);	//Wird für den Pufferwechsel benötigt
-		//createBufferStrategy(2);		//2Fach Puffer-Strategy wird angelegt
-		//strategy = getBufferStrategy();	//Unser Puffer
 		frame.setVisible(true);
 		
 		frame.setResizable(false);
 		frame.addKeyListener(this);
+		
+		frame2 = new JFrame("Dungeon MYS");
+		frame2.setLocation(600,350);
+		paintMenu();
 		
 		Thread t = new Thread(this);
 		t.start(); //ruft run auf
@@ -185,6 +193,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
 				doInitializations();
 				setStarted(true);
+				frame2.dispose();
 			}
 		});
 		b2.addActionListener(new ActionListener(){
@@ -194,11 +203,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 		});
 		
-		frame.add(b1);
-		frame.pack();
-		frame.add(b2);
-
-		frame.setVisible(true);
+		frame2.add(b1);
+		frame2.pack();
+		frame2.setVisible(true);
 	}
 
 	
@@ -337,6 +344,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		gameover = 1;
 		//TODO: Sinnvolle Ausgabe und Möglichkeit des Neustarts
 		//Oder Gamerunning auf false?
+	}
+	
+	public void wonGame(){
+		System.out.println("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
+		paintMenu();
 	}
 	
 	public void setLevel(int level){
