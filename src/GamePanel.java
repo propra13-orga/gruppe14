@@ -91,11 +91,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame2.setLocation(600,350);
 		paintMenu();
 		
-		/*
-		Thread t = new Thread(this);
+				
+		
+		/*Thread t = new Thread(this);
 		t.start(); //ruft run auf
-		run();
-		*/
+		run();*/
+		
 	}
 	private void start(){	
 		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
@@ -122,8 +123,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
 		map = new MapDisplay("level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
-		
-		
+		frame.setVisible(true);
+		frame.add(this);
+
 		
 		
 	}
@@ -203,6 +205,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				frame2.dispose();
 				start();
 				run();
+				
 			}
 		});
 		b2.addActionListener(new ActionListener(){

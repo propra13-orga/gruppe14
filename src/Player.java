@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Sprite {
 	private static final long serialVersionUID = 1L;
-	int edge;
+	int corner;
 	
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
@@ -38,24 +38,27 @@ public class Player extends Sprite {
 		//System.out.println(getY());
 		//Mittels der Abfrage der Farbe kann festgestellt werden, auf welchem Tile sich der Spieler zurzeit befindet, Stichwort: ShadowMap
 		//Denkbar: Weitere Punkte überprüfen, um höhere Genauigkeit zu erreichen, hängt von Ausarbeitung der ShadowMap ab
-		edge = 1;
+		corner = 1;
 		Color col1 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)getY())); //Ecke oben links
-		edge = 2;
-		Color col2 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)(getY() + 40))); //Ecke unten rechts, 40 = Höhe/Breite der Tiles
-		edge = 3;
-		Color col3 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)(getY() + 40))); //Ecke unten links
-		edge = 4;
-		Color col4 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)getY())); //Ecke oben rechts
-		
 		checkColor(col1);
+		corner = 2;
+		Color col2 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)(getY() + 40))); //Ecke unten rechts, 40 = Höhe/Breite der Tiles
 		checkColor(col2);
+		corner = 3;
+		Color col3 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)(getY() + 40))); //Ecke unten links
 		checkColor(col3);
+		corner = 4;
+		Color col4 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)getY())); //Ecke oben rechts
 		checkColor(col4);
+		
+		
+		
+	
 		
 		
 	}
 	private void checkColor(Color col){
-		switch(edge){
+		switch(corner){
 		case 1:
 			if(col.equals(Color.gray)){ //grau = 128, 128, 128
 				
@@ -142,6 +145,7 @@ public class Player extends Sprite {
 				}
 				
 			}
+			System.out.println(corner);
 		}
 
 		if(col.equals(Color.green)){ //grün = 0, 255, 0
