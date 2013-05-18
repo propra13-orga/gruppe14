@@ -1,14 +1,23 @@
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 public class Player extends Sprite {
 	private static final long serialVersionUID = 1L;
 	int corner;
+	private Point ol;
+	private Point or;
+	private Point ul;
+	private Point ur;
 	
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
+		ol = new Point();
+		or = new Point();
+		ul = new Point();
+		ur = new Point();
 	}
 	
 	@Override
@@ -39,16 +48,24 @@ public class Player extends Sprite {
 		//Mittels der Abfrage der Farbe kann festgestellt werden, auf welchem Tile sich der Spieler zurzeit befindet, Stichwort: ShadowMap
 		//Denkbar: Weitere Punkte überprüfen, um höhere Genauigkeit zu erreichen, hängt von Ausarbeitung der ShadowMap ab
 		corner = 1;
-		Color col1 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)getY())); //Ecke oben links
+		ol.setLocation((int)getX(), (int)getY());
+		Color col1 = parent.getMap().getColorForPoint(ol); //Ecke oben links
 		checkColor(col1);
+		
 		corner = 2;
-		Color col2 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)(getY() + 40))); //Ecke unten rechts, 40 = Höhe/Breite der Tiles
+		ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+		Color col2 = parent.getMap().getColorForPoint(ur); //Ecke unten rechts
 		checkColor(col2);
+		
 		corner = 3;
-		Color col3 = parent.getMap().getColorForPoint(new Point((int)(getX()), (int)(getY() + 40))); //Ecke unten links
+		ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
+		Color col3 = parent.getMap().getColorForPoint(ul); //Ecke unten links
 		checkColor(col3);
+		
+		
 		corner = 4;
-		Color col4 = parent.getMap().getColorForPoint(new Point((int)(getX() + 40), (int)getY())); //Ecke oben rechts
+		or.setLocation((int)(getX() + (width - 1)), (int)getY());
+		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
 		checkColor(col4);
 		
 		
@@ -61,7 +78,6 @@ public class Player extends Sprite {
 		switch(corner){
 		case 1:
 			if(col.equals(Color.gray)){ //grau = 128, 128, 128
-				
 				if(parent.up){
 					setVerticalSpeed(0);
 					y = y + 1;
