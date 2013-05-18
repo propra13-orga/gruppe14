@@ -24,6 +24,8 @@ public class Player extends Sprite {
 	public void doLogic(long delta)	{
 		super.doLogic(delta);
 		//Überprüfen der Ränder, damit Player nicht darüber hinaus kann
+		
+		/*
 		if(getX() < 0){
 			setHorizontalSpeed(0);
 			x = 0;
@@ -67,98 +69,155 @@ public class Player extends Sprite {
 		or.setLocation((int)(getX() + (width - 1)), (int)getY());
 		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
 		checkColor(col4);
+		 */
+		
+	}
+	@Override
+	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
+		if(dx != 0){
+			x = x + dx*(delta/1e9);
+		}
+		
+		if(dy != 0){
+			y = y + dy*(delta/1e9);
+		}
+		if(getX() < 0){
+			setHorizontalSpeed(0);
+			x = 0;
+		}
+		if(getY() < 0){
+			setVerticalSpeed(0);
+			y = 0;
+		}
+		
+		if(getX()+getWidth() > parent.getWidth()){
+			setHorizontalSpeed(0);
+			x = parent.getWidth() - getWidth();
+		}
+		
+		if(getY()+getHeight() > parent.getHeight()){
+			setVerticalSpeed(0);
+			y = parent.getHeight() - getHeight();
+		}
 		
 		
+		corner = 1;
+		ol.setLocation((int)getX(), (int)getY());
+		Color col1 = parent.getMap().getColorForPoint(ol); //Ecke oben links
+		checkColor(col1);
 		
-	
+		corner = 2;
+		ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+		Color col2 = parent.getMap().getColorForPoint(ur); //Ecke unten rechts
+		checkColor(col2);
+		
+		corner = 3;
+		ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
+		Color col3 = parent.getMap().getColorForPoint(ul); //Ecke unten links
+		checkColor(col3);
 		
 		
+		corner = 4;
+		or.setLocation((int)(getX() + (width - 1)), (int)getY());
+		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
+		checkColor(col4);
 	}
 	private void checkColor(Color col){
 		switch(corner){
 		case 1:
 			if(col.equals(Color.gray)){ //grau = 128, 128, 128
-				if(parent.up){
-					setVerticalSpeed(0);
-					y = y + 1;
-				}
-				if(parent.down){
-					//setVerticalSpeed(0);
-					//y = y - 1;
-				}
-				if(parent.left){
-					setHorizontalSpeed(0);
-					x = x + 1;
-				}
-				if(parent.right){
-					//setHorizontalSpeed(0);
-					//x = x - 1;
+				while(parent.getMap().getColorForPoint(ol).equals(Color.gray)){
+					if(parent.up){
+						setVerticalSpeed(0);
+						y = y + 1;
+					}
+					if(parent.down){
+						//setVerticalSpeed(0);
+						//y = y - 1;
+					}
+					if(parent.left){
+						setHorizontalSpeed(0);
+						x = x + 1;
+					}
+					if(parent.right){
+						//setHorizontalSpeed(0);
+						//x = x - 1;
+					}
+					ol.setLocation((int)getX(), (int)getY());
+					
 				}
 			
 			}
 		case 2:
 			if(col.equals(Color.gray)){
 				
-				if(parent.up){
-					//setVerticalSpeed(0);
-					//y = y + 1;
+				while(parent.getMap().getColorForPoint(ur).equals(Color.gray)){
+					if(parent.up){
+						//setVerticalSpeed(0);
+						//y = y + 1;
+					}
+					if(parent.down){
+						setVerticalSpeed(0);
+						y = y - 1;
+					}
+					if(parent.left){
+						//setHorizontalSpeed(0);
+						//x = x + 1;
+					}
+					if(parent.right){
+						setHorizontalSpeed(0);
+						x = x - 1;
+					}
+					ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+					
 				}
-				if(parent.down){
-					setVerticalSpeed(0);
-					y = y - 1;
-				}
-				if(parent.left){
-					//setHorizontalSpeed(0);
-					//x = x + 1;
-				}
-				if(parent.right){
-					setHorizontalSpeed(0);
-					x = x - 1;
-				}
-				
 			}
 			
 		case 3:
 			if(col.equals(Color.gray)){
-				
-				if(parent.up){
-					//setVerticalSpeed(0);
-					//y = y + 1;
-				}
-				if(parent.down){
-					setVerticalSpeed(0);
-					y = y - 1;
-				}
-				if(parent.left){
-					setHorizontalSpeed(0);
-					x = x + 1;
-				}
-				if(parent.right){
-					//setHorizontalSpeed(0);
-					//x = x - 1;
+				while(parent.getMap().getColorForPoint(ul).equals(Color.gray)){
+					if(parent.up){
+						//setVerticalSpeed(0);
+						//y = y + 1;
+					}
+					if(parent.down){
+						setVerticalSpeed(0);
+						y = y - 1;
+					}
+					if(parent.left){
+						setHorizontalSpeed(0);
+						x = x + 1;
+					}
+					if(parent.right){
+						//setHorizontalSpeed(0);
+						//x = x - 1;
+					}
+					ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
 				}
 				
 			}
 		case 4:
 			if(col.equals(Color.gray)){
-				
-				if(parent.up){
-					setVerticalSpeed(0);
-					y = y + 1;
+				while(parent.getMap().getColorForPoint(or).equals(Color.gray)){
+					if(parent.up){
+						setVerticalSpeed(0);
+						y = y + 1;
+					}
+					if(parent.down){
+						//setVerticalSpeed(0);
+						//y = y - 1;
+					}
+					if(parent.left){
+						//setHorizontalSpeed(0);
+						//x = x + 1;
+					}
+					if(parent.right){
+						setHorizontalSpeed(0);
+						x = x - 1;
+					}
+					or.setLocation((int)(getX() + (width - 1)), (int)getY());
+					
 				}
-				if(parent.down){
-					//setVerticalSpeed(0);
-					//y = y - 1;
-				}
-				if(parent.left){
-					//setHorizontalSpeed(0);
-					//x = x + 1;
-				}
-				if(parent.right){
-					setHorizontalSpeed(0);
-					x = x - 1;
-				}
-				
 			}
 
 		}
@@ -194,15 +253,6 @@ public class Player extends Sprite {
 	public boolean collidedWith(Sprite s) {
 		return false;
 	}
-	@Override
-	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
-		if(dx != 0){
-			x = x + dx*(delta/1e9);
-			
-		}
-		if(dy != 0){
-			y = y + dy*(delta/1e9);
-		}
-	}
+	
 }
 

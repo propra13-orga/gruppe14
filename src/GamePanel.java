@@ -93,7 +93,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		Thread t = new Thread(this);
 		t.start(); //ruft run auf
-		run();
+		//run();
 		
 	}
 	private void start(){	
@@ -104,7 +104,25 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		run();
 	}
-	
+private void doInitializations(){
+		
+		//createBackbuffer();		//Ein Puffer wird angelegt
+		
+		level = 1;
+		last = System.nanoTime();
+		gameover = 0;
+		
+		actors = new CopyOnWriteArrayList<Sprite>();
+		
+		lib = SpriteLib.getInstance();
+		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 40, 40, 100, this);
+		actors.add(player);
+		
+		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
+		map = new MapDisplay("level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
+
+		game_running = true;
+	}
 	private void doInitializations(JFrame menu){
 		
 		//createBackbuffer();		//Ein Puffer wird angelegt
@@ -116,7 +134,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors = new CopyOnWriteArrayList<Sprite>();
 		
 		lib = SpriteLib.getInstance();
-		player = new Player(lib.getSprite("resources/pics/player.gif", 1, 1), 40, 40, 100, this);
+		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
 		actors.add(player);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
@@ -235,6 +253,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					gamewon = false;
 					setStarted(true);
 					frame2.dispose();
+					doInitializations();
 					run();
 					
 				}
