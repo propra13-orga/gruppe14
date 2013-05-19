@@ -10,6 +10,8 @@ public class Player extends Sprite {
 	private Point or;
 	private Point ul;
 	private Point ur;
+	private double copy_dx;
+	private double copy_dy;
 	
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
@@ -74,6 +76,8 @@ public class Player extends Sprite {
 	}
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
+		copy_dx = dx;
+		copy_dy = dy;
 		if(dx != 0){
 			x = x + dx*(delta/1e9);
 		}
@@ -127,19 +131,19 @@ public class Player extends Sprite {
 		case 1:
 			if(col.equals(Color.gray)){ //grau = 128, 128, 128
 				while(parent.getMap().getColorForPoint(ol).equals(Color.gray)){
-					if(parent.up){
+					if(copy_dy < 0){
 						setVerticalSpeed(0);
 						y = y + 1;
 					}
-					if(parent.down){
+					if(copy_dy > 0){
 						//setVerticalSpeed(0);
 						//y = y - 1;
 					}
-					if(parent.left){
+					if(copy_dx < 0){
 						setHorizontalSpeed(0);
 						x = x + 1;
 					}
-					if(parent.right){
+					if(copy_dx > 0){
 						//setHorizontalSpeed(0);
 						//x = x - 1;
 					}
@@ -152,19 +156,19 @@ public class Player extends Sprite {
 			if(col.equals(Color.gray)){
 				
 				while(parent.getMap().getColorForPoint(ur).equals(Color.gray)){
-					if(parent.up){
+					if(copy_dy < 0){
 						//setVerticalSpeed(0);
 						//y = y + 1;
 					}
-					if(parent.down){
+					if(copy_dy > 0){
 						setVerticalSpeed(0);
 						y = y - 1;
 					}
-					if(parent.left){
+					if(copy_dx < 0){
 						//setHorizontalSpeed(0);
 						//x = x + 1;
 					}
-					if(parent.right){
+					if(copy_dx > 0){
 						setHorizontalSpeed(0);
 						x = x - 1;
 					}
@@ -176,19 +180,19 @@ public class Player extends Sprite {
 		case 3:
 			if(col.equals(Color.gray)){
 				while(parent.getMap().getColorForPoint(ul).equals(Color.gray)){
-					if(parent.up){
+					if(copy_dy < 0){
 						//setVerticalSpeed(0);
 						//y = y + 1;
 					}
-					if(parent.down){
+					if(copy_dy > 0){
 						setVerticalSpeed(0);
 						y = y - 1;
 					}
-					if(parent.left){
+					if(copy_dx < 0){
 						setHorizontalSpeed(0);
 						x = x + 1;
 					}
-					if(parent.right){
+					if(copy_dx > 0){
 						//setHorizontalSpeed(0);
 						//x = x - 1;
 					}
@@ -199,19 +203,19 @@ public class Player extends Sprite {
 		case 4:
 			if(col.equals(Color.gray)){
 				while(parent.getMap().getColorForPoint(or).equals(Color.gray)){
-					if(parent.up){
+					if(copy_dy < 0){
 						setVerticalSpeed(0);
 						y = y + 1;
 					}
-					if(parent.down){
+					if(copy_dy > 0){
 						//setVerticalSpeed(0);
 						//y = y - 1;
 					}
-					if(parent.left){
+					if(copy_dx < 0){
 						//setHorizontalSpeed(0);
 						//x = x + 1;
 					}
-					if(parent.right){
+					if(copy_dx > 0){
 						setHorizontalSpeed(0);
 						x = x - 1;
 					}
