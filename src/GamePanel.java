@@ -305,8 +305,8 @@ private void doInitializations(){
 			//repaint(); //Von Component geerbt, stößt Neuzeichnen an, gehört vllt. auch hinter die Schleife?
 			
 			try{
-				
-				Thread.sleep((System.nanoTime() - last + 1000000000)/60000000);	
+				Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000);
+				//Thread.sleep((System.nanoTime() - last + 1000000000)/60000000);
 				//Thread.sleep(40);
 				
 			}catch (InterruptedException e){}
