@@ -3,6 +3,6 @@
 tmp/**
 tmp/**/*
 .settings/
-.bin/**
+bin/**
 .loadpath
 *.launch
