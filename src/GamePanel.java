@@ -46,8 +46,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean game_running = true;
 	boolean started = false;
 	boolean once = false; //bei Neustart keinen neuen Thread - wie muss once am Anfang sein, false oder true?
-	boolean gamewon;
-	boolean lost = false;
+	
+	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause; Ersetzt boolean gamewon, lost
 	int pressCount;
 	int speed = 80;
 	int x = 0;
@@ -213,42 +213,51 @@ private void doInitializations(){
 	}
 	
 	private void paintMenu(){ //Wird bisher noch nicht angesprochen, da Methode buggt (ArrayIndexOutOfBoundsException in MapDisplay.getColorForPoint)
-		if(gamewon == false && lost == false){
+		if(spiel_status == 3){
 			frame3 = new JFrame("Neustart?");
 			frame3.setLocation(650,300);
 			frame3.setSize(100, 100);
 			JButton b1 = new JButton("Spiel starten");
 			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
+			JButton b2 = new JButton("Beenden");
+			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
+			
+			frame3.add(BorderLayout.NORTH, b1);
+			frame3.add(BorderLayout.SOUTH, b2);
+			frame3.pack();
+			frame3.setVisible(true);
+			
+			
 			b1.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
 					
 					doInitializations(frame3);
+					//doInitializations();
+					
+					
 					setStarted(true);
+					frame3.dispose();
 					
 				}
 			});
 			
-			JButton b2 = new JButton("Beenden");
-			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
+			
 			b2.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
 					System.exit(0);
 				}
 				
 			});
-			frame3.add(BorderLayout.NORTH, b1);
-			frame3.add(BorderLayout.SOUTH, b2);
-			frame3.pack();
-			frame3.setVisible(true);
+			
 			
 		}
 		
-		if((gamewon == true && lost == false) || (gamewon == false) && (lost == true)){
+		if(spiel_status == 1|| spiel_status == 0){
 			frame2 = new JFrame("Menü");
 			frame2.setLocation(650,300);
 			frame2.setSize(100, 100);
 			JLabel label;
-			if(lost == false){
+			if(spiel_status == 1){
 				label = new JLabel("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
 			}else{
 				label = new JLabel("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
@@ -259,12 +268,22 @@ private void doInitializations(){
 			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
 			b1.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
-					gamewon = false;
-					lost = false;
+					
+					/*spiel_status = 0;
 					setStarted(true);
 					frame2.dispose();
 					doInitializations(frame2);
-					start();
+					start(); 
+					*/
+					
+					doInitializations(frame2);
+					frame2.dispose();
+					
+					
+					setStarted(true);
+					
+					//start();
+					
 					
 				}
 			});
@@ -282,8 +301,9 @@ private void doInitializations(){
 			frame2.add(BorderLayout.SOUTH, b2);
 			frame2.pack();
 			frame2.setVisible(true);
-			gamewon = false;
+			spiel_status =0;
 		}
+		spiel_status = 0; // Daraus folgt, dass wenn man das Spiel per ESC-taste verlässt, man verliert.
 		
 	}
 
@@ -304,6 +324,7 @@ private void doInitializations(){
 				
 				
 			}else{
+				//break;
 				//System.out.println("Das Spiel ist nocht nicht gestartet bzw. beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
 			}
 			
@@ -355,24 +376,27 @@ private void doInitializations(){
 	private void stopGame(){
 		setStarted(false);
 		gameover = 1;
+		
+		
 		//TODO: Sinnvolle Ausgabe und Möglichkeit des Neustarts
 		//Oder Gamerunning auf false?
 	}
 	
 	public void wonGame(){
 		System.out.println("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
+		stopGame();
 		started = false;
-		game_running = false;
-		gamewon = true;
+		//game_running = false;Darf hier nicht stehen. Spiel lässt sich sonst nicht starten.
+		spiel_status = 1;
 		paintMenu();
 	}
 	
 	public void lostGame(){
 		System.out.println("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
+		stopGame();
 		started = false;
-		game_running = false;
-		gamewon = false;
-		lost = true;
+		//game_running = false; Darf hier nicht stehen. Spiel lässt sich sonst nicht starten.
+		spiel_status = 0;
 		paintMenu();
 	}
 
@@ -491,6 +515,7 @@ private void doInitializations(){
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B
 			if(isStarted()){
 				stopGame(); //oder gamerunning = false?
+				paintMenu();//Zurück zum Menü
 			}else {
 				//hier auch stopGame()?
 				setStarted(false);
