@@ -1,15 +1,14 @@
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 public class Player extends Sprite {
 	private static final long serialVersionUID = 1L;
 	int corner;
-	private Point ol;
-	private Point or;
-	private Point ul;
-	private Point ur;
+	private Point ol; //oben links
+	private Point or; //oben rechts
+	private Point ul; //unten links
+	private Point ur; //unten rechts
 	private double copy_dx;
 	private double copy_dy;
 	
@@ -24,55 +23,7 @@ public class Player extends Sprite {
 	
 	@Override
 	public void doLogic(long delta)	{
-		super.doLogic(delta);
-		//Überprüfen der Ränder, damit Player nicht darüber hinaus kann
-		
-		/*
-		if(getX() < 0){
-			setHorizontalSpeed(0);
-			x = 0;
-		}
-		if(getY() < 0){
-			setVerticalSpeed(0);
-			y = 0;
-		}
-		
-		if(getX()+getWidth() > parent.getWidth()){
-			setHorizontalSpeed(0);
-			x = parent.getWidth() - getWidth();
-		}
-		
-		if(getY()+getHeight() > parent.getHeight()){
-			setVerticalSpeed(0);
-			y = parent.getHeight() - getHeight();
-		}
-		
-		//System.out.println(getX());
-		//System.out.println(getY());
-		//Mittels der Abfrage der Farbe kann festgestellt werden, auf welchem Tile sich der Spieler zurzeit befindet, Stichwort: ShadowMap
-		//Denkbar: Weitere Punkte überprüfen, um höhere Genauigkeit zu erreichen, hängt von Ausarbeitung der ShadowMap ab
-		corner = 1;
-		ol.setLocation((int)getX(), (int)getY());
-		Color col1 = parent.getMap().getColorForPoint(ol); //Ecke oben links
-		checkColor(col1);
-		
-		corner = 2;
-		ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
-		Color col2 = parent.getMap().getColorForPoint(ur); //Ecke unten rechts
-		checkColor(col2);
-		
-		corner = 3;
-		ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
-		Color col3 = parent.getMap().getColorForPoint(ul); //Ecke unten links
-		checkColor(col3);
-		
-		
-		corner = 4;
-		or.setLocation((int)(getX() + (width - 1)), (int)getY());
-		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
-		checkColor(col4);
-		 */
-		
+		super.doLogic(delta);		
 	}
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
@@ -104,7 +55,7 @@ public class Player extends Sprite {
 			y = parent.getHeight() - getHeight();
 		}
 		
-		
+		//Überprüfung der Farben jetzt in der move-Methode
 		corner = 1;
 		ol.setLocation((int)getX(), (int)getY());
 		Color col1 = parent.getMap().getColorForPoint(ol); //Ecke oben links
@@ -232,8 +183,7 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
 			//Tod durch Feuer!
-			parent.setStarted(false); 
-			
+			parent.lostGame();		
 		}
 		
 		if(col.equals(Color.blue)){ //gelb = 255, 255, 0

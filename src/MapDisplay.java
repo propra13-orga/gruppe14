@@ -2,8 +2,8 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 public class MapDisplay extends Rectangle{
@@ -30,9 +30,8 @@ public class MapDisplay extends Rectangle{
 
 	private void loadLevelData(String level){
 		try{
-			
-			InputStreamReader isr = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(level));
-			BufferedReader bufread = new BufferedReader(isr);
+			FileReader fr = new FileReader(level);
+			BufferedReader bufread = new BufferedReader(fr);
 			
 			String line = null;
 			String delimiters = " ";
@@ -75,7 +74,7 @@ public class MapDisplay extends Rectangle{
 			}
 		
 			bufread.close(); //Reader wieder schlieﬂen
-			isr.close();
+			fr.close();
 		
 		} catch(IOException e){
 			e.printStackTrace();

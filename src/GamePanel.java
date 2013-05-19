@@ -23,6 +23,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame;
 	JFrame frame2;
 	JFrame frame3;
+	JFrame frame4;
 	
 	long testtime = 0;
 	
@@ -46,6 +47,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean started = false;
 	boolean once = false; //bei Neustart keinen neuen Thread - wie muss once am Anfang sein, false oder true?
 	boolean gamewon;
+	boolean lost = false;
 	int pressCount;
 	int speed = 80;
 	int x = 0;
@@ -93,7 +95,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		Thread t = new Thread(this);
 		t.start(); //ruft run auf
-		//run();
 		
 	}
 	private void start(){	
@@ -119,7 +120,7 @@ private void doInitializations(){
 		actors.add(player);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
-		map = new MapDisplay("level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 
 		game_running = true;
 	}
@@ -138,10 +139,12 @@ private void doInitializations(){
 		actors.add(player);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
-		map = new MapDisplay("level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
+		
+	
 
 		
 		
@@ -199,18 +202,18 @@ private void doInitializations(){
 	public void doInitializations2(){
 		level = 2;
 		//Player muss neu platziert werden
-		map = new MapDisplay("level/TileMap_2.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this); //auch entsprechend angepasste ShadowMap muss geladen werden! Man könnte auch verschiedene TileSets übergeben
+		map = new MapDisplay("resources/level/TileMap_2.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this); //auch entsprechend angepasste ShadowMap muss geladen werden! Man könnte auch verschiedene TileSets übergeben
 		
 	}
 	
 	public void doInitializations3(){
 		level = 3;
 		//Player muss neu platziert werden
-		map = new MapDisplay("level/TileMap_3.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("resources/level/TileMap_3.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 	}
 	
 	private void paintMenu(){ //Wird bisher noch nicht angesprochen, da Methode buggt (ArrayIndexOutOfBoundsException in MapDisplay.getColorForPoint)
-		if(gamewon == false){
+		if(gamewon == false && lost == false){
 			frame3 = new JFrame("Neustart?");
 			frame3.setLocation(650,300);
 			frame3.setSize(100, 100);
@@ -240,24 +243,32 @@ private void doInitializations(){
 			
 		}
 		
-		if(gamewon == true){
+		if((gamewon == true && lost == false) || (gamewon == false) && (lost == true)){
 			frame2 = new JFrame("Menü");
 			frame2.setLocation(650,300);
 			frame2.setSize(100, 100);
-			JLabel label = new JLabel("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
+			JLabel label;
+			if(lost == false){
+				label = new JLabel("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
+			}else{
+				label = new JLabel("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
+			}
+			
 			frame2.add(BorderLayout.NORTH, label);
 			JButton b1 = new JButton("Ich möchte nocheinmal spielen");
 			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
 			b1.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
 					gamewon = false;
+					lost = false;
 					setStarted(true);
 					frame2.dispose();
-					doInitializations();
-					run();
+					doInitializations(frame2);
+					start();
 					
 				}
 			});
+			
 			
 			JButton b2 = new JButton("Es reicht mir...");
 			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
@@ -274,7 +285,6 @@ private void doInitializations(){
 			gamewon = false;
 		}
 		
-	
 	}
 
 	
@@ -339,12 +349,33 @@ private void doInitializations(){
 		}
 		g.setColor(Color.red);
 		g.drawString("FPS " + Long.toString(fps), 20, 10); //Zur Überprüfung des flüssigen Spiellaufs
-		
-		
-		
-	
+			
 	}
 	
+	private void stopGame(){
+		setStarted(false);
+		gameover = 1;
+		//TODO: Sinnvolle Ausgabe und Möglichkeit des Neustarts
+		//Oder Gamerunning auf false?
+	}
+	
+	public void wonGame(){
+		System.out.println("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
+		started = false;
+		game_running = false;
+		gamewon = true;
+		paintMenu();
+	}
+	
+	public void lostGame(){
+		System.out.println("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
+		started = false;
+		game_running = false;
+		gamewon = false;
+		lost = true;
+		paintMenu();
+	}
+
     public boolean isStarted(){
     	return started;
     }
@@ -352,9 +383,21 @@ private void doInitializations(){
     public void setStarted(boolean started){
     	this.started = started;
     }
+    
+	public void setLevel(int level){
+		this.level = level;
+	}
+	
+	public int getLevel(){
+		return level;
+	}
+	
+	public MapDisplay getMap(){
+		return map; //gibt die Karte zurück
+	}
 	
 	private void checkKeys(){
-	
+		
 		if(left){
 			player.setHorizontalSpeed(-speed);
 		}
@@ -407,33 +450,6 @@ private void doInitializations(){
 			r.move(delta);
 		}
 	}
-	
-	private void stopGame(){
-		setStarted(false);
-		gameover = 1;
-		//TODO: Sinnvolle Ausgabe und Möglichkeit des Neustarts
-		//Oder Gamerunning auf false?
-	}
-	
-	public void wonGame(){
-		System.out.println("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
-		started = false;
-		game_running = false;
-		gamewon = true;
-		paintMenu();
-	}
-	
-	public void setLevel(int level){
-		this.level = level;
-	}
-	
-	public int getLevel(){
-		return level;
-	}
-	public MapDisplay getMap(){
-		return map; //gibt die Karte zurück
-	}
-	
 	//Tastaturabfragen zur Steuerung
 	public void keyPressed(KeyEvent e){
 		
