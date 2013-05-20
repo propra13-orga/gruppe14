@@ -123,6 +123,9 @@ private void doInitializations(){
 		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 
 		game_running = true;
+		//player.setVerticalSpeed(0);
+		
+		//player.setHorizontalSpeed(0);		
 	}
 	private void doInitializations(JFrame menu){
 		
@@ -143,6 +146,7 @@ private void doInitializations(){
 		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
+		
 		
 	
 
@@ -254,7 +258,7 @@ private void doInitializations(){
 		
 		if(spiel_status == 1|| spiel_status == 0){
 			frame2 = new JFrame("Menü");
-			frame2.setLocation(650,300);
+			frame2.setLocation(500,300);
 			frame2.setSize(100, 100);
 			JLabel label;
 			if(spiel_status == 1){
