@@ -18,6 +18,8 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	BufferedImage[] pics;
 	int currentpic = 0;
 	
+	boolean remove;
+	
 
 	
 	public Sprite(BufferedImage[] i, double x, double y, long delay, GamePanel p ){

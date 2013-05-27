@@ -182,11 +182,22 @@ public class Player extends Sprite {
 	
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
-			System.out.println("Ausgabe von Player: Kawumm!");
-			//Nur zur Überprüfung, für den Meilenstein ist Verlust von Lebenspunkt vorgesehen!
-			setLifes(getLifes()-1);
-			parent.lostGame();
-			return true;
+			if(s instanceof Enemy){
+				System.out.println("Ausgabe von Player: Kawumm!");
+				//Nur zur Überprüfung, für den Meilenstein ist Verlust von Lebenspunkt vorgesehen!
+				setLifes(getLifes()-1);
+				System.out.println(getLifes());
+				parent.lostGame();
+				return true;
+			}
+			if(s instanceof Coin){
+				System.out.println("Bravo, du hast eine Münze gesammelt");
+				//Anzahl der Leben wird erhöht, eigentlich aber Kontostand
+				setLifes(getLifes()+1);
+				System.out.println(getLifes());
+				s.remove = true;
+				return true;
+			}
 		}
 		return false;
 	}
