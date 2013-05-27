@@ -40,7 +40,11 @@ public class Enemy extends Sprite {
 			y = parent.getHeight() - getHeight();
 		}
 	}
-	public boolean collidedWith(Sprite s) {
+	public boolean collidedWith(Sprite s){
+		if(this.intersects(s)){
+			System.out.println("Ausgabe von Enemy: Krawumms!");
+			return true;
+		}
 		return false;
 	}
 	

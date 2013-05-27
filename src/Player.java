@@ -180,5 +180,16 @@ public class Player extends Sprite {
 		}
 	}
 	
+	public boolean collidedWith(Sprite s){
+		if(this.intersects(s)){
+			System.out.println("Ausgabe von Player: Kawumm!");
+			//Nur zur Überprüfung, für den Meilenstein ist Verlust von Lebenspunkt vorgesehen!
+			setLifes(getLifes()-1);
+			parent.lostGame();
+			return true;
+		}
+		return false;
+	}
+	
 }
 

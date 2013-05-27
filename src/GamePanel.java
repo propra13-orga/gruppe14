@@ -55,7 +55,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 
 	public static void main(String[] args){
-		new GamePanel(800,600);
+		new GamePanel(790,590); //Sonst grauer Streifen an den Rändern rechts und unten
 	}
 	
 	public GamePanel(int w, int h){
@@ -92,12 +92,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
-
-		
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 100, 100, this);
-		actors.add(enemy);
-		actors.add(player);
-		enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts
+		//TODO: Wie verschiedene Enemys organisieren, auch bzgl. Namen?
+		actors.add(player); //actors(0) == player
+		actors.add(enemy); //actors(1) == enemy
+		enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts, entsprechend lassen sich hier auch vertikale Gegner einbauen
 
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
@@ -204,14 +203,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			computeDelta(); //Zeit für vorausgehenden Schleifendurchlauf wird errechnet
 			//Erst Methoden abarbeiten, wenn Spiel gestartet ist
 			if(isStarted()){
+				
 				checkKeys(); //Tastaturabfrage
-				
-				
 				doLogic(); //Ausführung der Logik
-				
-				
 				moveObjects(); //Bewegen von Objekten
-				
 				
 			}
 
@@ -219,7 +214,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 			try{
 				Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
-
 				
 			}catch (InterruptedException e){}
 			
@@ -333,6 +327,15 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			if(System.currentTimeMillis() - gameover > 3000){
 				stopGame();
 			}
+		}
+		
+		Sprite s1 = actors.get(0); //Player! Nur Überprüfung von Kollision des Player mit beliebigem Sprite
+		for (int n = 1; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
+				
+				Sprite s2 = actors.get(n);
+				
+				s1.collidedWith(s2);
+			
 		}
 	}
 	

@@ -1,7 +1,3 @@
-import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +8,7 @@ import javax.imageio.ImageIO;
 
 public class SpriteLib {
 	private static SpriteLib single;
-	private static GraphicsEnvironment ge;
-	private static GraphicsConfiguration gc;
+
 	private static HashMap<URL, BufferedImage>sprites; //speichert unsere Bilder ab
 	
 	public static SpriteLib getInstance(){
