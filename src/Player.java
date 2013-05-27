@@ -86,18 +86,12 @@ public class Player extends Sprite {
 						setVerticalSpeed(0);
 						y = y + 1;
 					}
-					if(copy_dy > 0){
-						//setVerticalSpeed(0);
-						//y = y - 1;
-					}
+					
 					if(copy_dx < 0){
 						setHorizontalSpeed(0);
 						x = x + 1;
 					}
-					if(copy_dx > 0){
-						//setHorizontalSpeed(0);
-						//x = x - 1;
-					}
+					
 					ol.setLocation((int)getX(), (int)getY());
 					
 				}
@@ -107,18 +101,12 @@ public class Player extends Sprite {
 			if(col.equals(Color.gray)){
 				
 				while(parent.getMap().getColorForPoint(ur).equals(Color.gray)){
-					if(copy_dy < 0){
-						//setVerticalSpeed(0);
-						//y = y + 1;
-					}
+					
 					if(copy_dy > 0){
 						setVerticalSpeed(0);
 						y = y - 1;
 					}
-					if(copy_dx < 0){
-						//setHorizontalSpeed(0);
-						//x = x + 1;
-					}
+					
 					if(copy_dx > 0){
 						setHorizontalSpeed(0);
 						x = x - 1;
@@ -131,10 +119,7 @@ public class Player extends Sprite {
 		case 3:
 			if(col.equals(Color.gray)){
 				while(parent.getMap().getColorForPoint(ul).equals(Color.gray)){
-					if(copy_dy < 0){
-						//setVerticalSpeed(0);
-						//y = y + 1;
-					}
+					
 					if(copy_dy > 0){
 						setVerticalSpeed(0);
 						y = y - 1;
@@ -143,10 +128,7 @@ public class Player extends Sprite {
 						setHorizontalSpeed(0);
 						x = x + 1;
 					}
-					if(copy_dx > 0){
-						//setHorizontalSpeed(0);
-						//x = x - 1;
-					}
+					
 					ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
 				}
 				
@@ -158,14 +140,7 @@ public class Player extends Sprite {
 						setVerticalSpeed(0);
 						y = y + 1;
 					}
-					if(copy_dy > 0){
-						//setVerticalSpeed(0);
-						//y = y - 1;
-					}
-					if(copy_dx < 0){
-						//setHorizontalSpeed(0);
-						//x = x + 1;
-					}
+					
 					if(copy_dx > 0){
 						setHorizontalSpeed(0);
 						x = x - 1;
@@ -186,9 +161,10 @@ public class Player extends Sprite {
 			parent.lostGame();		
 		}
 		
-		if(col.equals(Color.blue)){ //gelb = 255, 255, 0
+		if(col.equals(Color.blue)){
 			
 			if (parent.getLevel() == 2){
+				
 				parent.doInitializations3();
 			}
 			
@@ -199,13 +175,9 @@ public class Player extends Sprite {
 			
 		}
 		
-		if(col.equals(Color.yellow)){
+		if(col.equals(Color.yellow)){  //gelb = 255, 255, 0
 			parent.wonGame();
 		}
-	}
-	
-	public boolean collidedWith(Sprite s) {
-		return false;
 	}
 	
 }

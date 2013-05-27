@@ -2,14 +2,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferStrategy;
-import java.awt.image.VolatileImage;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -34,6 +30,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 	SpriteLib lib;
 	Player player;
+	Enemy enemy;
 	MapDisplay map;
 	
 	CopyOnWriteArrayList<Sprite> actors;
@@ -45,21 +42,15 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean waitingForKeyPress;
 	boolean game_running = true;
 	boolean started = false;
-	boolean once = false; //bei Neustart keinen neuen Thread - wie muss once am Anfang sein, false oder true?
+
 	
-	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause; Ersetzt boolean gamewon, lost
+	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet; Ersetzt boolean gamewon, lost
 	int pressCount;
 	int speed = 80;
 	int x = 0;
 	int y = 0;
 	int level;
 	
-	//VolatileImage als hardwarebeschleunigte Render-Methode verwendet einen 2fach Puffer, der zwischen aktuell berechnetem und altem Bild hin und her schaltet
-	VolatileImage backbuffer;	//Der aktuelle Puffer
-	GraphicsEnvironment ge;		//Umgebungsvariablen
-	GraphicsConfiguration gc;	
-	BufferStrategy strategy;	//Der 2Fach Puffer
-
 	static int rows, columns;
 	
 
@@ -68,14 +59,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	
 	public GamePanel(int w, int h){
-		
-		ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-		
-		
-		//frame.setIgnoreRepaint(true);	//Wird für den Pufferwechsel benötigt
-		//createBufferStrategy(2);		//2Fach Puffer-Strategy wird angelegt
-		//strategy = getBufferStrategy();	//Unser Puffer
 		
 		this.setPreferredSize(new Dimension(w,h));
 		this.setBackground(Color.darkGray);
@@ -92,41 +75,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		paintMenu();
 				
-		
 		Thread t = new Thread(this);
 		t.start(); //ruft run auf
 		
 	}
-	private void start(){	
-		if(!once){//verhindert, dass bei Neustart neuer Thread gestartet wird
-			once = true;
-			Thread t = new Thread(this);
-			t.start();
-		}
-		run();
-	}
-private void doInitializations(){
-		
-		//createBackbuffer();		//Ein Puffer wird angelegt
-		
-		level = 1;
-		last = System.nanoTime();
-		gameover = 0;
-		
-		actors = new CopyOnWriteArrayList<Sprite>();
-		
-		lib = SpriteLib.getInstance();
-		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 40, 40, 100, this);
-		actors.add(player);
-		
-		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
-		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 
-		game_running = true;
-		//player.setVerticalSpeed(0);
-		
-		//player.setHorizontalSpeed(0);		
-	}
 	private void doInitializations(JFrame menu){
 		
 		//createBackbuffer();		//Ein Puffer wird angelegt
@@ -139,86 +92,38 @@ private void doInitializations(){
 		
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
+
+		
+		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 100, 100, this);
+		actors.add(enemy);
 		actors.add(player);
+		enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts
+
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
 		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
-		
-		
-	
-
-		
+		setStarted(true);
 		
 	}
 	
-	/*Methoden für die Volatile-Images Variante*/
-	/*
-	private void createBackbuffer(){
-		if(backbuffer != null){
-			backbuffer.flush();
-			backbuffer = null;
-		}
-		ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-		backbuffer = gc.createCompatibleVolatileImage(getWidth(), getHeight());
-	}
-	
-	
-	private void doPainting(){	//Neue Zeichenmethode basierend auf dem 2fach Puffer
-		checkBackbuffer();		//Ist der Puffer da? (Volatile Images können verloren gehen, daher immer prüfen!)
-		
-		Graphics g = backbuffer.getGraphics();	//Graphics-Objekt vom Volatile Image holen
-		render(g);								//Es wird ins Volatile-Image gezeichnet
-		g.dispose();							//Graphics-Objekt wird nicht mehr benötigt
-		
-		Graphics g2 = strategy.getDrawGraphics();	//Graphics-Objekt von der Strategy holen
-		g2.drawImage(backbuffer, 0, 0, this);		//Das backbuffer V.Image in die Strategy reinmalen
-		g2.dispose();								//Graphics-Objekt wird nicht mehr benötigt
-		
-		strategy.show();							//Den aktuellen Puffer zeigen (Flip)
-		
-	}
-	
-	private void checkBackbuffer(){
-		if(backbuffer == null){
-			createBackbuffer();	
-		}
-		if(backbuffer.validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE){
-			createBackbuffer();
-		}
-	}
-	//Render-Methode für die Volatile-Image, 2Fach-Puffer - Methode
-	public void render(Graphics g){
-		if(isStarted()){
-			map.drawVisibleMap(g);
-			player.drawObjects(g);
-		}else{
-			g.setColor(Color.red);
-			g.drawString("Press Enter!", 50, 50);
-		}
-		g.setColor(Color.red);
-		g.drawString(Long.toString(fps), 20, 20);
-	}
-	*/
+	//Vllt. lieber in doInitializations Abfrage nach Wert von level und entsprechendes Laden von Map?
 	public void doInitializations2(){
 		level = 2;
-		//Player muss neu platziert werden
-		map = new MapDisplay("resources/level/TileMap_2.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this); //auch entsprechend angepasste ShadowMap muss geladen werden! Man könnte auch verschiedene TileSets übergeben
-		
+		map = new MapDisplay("resources/level/TileMap_2.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this); 
 	}
 	
 	public void doInitializations3(){
 		level = 3;
-		//Player muss neu platziert werden
 		map = new MapDisplay("resources/level/TileMap_3.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
 	}
 	
-	private void paintMenu(){ //Wird bisher noch nicht angesprochen, da Methode buggt (ArrayIndexOutOfBoundsException in MapDisplay.getColorForPoint)
-		if(spiel_status == 3){
-			frame3 = new JFrame("Neustart?");
+	private void paintMenu(){ 
+		//Idee: Vllt. lieber Menü auf unsichtbar setzen und immer wieder anzeigen, wenn benötigt? Vllt. auch praktisch für Pause...Aber was mit entsprechenden Labels?
+		if(spiel_status == 3){ //Spiel noch gar nicht gestartet
+			frame3 = new JFrame("Spiel starten?");
 			frame3.setLocation(650,300);
 			frame3.setSize(100, 100);
 			JButton b1 = new JButton("Spiel starten");
@@ -233,15 +138,10 @@ private void doInitializations(){
 			
 			
 			b1.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+				public void actionPerformed(ActionEvent arg0){
 					
 					doInitializations(frame3);
-					//doInitializations();
-					
-					
-					setStarted(true);
-					frame3.dispose();
-					
+	
 				}
 			});
 			
@@ -256,8 +156,8 @@ private void doInitializations(){
 			
 		}
 		
-		if(spiel_status == 1|| spiel_status == 0){
-			frame2 = new JFrame("Menü");
+		if(spiel_status == 1|| spiel_status == 0){ //Wenn Spiel gewonnen oder verloren
+			frame2 = new JFrame("Neustart?");
 			frame2.setLocation(500,300);
 			frame2.setSize(100, 100);
 			JLabel label;
@@ -272,23 +172,9 @@ private void doInitializations(){
 			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
 			b1.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
-					
-					/*spiel_status = 0;
-					setStarted(true);
-					frame2.dispose();
+
 					doInitializations(frame2);
-					start(); 
-					*/
-					
-					doInitializations(frame2);
-					frame2.dispose();
-					
-					
-					setStarted(true);
-					
-					//start();
-					
-					
+	
 				}
 			});
 			
@@ -327,22 +213,13 @@ private void doInitializations(){
 				moveObjects(); //Bewegen von Objekten
 				
 				
-			}else{
-				//break;
-				//System.out.println("Das Spiel ist nocht nicht gestartet bzw. beendet"); //Wenn Spiel beendet, wird GameLoop nicht mehr ausgeführt
 			}
-			
-			//testtime = System.nanoTime();
+
 			repaint();
-			//doPainting();
-			//System.out.println((System.nanoTime() - testtime)/1000);
-			
-			//repaint(); //Von Component geerbt, stößt Neuzeichnen an, gehört vllt. auch hinter die Schleife?
 			
 			try{
-				Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000);
-				//Thread.sleep((System.nanoTime() - last + 1000000000)/60000000);
-				//Thread.sleep(40);
+				Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+
 				
 			}catch (InterruptedException e){}
 			
@@ -352,7 +229,6 @@ private void doInitializations(){
 	private void computeDelta(){
 		delta = System.nanoTime() - last; //Errechnung der Zeit für Schleifendurchlauf in NS
 		last = System.nanoTime(); //Speichern der aktuellen Systemzeit
-		
 		fps = ((long) 1e9)/delta; //Errechnen der Framerate
 	}
 	@Override
@@ -360,16 +236,18 @@ private void doInitializations(){
 		super.paintComponent(g);
 		
 		
-		
 		if(!isStarted()){
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
+		map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte wird nur noch einmal gezeichnet, nicht für jeden Sprite in actors neu
 		
 		if(actors!=null){
+
 			for(ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
+				
 				Sprite draw = it.next();
-				map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte muss nicht jedes mal neu gezeichnet werden - woandershin auslagern?
 				draw.drawObjects(g);
+
 			}
 		}
 		g.setColor(Color.red);
@@ -380,10 +258,6 @@ private void doInitializations(){
 	private void stopGame(){
 		setStarted(false);
 		gameover = 1;
-		
-		
-		//TODO: Sinnvolle Ausgabe und Möglichkeit des Neustarts
-		//Oder Gamerunning auf false?
 	}
 	
 	public void wonGame(){
@@ -447,17 +321,13 @@ private void doInitializations(){
 	}
 	
 	private void doLogic(){
-		/*
-		for(Movable mov:actors){
-			mov.doLogic(delta);
-		}*/
+		
 		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
 		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
 			Sprite r = it.next();
 			r.doLogic(delta);
 		}
 		
-		//hier Kollisionsabfrage?
 		
 		if(gameover == 1){
 			if(System.currentTimeMillis() - gameover > 3000){
@@ -467,11 +337,7 @@ private void doInitializations(){
 	}
 	
 	private void moveObjects(){
-		/*
-		for(Movable mov:actors){
-			mov.move(delta);
-		}
-		*/
+
 		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
 		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
 			Sprite r = it.next();
@@ -509,17 +375,11 @@ private void doInitializations(){
 		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = false;
 		}
-		/*if (e.getKeyCode() == KeyEvent.VK_ENTER){//Enter zum starten
-			if(!isStarted()){
-				doInitializations();
-				setStarted(true);
-			}
-		}*/
 		
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B
 			if(isStarted()){
-				stopGame(); //oder gamerunning = false?
-				paintMenu();//Zurück zum Menü
+				stopGame(); 
+				paintMenu(); 
 			}else {
 				//hier auch stopGame()?
 				setStarted(false);
@@ -527,19 +387,11 @@ private void doInitializations(){
 			}
 		}
 	}
-	
-	public void keyTyped(KeyEvent e){ //???
-		/*
-		if (waitingForKeyPress){
-			if (pressCount == 1){
-				waitingForKeyPress = false;
-				//startGame();
-				pressCount = 0;
-			} else{
-				pressCount++;
-			}
-		}
-		*/
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

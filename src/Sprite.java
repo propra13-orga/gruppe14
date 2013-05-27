@@ -16,7 +16,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	BufferedImage[] pics;
 	int currentpic = 0;
 	
-	
+
 	
 	public Sprite(BufferedImage[] i, double x, double y, long delay, GamePanel p ){
 		pics = i;
@@ -73,7 +73,5 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	public void setVerticalSpeed(double dy) {
 		this.dy = dy;
 	}
-	
 
-	public abstract boolean collidedWith(Sprite s);
 }
