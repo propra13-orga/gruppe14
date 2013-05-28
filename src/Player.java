@@ -11,7 +11,7 @@ public class Player extends Sprite {
 	private Point ur; //unten rechts
 	private double copy_dx;
 	private double copy_dy;
-	
+	int coins;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -193,14 +193,20 @@ public class Player extends Sprite {
 			if(s instanceof Coin){
 				System.out.println("Bravo, du hast eine Münze gesammelt");
 				//Anzahl der Leben wird erhöht, eigentlich aber Kontostand
-				setLifes(getLifes()+1);
+				coins++;
 				System.out.println(getLifes());
 				s.remove = true;
-				return true;
 			}
 		}
 		return false;
 	}
 	
+	public int getCoins(){
+		return coins;
+	}
+	
+	public void setCoins(int c){
+		coins = c;
+	}
 }
 

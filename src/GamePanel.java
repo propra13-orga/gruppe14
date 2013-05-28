@@ -52,12 +52,13 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	int x = 0;
 	int y = 0;
 	int level;
+	int player_number; //Position des Spielers in actors
 	
 	static int rows, columns;
 	
 
 	public static void main(String[] args){
-		new GamePanel(790,590); //Sonst grauer Streifen an den Rändern rechts und unten
+		new GamePanel(790,600); //Sonst grauer Streifen an den Rändern rechts und unten
 	}
 	
 	public GamePanel(int w, int h){
@@ -98,10 +99,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 300, 100, this);
 		coin = new Coin(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 100, this);
 		//TODO: Wie verschiedene Enemys organisieren, auch bzgl. Namen?
-		actors.add(player); //actors(0) == player
-		actors.add(enemy); //actors(1) == enemy
-		actors.add(enemy2); //actors(2) == enemy2
-		actors.add(coin); //actors(3) == coin
+		actors.add(enemy); //actors(0) == enemy
+		actors.add(enemy2); //actors(1) == enemy2
+		actors.add(coin); //actors(2) == coin
+		actors.add(player); //actors(3) == player
+		player_number = 3;
 		enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts, entsprechend lassen sich hier auch vertikale Gegner einbauen
 		enemy2.setVerticalSpeed(80);
 		player.setLifes(3);
@@ -253,9 +255,49 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		g.setColor(Color.red);
 		g.drawString("FPS " + Long.toString(fps), 20, 10); //Zur Überprüfung des flüssigen Spiellaufs
+		g.setColor(Color.white);
+		g.drawString("Du hast " + player.getCoins() + " Münze(n)", 20, 610);
 			
 	}
 	
+private void doLogic(){
+		
+		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
+		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
+			Sprite r = it.next();
+			r.doLogic(delta);
+		
+			if(r.remove){
+				actors.remove(r);//Löschen von Sprite, remove == true; Wichtig für z.B. damit eine Münze nach dem Einsammeln nicht mehr angezeigt wird
+				player_number--;
+			}
+		}
+		
+		
+		if(gameover == 1){
+			if(System.currentTimeMillis() - gameover > 3000){
+				stopGame();
+			}
+		}
+		
+		Sprite s1 = actors.get(player_number); //Player! Nur Überprüfung von Kollision des Player mit beliebigem Sprite. Wenn mehr Sprites muss hier Index angepasst werden.
+		for (int n = 1; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
+				
+				Sprite s2 = actors.get(n);
+				
+				s1.collidedWith(s2);
+			
+		}
+	}
+	
+	private void moveObjects(){
+
+		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
+		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
+			Sprite r = it.next();
+			r.move(delta);
+		}
+	}
 	private void stopGame(){
 		setStarted(false);
 		gameover = 1;
@@ -321,43 +363,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 	}
 	
-	private void doLogic(){
-		
-		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
-		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
-			Sprite r = it.next();
-			r.doLogic(delta);
-		
-			if(r.remove){
-				it.remove();//Exception?!
-			}
-		}
-		
-		
-		if(gameover == 1){
-			if(System.currentTimeMillis() - gameover > 3000){
-				stopGame();
-			}
-		}
-		
-		Sprite s1 = actors.get(0); //Player! Nur Überprüfung von Kollision des Player mit beliebigem Sprite
-		for (int n = 1; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
-				
-				Sprite s2 = actors.get(n);
-				
-				s1.collidedWith(s2);
-			
-		}
-	}
 	
-	private void moveObjects(){
-
-		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
-		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
-			Sprite r = it.next();
-			r.move(delta);
-		}
-	}
 	//Tastaturabfragen zur Steuerung
 	public void keyPressed(KeyEvent e){
 		
