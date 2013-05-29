@@ -92,7 +92,7 @@ public class Enemy extends Sprite {
 	}
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
-			System.out.println("Ausgabe von Enemy: Krawumms!");
+			System.out.println("Ausgabe von Enemy: Lecker, lecker Ohren!");
 			return true;
 		}
 		return false;

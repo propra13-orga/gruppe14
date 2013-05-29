@@ -85,6 +85,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 
 	private void doInitializations(JFrame menu){
 		
+		up = false;
+		down = false;
+		left = false;
+		right = false;
+		
 		//createBackbuffer();		//Ein Puffer wird angelegt
 		
 		level = 1;
@@ -281,7 +286,7 @@ private void doLogic(){
 		}
 		
 		Sprite s1 = actors.get(player_number); //Player! Nur Überprüfung von Kollision des Player mit beliebigem Sprite. Wenn mehr Sprites muss hier Index angepasst werden.
-		for (int n = 1; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
+		for (int n = 0; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
 				
 				Sprite s2 = actors.get(n);
 				

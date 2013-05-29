@@ -183,7 +183,7 @@ public class Player extends Sprite {
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
 			if(s instanceof Enemy){
-				System.out.println("Ausgabe von Player: Kawumm!");
+				System.out.println("Ausgabe von Player: Oh nein, er hat mein Ohr abgebissen!");
 				//Nur zur Überprüfung, für den Meilenstein ist Verlust von Lebenspunkt vorgesehen!
 				setLifes(getLifes()-1);
 				System.out.println(getLifes());
