@@ -23,7 +23,7 @@ public class Player extends Sprite {
 	
 	@Override
 	public void doLogic(long delta)	{
-		super.doLogic(delta);		
+		super.doLogic(delta);
 	}
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
@@ -82,15 +82,16 @@ public class Player extends Sprite {
 		case 1:
 			if(col.equals(Color.gray)){ //grau = 128, 128, 128
 				while(parent.getMap().getColorForPoint(ol).equals(Color.gray)){
+					
 					if(copy_dy < 0){
 						setVerticalSpeed(0);
 						y = y + 1;
 					}
-					
 					if(copy_dx < 0){
 						setHorizontalSpeed(0);
 						x = x + 1;
 					}
+					
 					
 					ol.setLocation((int)getX(), (int)getY());
 					

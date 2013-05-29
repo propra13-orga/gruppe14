@@ -101,7 +101,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 100, this);
-		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 300, 100, this);
+		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 100, this);
 		coin = new Coin(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 100, this);
 		//TODO: Wie verschiedene Enemys organisieren, auch bzgl. Namen?
 		actors.add(enemy); //actors(0) == enemy
@@ -109,8 +109,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(coin); //actors(2) == coin
 		actors.add(player); //actors(3) == player
 		player_number = 3;
-		enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts, entsprechend lassen sich hier auch vertikale Gegner einbauen
-		enemy2.setVerticalSpeed(80);
+		//enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts, entsprechend lassen sich hier auch vertikale Gegner einbauen
+		//enemy2.setVerticalSpeed(80);
 		player.setLifes(3);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
