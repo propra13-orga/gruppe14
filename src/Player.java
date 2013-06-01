@@ -11,7 +11,8 @@ public class Player extends Sprite {
 	private Point ur; //unten rechts
 	private double copy_dx;
 	private double copy_dy;
-	int coins;
+	private int coins;
+	private int lifes;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -159,7 +160,7 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
 			//Tod durch Feuer!
-			parent.lostGame();		
+			parent.lostLife();		
 		}
 		
 		if(col.equals(Color.blue)){
@@ -186,9 +187,7 @@ public class Player extends Sprite {
 			if(s instanceof Enemy){
 				System.out.println("Ausgabe von Player: Oh nein, er hat mein Ohr abgebissen!");
 				//Nur zur Überprüfung, für den Meilenstein ist Verlust von Lebenspunkt vorgesehen!
-				setLifes(getLifes()-1);
-				System.out.println(getLifes());
-				parent.lostGame();
+				parent.lostLife();
 				return true;
 			}
 			if(s instanceof Coin){
@@ -200,6 +199,14 @@ public class Player extends Sprite {
 			}
 		}
 		return false;
+	}
+	
+	public void setLifes(int l){
+		this.lifes = l;
+	}
+	
+	public int getLifes(){
+		return lifes;
 	}
 	
 	public int getCoins(){

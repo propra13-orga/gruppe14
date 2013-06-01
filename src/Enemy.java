@@ -1,9 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.lang.Math.*;
 
 public class Enemy extends Sprite {
 	private static final long serialVersionUID = 1L;

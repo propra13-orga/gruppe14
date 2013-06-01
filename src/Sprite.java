@@ -12,8 +12,6 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	protected double dx; //horizontale Veränderung, bzw. Position
 	protected double dy; //vertikale Veränderung, bzw. Position
 	
-	private int lifes;
-	
 	GamePanel parent;
 	BufferedImage[] pics;
 	int currentpic = 0;
@@ -78,12 +76,5 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		this.dy = dy;
 	}
 
-	public void setLifes(int l){
-		this.lifes = l;
-	}
-	
-	public int getLifes(){
-		return lifes;
-	}
 	public abstract boolean collidedWith(Sprite s);
 }

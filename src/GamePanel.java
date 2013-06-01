@@ -52,7 +52,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	int x = 0;
 	int y = 0;
 	int level;
-	int player_number; //Position des Spielers in actors
 	
 	static int rows, columns;
 	
@@ -108,10 +107,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(enemy2); //actors(1) == enemy2
 		actors.add(coin); //actors(2) == coin
 		actors.add(player); //actors(3) == player
-		player_number = 3;
 		//enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts, entsprechend lassen sich hier auch vertikale Gegner einbauen
 		//enemy2.setVerticalSpeed(80);
-		player.setLifes(3);
+		player.setLifes(3); //Spieler hat am Anfang 3 Leben
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
 		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
@@ -247,6 +245,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		if(!isStarted()){
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
+		
 		map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte wird nur noch einmal gezeichnet, nicht für jeden Sprite in actors neu
 		
 		if(actors!=null){
@@ -261,7 +260,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		g.setColor(Color.red);
 		g.drawString("FPS " + Long.toString(fps), 20, 10); //Zur Überprüfung des flüssigen Spiellaufs
 		g.setColor(Color.white);
-		g.drawString("Du hast " + player.getCoins() + " Münze(n)", 20, 610);
+		g.drawString("Du hast " + player.getLifes() + " Leben", 20, 610);
+		g.drawString("und " + player.getCoins() + " Münze(n)", 115, 610);
+		
 			
 	}
 	
@@ -274,7 +275,6 @@ private void doLogic(){
 		
 			if(r.remove){
 				actors.remove(r);//Löschen von Sprite, remove == true; Wichtig für z.B. damit eine Münze nach dem Einsammeln nicht mehr angezeigt wird
-				player_number--;
 			}
 		}
 		
@@ -285,12 +285,11 @@ private void doLogic(){
 			}
 		}
 		
-		Sprite s1 = actors.get(player_number); //Player! Nur Überprüfung von Kollision des Player mit beliebigem Sprite. Wenn mehr Sprites muss hier Index angepasst werden.
 		for (int n = 0; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
 				
 				Sprite s2 = actors.get(n);
 				
-				s1.collidedWith(s2);
+				player.collidedWith(s2); //Überprüfung ob Spieler kollidiert ist
 			
 		}
 	}
@@ -326,6 +325,15 @@ private void doLogic(){
 		paintMenu();
 	}
 
+	public void lostLife(){
+		System.out.println("Du hast ein Leben verloren, streng dich dieses mal mehr an!");
+		player.setLifes(player.getLifes()-1);
+		player.x = 50;
+		player.y = 50;
+		if(player.getLifes() == 0){
+			lostGame();
+		}
+	}
     public boolean isStarted(){
     	return started;
     }

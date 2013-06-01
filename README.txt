@@ -8,12 +8,20 @@ FunktionalitÃ¤t zurzeit:
 - Bewegung durch Mauer nicht mehr möglich, Methode aber noch n bisschen verbuggt
 - Einlesen der Karte aus txt.Datei
 - Menüführung mit zwei Buttons, funktioniert bei Neustart noch nicht
+- Gegner verfolgt Spieler (KI)
+- Coins
+- Anzeige der Anzahl der Coins, hier können auch einfach weitere Informationen eingearbeitet werden
 
 TODO:
 
 
 - schönere Bilder
-- flüssigere Bewegungen (teilweise ruckelt es immer noch)
 - Ausarbeitung von Leveln
 - Items
-- Gegner?
+- Shops
+- NPC
+- Räume/Level
+- Checkpoints (einfach am Anfang eines Levels?)
+- Waffen
+- Zauber
+- Schadenssystem
