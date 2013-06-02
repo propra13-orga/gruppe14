@@ -13,6 +13,7 @@ public class Player extends Sprite {
 	private double copy_dy;
 	private int coins;
 	private int lifes;
+	private int mana;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -20,6 +21,9 @@ public class Player extends Sprite {
 		or = new Point();
 		ul = new Point();
 		ur = new Point();
+		lifes = 3;
+		coins = 0;
+		mana = 0;
 	}
 	
 	@Override
@@ -194,8 +198,20 @@ public class Player extends Sprite {
 				System.out.println("Bravo, du hast eine Münze gesammelt");
 				//Anzahl der Leben wird erhöht, eigentlich aber Kontostand
 				coins++;
-				System.out.println(getLifes());
 				s.remove = true;
+			}
+			if(s instanceof Mana){
+				System.out.println("Bravo, du hast einen Manatrank gesammelt");
+				mana++;
+				s.remove = true;
+			}
+			if(s instanceof Shop && parent.enterShop == true){
+				if(parent.shopmode == false){
+					parent.shopmode = true;
+					parent.shop();
+					
+				}
+
 			}
 		}
 		return false;
@@ -215,6 +231,14 @@ public class Player extends Sprite {
 	
 	public void setCoins(int c){
 		coins = c;
+	}
+	
+	public void setMana(int m){
+		mana = m;
+	}
+	
+	public int getMana(){
+		return mana;
 	}
 }
 

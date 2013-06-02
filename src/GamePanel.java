@@ -20,8 +20,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame2;
 	JFrame frame3;
 	JFrame frame4;
-	
-	long testtime = 0;
+	JFrame shop2 = new JFrame("Shop");
 	
 	long delta = 0;
 	long last = 0;
@@ -33,6 +32,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Enemy enemy;
 	Enemy enemy2;
 	Coin coin;
+	Mana mana;
+	Shop shop;
 	MapDisplay map;
 	
 	CopyOnWriteArrayList<Sprite> actors;
@@ -44,14 +45,17 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean waitingForKeyPress;
 	boolean game_running = true;
 	boolean started = false;
+	boolean shopmode = false; //Ist Spieler im Shop oder nicht?
+	boolean enterShop = false;
 
-	
 	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet; Ersetzt boolean gamewon, lost
 	int pressCount;
 	int speed = 80;
 	int x = 0;
 	int y = 0;
 	int level;
+	int startposx;
+	int startposy;
 	
 	static int rows, columns;
 	
@@ -87,9 +91,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		up = false;
 		down = false;
 		left = false;
-		right = false;
-		
-		//createBackbuffer();		//Ein Puffer wird angelegt
+		right = false; //sonst läuft Spieler nach Neustart einfach los
 		
 		level = 1;
 		last = System.nanoTime();
@@ -102,14 +104,20 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 100, this);
 		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 100, this);
 		coin = new Coin(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 100, this);
-		//TODO: Wie verschiedene Enemys organisieren, auch bzgl. Namen?
-		actors.add(enemy); //actors(0) == enemy
-		actors.add(enemy2); //actors(1) == enemy2
-		actors.add(coin); //actors(2) == coin
-		actors.add(player); //actors(3) == player
-		//enemy.setHorizontalSpeed(80); //Spieler läuft nur von links nach rechts, entsprechend lassen sich hier auch vertikale Gegner einbauen
-		//enemy2.setVerticalSpeed(80);
-		player.setLifes(3); //Spieler hat am Anfang 3 Leben
+		mana = new Mana(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 100, this);
+		shop = new Shop(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 100, this);
+
+		actors.add(enemy); 
+		actors.add(enemy2); 
+		actors.add(coin); 
+		actors.add(mana);
+		actors.add(shop);
+		actors.add(player); 
+		
+		startposx = 50;
+		startposy = 50;
+		
+		player.setCoins(100);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
 		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
@@ -123,6 +131,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	//Vllt. lieber in doInitializations Abfrage nach Wert von level und entsprechendes Laden von Map?
 	public void doInitializations2(){
 		level = 2;
+		startposx = 400;
+		startposy = 400;
 		map = new MapDisplay("resources/level/TileMap_2.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this); 
 	}
 	
@@ -208,7 +218,54 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 
-	
+	public void shop(){
+		up = false;
+		down = false;
+		left = false;
+		right = false;
+		shopmode = true;
+		
+		shop2.setLocation(500,300);
+		shop2.setSize(800, 600);
+		shop2.pack();
+		shop2.setVisible(true);
+		
+		JButton b1 = new JButton("1 Manatrank für 10 Münzen");
+		b1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+				if(player.getCoins() >= 10){
+					player.setMana(player.getMana()+1);
+					player.setCoins(player.getCoins()-10);
+				}else{
+					System.out.println("Du hast nicht genug Münzen!");
+				}
+				shopmode = false;
+				enterShop = false;
+			}
+		});
+		
+		
+		JButton b2 = new JButton("1 Leben für 50 Münzen");
+
+		b2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+				if(player.getCoins() >= 50){
+					player.setLifes(player.getLifes()+1);
+					player.setCoins(player.getCoins()-10);
+				}else{
+					System.out.println("Du hast nicht genug Münzen!");
+				}
+				shopmode = false;
+				enterShop = false;
+			}
+			
+		});
+		shop2.add(BorderLayout.CENTER, b1);
+		shop2.add(BorderLayout.SOUTH, b2);
+		shop2.pack();
+		shop2.setVisible(true);
+		
+	}
 	public void run(){
 		while(game_running){
 			
@@ -261,7 +318,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		g.drawString("FPS " + Long.toString(fps), 20, 10); //Zur Überprüfung des flüssigen Spiellaufs
 		g.setColor(Color.white);
 		g.drawString("Du hast " + player.getLifes() + " Leben", 20, 610);
-		g.drawString("und " + player.getCoins() + " Münze(n)", 115, 610);
+		g.drawString(", " + player.getCoins() + " Münze(n)", 115, 610);
+		g.drawString(" und " + player.getMana() + " Einheit(en) Mana", 220, 610);
 		
 			
 	}
@@ -292,6 +350,10 @@ private void doLogic(){
 				player.collidedWith(s2); //Überprüfung ob Spieler kollidiert ist
 			
 		}
+		
+		if (shopmode == false){
+			shop2.setVisible(false);
+		}
 	}
 	
 	private void moveObjects(){
@@ -311,7 +373,6 @@ private void doLogic(){
 		System.out.println("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
 		stopGame();
 		started = false;
-		//game_running = false;Darf hier nicht stehen. Spiel lässt sich sonst nicht starten.
 		spiel_status = 1;
 		paintMenu();
 	}
@@ -320,7 +381,6 @@ private void doLogic(){
 		System.out.println("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
 		stopGame();
 		started = false;
-		//game_running = false; Darf hier nicht stehen. Spiel lässt sich sonst nicht starten.
 		spiel_status = 0;
 		paintMenu();
 	}
@@ -328,8 +388,9 @@ private void doLogic(){
 	public void lostLife(){
 		System.out.println("Du hast ein Leben verloren, streng dich dieses mal mehr an!");
 		player.setLifes(player.getLifes()-1);
-		player.x = 50;
-		player.y = 50;
+		player.x = startposx;
+		player.y = startposy;
+		
 		if(player.getLifes() == 0){
 			lostGame();
 		}
@@ -392,6 +453,9 @@ private void doLogic(){
 		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = true;
 		}
+		if (e.getKeyCode() == KeyEvent.VK_ENTER){
+			enterShop = true;
+		}
 	}
 	//Taste wieder losgelassen?
 	public void keyReleased(KeyEvent e){
@@ -414,7 +478,6 @@ private void doLogic(){
 				stopGame(); 
 				paintMenu(); 
 			}else {
-				//hier auch stopGame()?
 				setStarted(false);
 				System.exit(0);
 			}
@@ -423,7 +486,6 @@ private void doLogic(){
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 

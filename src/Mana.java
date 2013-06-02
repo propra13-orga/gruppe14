@@ -1,12 +1,14 @@
 import java.awt.image.BufferedImage;
 
 
-public class Coin extends Sprite {
-	
-	private static final long serialVersionUID = 1L;
+public class Mana extends Sprite	 {
 
-	public Coin(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
+	private static final long serialVersionUID = 1L;
+	
+	public Mana(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
+		
 		super(i, x, y, delay, p);
+
 	}
 
 	@Override

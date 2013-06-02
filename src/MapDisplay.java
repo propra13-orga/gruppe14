@@ -12,6 +12,7 @@ public class MapDisplay extends Rectangle{
 	
 	ImageControl control;
 	Vector<Tile> tiles;
+	Vector<Sprite> sprites;
 	Rectangle2D display;
 	private Tile t;
 	
@@ -19,6 +20,7 @@ public class MapDisplay extends Rectangle{
 	
 	public MapDisplay(String level, String picpath, String shadowpath, int column, int row, GamePanel p){
 		tiles = new Vector<Tile> ();
+		sprites = new Vector<Sprite> ();
 		
 		loadLevelData(level);
 		

@@ -11,6 +11,7 @@ FunktionalitÃ¤t zurzeit:
 - Gegner verfolgt Spieler (KI)
 - Coins
 - Anzeige der Anzahl der Coins, hier können auch einfach weitere Informationen eingearbeitet werden
+- Shop, Betreten durch Drücken von ENTER
 
 TODO:
 
