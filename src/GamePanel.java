@@ -74,7 +74,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame.add(this);
 		frame.pack();
 		frame.setVisible(true);
-		
 		frame.setResizable(false);
 		frame.addKeyListener(this);
 		
@@ -120,7 +119,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		player.setCoins(100);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
-		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
@@ -133,7 +132,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		level = 2;
 		startposx = 400;
 		startposy = 400;
-		map = new MapDisplay("resources/level/TileMap_2.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this); 
+		map = new MapDisplay("resources/level/TileMap_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this); 
 	}
 	
 	public void doInitializations3(){
@@ -251,7 +250,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
 				if(player.getCoins() >= 50){
 					player.setLifes(player.getLifes()+1);
-					player.setCoins(player.getCoins()-10);
+					player.setCoins(player.getCoins()-50);
 				}else{
 					System.out.println("Du hast nicht genug Münzen!");
 				}
@@ -390,7 +389,7 @@ private void doLogic(){
 		player.setLifes(player.getLifes()-1);
 		player.x = startposx;
 		player.y = startposy;
-		
+		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen!
 		if(player.getLifes() == 0){
 			lostGame();
 		}
