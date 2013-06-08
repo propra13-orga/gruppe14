@@ -31,12 +31,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Player player;
 	Enemy enemy;
 	Enemy enemy2;
-	Coin coin;
-	Mana mana;
-	Shop shop;
+	Item coin;
+	Item mana;
+	Item shop;
 	MapDisplay map;
 	
-	CopyOnWriteArrayList<Sprite> actors;
+	CopyOnWriteArrayList<Sprite> actors; //beinhaltet alle Objekte im Spiel, also Gegner, Items etc.
 
 	boolean up;
 	boolean down;
@@ -102,9 +102,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 100, this);
 		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 100, this);
-		coin = new Coin(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 100, this);
-		mana = new Mana(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 100, this);
-		shop = new Shop(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 100, this);
+		coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
+		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
+		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 
 		actors.add(enemy); 
 		actors.add(enemy2); 

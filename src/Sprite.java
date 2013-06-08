@@ -76,5 +76,6 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		this.dy = dy;
 	}
 
-	public abstract boolean collidedWith(Sprite s);
+	public abstract int getType();
+
 }

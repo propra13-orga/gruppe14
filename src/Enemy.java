@@ -198,12 +198,19 @@ public class Enemy extends Sprite {
 		super.drawObjects(g);
 		g.setColor(Color.ORANGE);
 	}
+	
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
 			System.out.println("Ausgabe von Enemy: Lecker, lecker Ohren!");
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int getType() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	
