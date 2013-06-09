@@ -37,6 +37,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Item mana;
 	Item shop;
 	Item npc;
+	Item schwert;
 	MapDisplay map;
 	
 
@@ -110,6 +111,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors = new CopyOnWriteArrayList<Sprite>();
 		attacks = new CopyOnWriteArrayList<Object>();
 		
+		////1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 100, this);
@@ -118,6 +120,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 		npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
+		schwert = new Item(lib.getSprite("resources/pics/weapon.gif", 1, 1), 100, 150, 5, 100, this);
 
 		actors.add(enemy); 
 		actors.add(enemy2); 
@@ -125,6 +128,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(mana);
 		actors.add(shop);
 		actors.add(npc);
+		actors.add(schwert);
 		actors.add(player); 
 		
 		startposx = 50;
@@ -348,7 +352,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		if(talkwithnpc == true){
 			g.drawString("Es war einmal in einem weit entfertenten Schloss...blablabla!", 60, 620);
 		}
-			
+		g.drawString("Schaden: " + player.getDamage(), 530, 610);
+		g.drawString("Gesundheit Enemy: " + enemy.getHealth(), 600, 610);
 	}
 	
 private void doLogic(){
@@ -358,27 +363,27 @@ private void doLogic(){
 			Sprite opfer;
 			angriff = player.getAttackObject();
 			if(angriff != null){
-				actors.add(player.getEffect());		//Hier die Kommentierung wegnehmen, und der Fehler tritt auf
+				actors.add(player.getEffect());	//Effekt wird hinzugefügt
 				attacks.add(angriff);	
 				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 					angriff = it1.next();
-					if((angriff instanceof java.awt.geom.Ellipse2D.Double)){
+					if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
 						Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
 						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
 							opfer = it2.next();
 							if(opfer instanceof Enemy){
-								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){
-									((Enemy)opfer).reduceHealth(player.getDamage());
+								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
+									((Enemy)opfer).reduceHealth(player.getDamage()); 
 								}
 							}
 							
 						}
-					}else if (angriff instanceof java.awt.geom.Line2D.Double){
+					}else if (angriff instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
 						Line2D.Double line = (Line2D.Double) angriff;
 						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
 							opfer = it2.next();
 							if(opfer instanceof Enemy){
-								if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){
+								if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
 									((Enemy)opfer).reduceHealth(player.getDamage());
 								}
 							}

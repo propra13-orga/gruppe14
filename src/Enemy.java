@@ -26,7 +26,7 @@ public class Enemy extends Sprite {
 		or = new Point();
 		ul = new Point();
 		ur = new Point();
-		health = 100;
+		health = 200;
 	}
 	
 	@Override
@@ -35,6 +35,8 @@ public class Enemy extends Sprite {
 		if(health <= 0){
 			remove = true;
 		}
+		
+		//Zur Verfolgung des Spieler, wenn der Spieler nah genug dran ist
 		diffX = parent.player.getX() - this.getX();
 		diffY = parent.player.getY() - this.getY();
 		if(Math.abs(diffX) < 100 && Math.abs(diffY)  < 100){ //Überprüfung ob der Spieler in der Nähe ist
@@ -217,6 +219,9 @@ public class Enemy extends Sprite {
 	}
 	public void reduceHealth(int schaden){
 		health = health - schaden;
+		if(health <= 0){
+			remove = true;
+		}
 	}
 
 

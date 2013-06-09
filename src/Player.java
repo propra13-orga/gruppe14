@@ -26,7 +26,9 @@ public class Player extends Sprite {
 	private int health;
 	private boolean attacking;
 	private boolean canAttack;
+	private boolean canLoseHealth;
 	private Timer timer;
+	private Timer timer2;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -41,6 +43,7 @@ public class Player extends Sprite {
 		health = 100;
 		attacking = false;
 		timer = new Timer();
+		timer2 = new Timer();
 		canAttack = true;
 		damage = 50;
 		range = 40;
@@ -190,7 +193,7 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
 			//Tod durch Feuer!
-			lostHealth(20);	
+			reduceHealth(20);	
 		}
 		
 		if(col.equals(Color.blue)){
@@ -216,8 +219,8 @@ public class Player extends Sprite {
 		if(this.intersects(s)){
 			if(s instanceof Enemy){
 				System.out.println("Ausgabe von Player: Oh nein, er hat mein Ohr abgebissen!");
-				//Nur zur Überprüfung, für den Meilenstein ist Verlust von Lebenspunkt vorgesehen!
-				lostHealth(50);
+
+				reduceHealth(10);
 				return true;
 			}
 			if(s instanceof Item){ //1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
@@ -240,19 +243,22 @@ public class Player extends Sprite {
 					
 				break;
 				case 3:
+					
 					if(parent.enterShop == true && parent.shopmode == false){
-
 						parent.shopmode = true;
 						parent.shop();
 					}
+					
 				break;
 				case 4:
 					System.out.println("Bravo, du hast eine Rüstung gesammelt");
 					hasArmour = true;
+					s.remove = true;
 				break;
 				case 5:
 					System.out.println("Bravo, du hast eine Waffe eingesammelt");
 					damage = damage + 10;
+					s.remove = true;
 				break;
 				case 6:
 					if(parent.enterNPC == true){
@@ -390,12 +396,14 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 		return health;
 	}
 	
-	public void lostHealth(int h){
-		health = health - h;
+	public void reduceHealth(int schaden){
+		
+		setAbleToLoseHealth(false);
+		timer2.schedule(new Task(this), 10000);
+		health = health - schaden;
 		if (health <= 0){
 			lostLife();
 		}
-		System.out.println("Lebenspunkte verloren"); //TODO: Timer, damit man nicht sofort stirbt!
 	}
 	public void setLifes(int l){
 		this.lifes = l;
@@ -420,7 +428,9 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	public int getMana(){
 		return mana;
 	}
-
+	public void setAbleToLoseHealth(boolean b){
+		canLoseHealth = b;
+	}
 	public void setAbleToAttack(boolean value){
 		canAttack = value;
 	}
