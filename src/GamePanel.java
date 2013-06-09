@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -37,11 +39,13 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	MapDisplay map;
 	
 	CopyOnWriteArrayList<Sprite> actors;
+	CopyOnWriteArrayList<Object> attacks;	//Liste für die Attack-Objekte
 
 	boolean up;
 	boolean down;
 	boolean left;
 	boolean right;
+	boolean attack;	//Spieler will attackieren
 	boolean waitingForKeyPress;
 	boolean game_running = true;
 	boolean started = false;
@@ -92,12 +96,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		down = false;
 		left = false;
 		right = false; //sonst läuft Spieler nach Neustart einfach los
+		attack = false;
 		
 		level = 1;
 		last = System.nanoTime();
 		gameover = 0;
 		
 		actors = new CopyOnWriteArrayList<Sprite>();
+		attacks = new CopyOnWriteArrayList<Object>();
 		
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
@@ -326,6 +332,46 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 private void doLogic(){
 		
+		if(attack){	//Wenn der Spieler angreifen will
+			Object angriff;
+			Sprite opfer;
+			angriff = player.getAttackObject();
+			if(angriff != null){
+				//actors.add(player.getEffect());		//Hier die Kommentierung wegnehmen, und der Fehler tritt auf
+				attacks.add(angriff);	
+				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
+					angriff = it1.next();
+					if((angriff instanceof java.awt.geom.Ellipse2D.Double)){
+						Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
+						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+							opfer = it2.next();
+							if(opfer instanceof Enemy){
+								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){
+									((Enemy)opfer).reduceHealth(player.getDamage());
+								}
+							}
+							
+						}
+					}else if (angriff instanceof java.awt.geom.Line2D.Double){
+						Line2D.Double line = (Line2D.Double) angriff;
+						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+							opfer = it2.next();
+							if(opfer instanceof Enemy){
+								if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){
+									((Enemy)opfer).reduceHealth(player.getDamage());
+								}
+							}
+							
+						}
+					}
+					
+				}
+				
+				
+			}
+					
+		}
+		
 		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
 		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
 			Sprite r = it.next();
@@ -435,6 +481,12 @@ private void doLogic(){
 		if(!left&&!right){ 						//wenn weder left noch rechts gedrückt
 			player.setHorizontalSpeed(0);
 		}
+		if(attack){
+			player.setAttacking();
+		}
+		if(!attack){
+			player.resetAttacking();
+		}
 	}
 	
 	
@@ -456,6 +508,9 @@ private void doLogic(){
 		if (e.getKeyCode() == KeyEvent.VK_ENTER){
 			enterShop = true;
 		}
+		if(e.getKeyCode() == KeyEvent.VK_X){
+			attack = true;
+		}
 	}
 	//Taste wieder losgelassen?
 	public void keyReleased(KeyEvent e){
@@ -471,6 +526,9 @@ private void doLogic(){
 		}
 		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = false;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_X){
+			attack = false;
 		}
 		
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B

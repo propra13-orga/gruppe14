@@ -12,6 +12,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	protected double dx; //horizontale Veränderung, bzw. Position
 	protected double dy; //vertikale Veränderung, bzw. Position
 	
+	int loop_from;
+	int loop_to;
+	
 	GamePanel parent;
 	BufferedImage[] pics;
 	int currentpic = 0;
@@ -28,6 +31,8 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		this.width = pics[0].getWidth();
 		this.height = pics[0].getHeight();
 		parent = p;
+		loop_from = 0;
+		loop_to = pics.length-1;
 	}
 	
 	public void drawObjects(Graphics g){
@@ -45,9 +50,14 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	private void computeAnimation(){
 		currentpic++;
 		
-		if(currentpic >= pics.length){ //Wenn Anzahl der vorhandenen Bilder überschreitet
-			currentpic = 0;
+		if(currentpic > loop_to){ //Wenn Anzahl der vorhandenen Bilder überschreitet
+			currentpic = loop_from;
 		}
+	}
+	public void setLoop(int from, int to){
+		loop_from = from;
+		loop_to = to;
+		currentpic = from;
 	}
 	
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert

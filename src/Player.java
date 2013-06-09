@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
 
 public class Player extends Sprite {
 	private static final long serialVersionUID = 1L;
@@ -15,15 +18,33 @@ public class Player extends Sprite {
 	private int lifes;
 	private int mana;
 	
+	private int damage;			//Schaden, den der Spieler verursacht
+	private int range;			//Reichweite seines Angriffes vertikal und horizontal
+	private int diagRange;		//Diagonale Reichweite (range/Wurzel 2 (ca. 1.4))
+	private int radialRange;	//Reichweite für den Rundumangriff (range + Hälfte der Spielerhöhe))
+	private int health;
+	private boolean attacking;
+	private boolean canAttack;
+	private Timer timer;
+	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 		ol = new Point();
 		or = new Point();
 		ul = new Point();
 		ur = new Point();
+		
 		lifes = 3;
 		coins = 0;
 		mana = 0;
+		health = 100;
+		attacking = false;
+		timer = new Timer();
+		canAttack = true;
+		damage = 50;
+		range = 40;
+		diagRange = (int)(range/1.4);
+		radialRange = (int)(range + height);
 	}
 	
 	@Override
@@ -103,6 +124,7 @@ public class Player extends Sprite {
 				}
 			
 			}
+			break;
 		case 2:
 			if(col.equals(Color.gray)){
 				
@@ -121,7 +143,7 @@ public class Player extends Sprite {
 					
 				}
 			}
-			
+			break;
 		case 3:
 			if(col.equals(Color.gray)){
 				while(parent.getMap().getColorForPoint(ul).equals(Color.gray)){
@@ -139,6 +161,7 @@ public class Player extends Sprite {
 				}
 				
 			}
+			break;
 		case 4:
 			if(col.equals(Color.gray)){
 				while(parent.getMap().getColorForPoint(or).equals(Color.gray)){
@@ -155,8 +178,9 @@ public class Player extends Sprite {
 					
 				}
 			}
-
+			break;
 		}
+	
 
 		if(col.equals(Color.green)){ //grün = 0, 255, 0
 			
@@ -217,6 +241,129 @@ public class Player extends Sprite {
 		return false;
 	}
 	
+	public Object getAttackObject(){	//Liefert ein Attack-Objekt (line oder rectangle), welches mit den actors aus dem Gamepanel kollidieren kann
+		
+		
+		//Hier wird der Timer gesetzt:
+		
+		if(!canAttack){
+			return null;
+		}
+		setAbleToAttack(false);
+		
+		timer.schedule(new Task(this), 2000);
+		
+		
+		//Hier kann je nach Ausrüstung des Spielers eine andere Sache zurückgegeben werden
+		if(dx > 0){
+			if(dy > 0){
+				return new Line2D.Double(ur.getX(), ur.getY(), ur.getX() + diagRange, ur.getY() + diagRange);
+			}else if(dy < 0){
+				return new Line2D.Double(or.getX(), or.getY(), or.getX() + diagRange, or.getY() - diagRange);
+			}else{
+				return new Line2D.Double(or.getX(), ((ur.getY() + or.getY())/2), or.getX() + range, ((ur.getY() + or.getY())/2));
+			}
+		}else if(dx < 0){
+			if(dy > 0){
+				return new Line2D.Double(ul.getX(), ul.getY(), ul.getX() - diagRange, ul.getY() + diagRange);
+			}else if(dy < 0){
+				return new Line2D.Double(ol.getX(), ol.getY(), ol.getX() - diagRange, ol.getY() - diagRange);
+			}else{
+				return new Line2D.Double(ol.getX(), ((ul.getY() + ol.getY())/2), ol.getX() - range, ((ul.getY() + ol.getY())/2));
+			}
+		}else{
+			if(dy > 0){
+				return new Line2D.Double(((ur.getX() + ul.getX())/2), ul.getY(), ((ur.getX() + ul.getX())/2), ul.getY() + range);
+			}else if(dy < 0){
+				return new Line2D.Double(((or.getX() + ol.getX())/2), ol.getY(), ((or.getX() + ol.getX())/2), ol.getY() - range);
+			}else{
+				return new Ellipse2D.Double((or.getX() + ol.getX())/2, (ur.getY() + or.getY())/2, radialRange, radialRange);
+			}
+		}
+	}
+public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
+		
+		
+		
+		//Hier kann je nach Ausrüstung des Spielers eine andere Sache zurückgegeben werden
+		Effect effect;
+		if(dx > 0){
+			if(dy > 0){			//Rechts unten
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);	//Diese Aufrufe machen Probleme, er findet die Dateien nicht
+				effect.setLoop(0, 4);
+				effect.x = ur.getX();
+				effect.y = ur.getY();
+				return effect;
+			}else if(dy < 0){	//Rechts oben
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);
+				effect.setLoop(1, 9);
+				effect.x = or.getX();
+				effect.y = or.getY() - 28;
+				return effect;
+			}else{				//Nur Rechts
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.tiff", 5, 1), 40, 5, 100, this.parent);
+				effect.x = or.getX();
+				effect.y = ((ur.getY() + or.getY())/2);
+				return effect;
+			}
+		}else if(dx < 0){
+			if(dy > 0){			//Links unten
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);
+				effect.setLoop(1, 9);
+				effect.x = ul.getX() - 28;
+				effect.y = ul.getY();
+				return effect;
+			}else if(dy < 0){	//Links oben
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);
+				effect.setLoop(0, 4);
+				effect.x = ol.getX() - 28;
+				effect.y = ol.getY() - 28;
+				return effect;
+			}else{				//Nur Links
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.tiff", 5, 1), 40, 5, 100, this.parent);
+				effect.x = ol.getX() - 40;
+				effect.y = ((ul.getY() + ol.getY())/2);
+				return effect;
+			}
+		}else{
+			if(dy > 0){			//Nur Unten
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.tiff", 5, 1), 5, 40, 100, this.parent);
+				effect.x = (ur.getX() + ul.getX())/2;
+				effect.y = ul.getY();
+				return effect;
+			}else if(dy < 0){	//Nur Oben
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.tiff", 5, 1), 5, 40, 100, this.parent);
+				effect.x = (or.getX() + ol.getX())/2;
+				effect.y = ol.getY() + 40;
+				return effect;
+			}else{				//Stillstand
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRot.tiff", 5, 1), 60, 60, 100, this.parent);
+				effect.x = ol.getX() - (60-width);
+				effect.y = ol.getY() -(60-height);
+				return effect;
+			}
+		}
+	}
+	
+	public void setAttacking(){
+		attacking = true;
+	}
+	public void resetAttacking(){
+		attacking = false;
+	}
+	
+	public boolean isAttacking(){
+		return attacking;
+	}
+	
+	public void setHealth(int h){
+		health = h;
+	}
+	
+	public int getHealth(){
+		return health;
+	}
+	
 	public void setLifes(int l){
 		this.lifes = l;
 	}
@@ -239,6 +386,21 @@ public class Player extends Sprite {
 	
 	public int getMana(){
 		return mana;
+	}
+	public void setAbleToAttack(boolean value){
+		canAttack = value;
+	}
+	public int getDamage(){
+		return damage;
+	}
+	public void setDamage(int pDamage){
+		damage = pDamage;
+	}
+	public void setRange(int pRange){
+		range = pRange;
+	}
+	public int getRange(){
+		return range;
 	}
 }
 

@@ -16,6 +16,7 @@ public class Enemy extends Sprite {
 	private int speed = 50;
 	private double diffX;
 	private double diffY;
+	private int health;
 	
 	boolean locked = false; //noch kein Ziel erfasst
 	
@@ -25,11 +26,15 @@ public class Enemy extends Sprite {
 		or = new Point();
 		ul = new Point();
 		ur = new Point();
+		health = 100;
 	}
 	
 	@Override
 	public void doLogic(long delta)	{
 		super.doLogic(delta);
+		if(health <= 0){
+			remove = true;
+		}
 		diffX = parent.player.getX() - this.getX();
 		diffY = parent.player.getY() - this.getY();
 		if(Math.abs(diffX) < 100 && Math.abs(diffY)  < 100){ //Überprüfung ob der Spieler in der Nähe ist
@@ -79,7 +84,7 @@ public class Enemy extends Sprite {
 			
 			}
 		case 2:
-			if(col.equals(Color.gray)){
+			if(col.equals(Color.gray) || col.equals(Color.red)){
 				check = parent.getMap().getColorForPoint(ur);
 				while(check.equals(Color.gray) || check.equals(Color.red)){
 					
@@ -99,7 +104,7 @@ public class Enemy extends Sprite {
 			}
 			
 		case 3:
-			if(col.equals(Color.gray)){
+			if(col.equals(Color.gray) || col.equals(Color.red)){
 				check = parent.getMap().getColorForPoint(ul);
 				while(check.equals(Color.gray) || check.equals(Color.red)){
 					
@@ -118,7 +123,7 @@ public class Enemy extends Sprite {
 				
 			}
 		case 4:
-			if(col.equals(Color.gray)){
+			if(col.equals(Color.gray) || col.equals(Color.red)){
 				check = parent.getMap().getColorForPoint(or);
 				while(check.equals(Color.gray) || check.equals(Color.red)){
 					if(copy_dy < 0){
@@ -204,6 +209,12 @@ public class Enemy extends Sprite {
 			return true;
 		}
 		return false;
+	}
+	public int getHealth(){
+		return health;
+	}
+	public void reduceHealth(int schaden){
+		health = health - schaden;
 	}
 	
 	
