@@ -15,7 +15,7 @@ public class Effect extends Sprite {
 	public void doLogic(long delta){
 		old_pic = currentpic;
 		super.doLogic(delta);
-		if(currentpic == 0 && old_pic != 0){
+		if(currentpic == loop_from && old_pic != loop_from){
 			remove = true;
 		}
 	}
