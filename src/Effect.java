@@ -19,9 +19,15 @@ public class Effect extends Sprite {
 			remove = true;
 		}
 	}
-	@Override
+	
 	public boolean collidedWith(Sprite s){
 		return false;
+	}
+
+	@Override
+	public int getType() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 		
 }

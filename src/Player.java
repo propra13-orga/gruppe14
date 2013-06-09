@@ -218,21 +218,32 @@ public class Player extends Sprite {
 				parent.lostLife();
 				return true;
 			}
-			if(s instanceof Coin){
-				System.out.println("Bravo, du hast eine Münze gesammelt");
-				//Anzahl der Leben wird erhöht, eigentlich aber Kontostand
-				coins++;
-				s.remove = true;
-			}
-			if(s instanceof Mana){
-				System.out.println("Bravo, du hast einen Manatrank gesammelt");
-				mana++;
-				s.remove = true;
-			}
-			if(s instanceof Shop && parent.enterShop == true){
-				if(parent.shopmode == false){
-					parent.shopmode = true;
-					parent.shop();
+			if(s instanceof Item){
+				int type = s.getType();
+				
+				switch(type){
+				
+				case 1:
+				
+					System.out.println("Bravo, du hast eine Münze gesammelt");
+					//Anzahl der Leben wird erhöht, eigentlich aber Kontostand
+					coins++;
+					s.remove = true;
+				break;
+				case 2: 
+		
+					System.out.println("Bravo, du hast einen Manatrank gesammelt");
+					mana++;
+					s.remove = true;
+					
+				break;
+				case 3:
+					if(parent.enterShop == true && parent.shopmode == false){
+
+						parent.shopmode = true;
+						parent.shop();
+					}
+				break;
 					
 				}
 
@@ -387,6 +398,7 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	public int getMana(){
 		return mana;
 	}
+
 	public void setAbleToAttack(boolean value){
 		canAttack = value;
 	}
@@ -401,6 +413,13 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	}
 	public int getRange(){
 		return range;
+	}
+
+	@Override
+	public int getType() {
+		// TODO Auto-generated method stub
+		return 0;
+
 	}
 }
 

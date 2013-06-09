@@ -203,6 +203,7 @@ public class Enemy extends Sprite {
 		super.drawObjects(g);
 		g.setColor(Color.ORANGE);
 	}
+	
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
 			System.out.println("Ausgabe von Enemy: Lecker, lecker Ohren!");
@@ -210,11 +211,19 @@ public class Enemy extends Sprite {
 		}
 		return false;
 	}
+
 	public int getHealth(){
 		return health;
 	}
 	public void reduceHealth(int schaden){
 		health = health - schaden;
+	}
+
+
+	@Override
+	public int getType() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	
