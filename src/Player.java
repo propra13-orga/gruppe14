@@ -322,7 +322,7 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 				return effect;
 			}else if(dy < 0){	//Rechts oben
 				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
-				effect.setLoop(1, 9);
+				effect.setLoop(5, 9);
 				effect.x = or.getX();
 				effect.y = or.getY() - 28;
 				return effect;
@@ -335,7 +335,7 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 		}else if(dx < 0){
 			if(dy > 0){			//Links unten
 				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
-				effect.setLoop(1, 9);
+				effect.setLoop(5, 9);
 				effect.x = ul.getX() - 28;
 				effect.y = ul.getY();
 				return effect;
