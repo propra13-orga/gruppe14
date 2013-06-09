@@ -18,6 +18,7 @@ public class Player extends Sprite {
 	private int lifes;
 	private int mana;
 	private boolean hasArmour; //trägt Rüstung?
+	private boolean hasWeapon;
 	
 	private int damage;			//Schaden, den der Spieler verursacht
 	private int range;			//Reichweite seines Angriffes vertikal und horizontal
@@ -28,7 +29,6 @@ public class Player extends Sprite {
 	private boolean canAttack;
 	private boolean canLoseHealth;
 	private Timer timer;
-	private Timer timer2;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -43,13 +43,13 @@ public class Player extends Sprite {
 		health = 100;
 		attacking = false;
 		timer = new Timer();
-		timer2 = new Timer();
 		canAttack = true;
 		damage = 50;
 		range = 40;
 		diagRange = (int)(range/1.4);
 		radialRange = (int)(range + height);
 		hasArmour = false;
+		canLoseHealth = true;
 	}
 	
 	@Override
@@ -192,21 +192,19 @@ public class Player extends Sprite {
 		}
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
-			//Tod durch Feuer!
-			reduceHealth(20);	
+			if(canLoseHealth){
+				reduceHealth(10);
+			}
 		}
 		
 		if(col.equals(Color.blue)){
-			
-			if (parent.getLevel() == 2){
-				
-				parent.doInitializations3();
+			System.out.println("Tür!");
+			if(parent.getRoom()+1 == 4){ //Levelwechsel
+				parent.doInitializations(parent.getLevel()+1, 1);
+			}else{
+				parent.doInitializations(parent.getLevel(), parent.getRoom()+1);
 			}
 			
-			if (parent.getLevel() == 1){
-				
-				parent.doInitializations2();
-			}
 			
 		}
 		
@@ -218,9 +216,10 @@ public class Player extends Sprite {
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
 			if(s instanceof Enemy){
-				System.out.println("Ausgabe von Player: Oh nein, er hat mein Ohr abgebissen!");
+				if(canLoseHealth){
+					reduceHealth(10);
+				}
 
-				reduceHealth(10);
 				return true;
 			}
 			if(s instanceof Item){ //1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
@@ -258,6 +257,7 @@ public class Player extends Sprite {
 				case 5:
 					System.out.println("Bravo, du hast eine Waffe eingesammelt");
 					damage = damage + 10;
+					hasWeapon = true;
 					s.remove = true;
 				break;
 				case 6:
@@ -266,7 +266,17 @@ public class Player extends Sprite {
 					}
 					
 				break;
-				}	
+				case 7:
+					if(health < 100){
+						health = health + 50;
+					}
+					if (health > 100){
+						health = 100;
+					}
+					s.remove = true;
+				break;
+				}
+							
 
 			}
 		}
@@ -387,7 +397,12 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	public boolean isAttacking(){
 		return attacking;
 	}
-	
+	public boolean hasArmour(){
+		return hasArmour;
+	}
+	public boolean hasWeapon(){
+		return hasWeapon;
+	}
 	public void setHealth(int h){
 		health = h;
 	}
@@ -397,13 +412,17 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	}
 	
 	public void reduceHealth(int schaden){
-		
-		setAbleToLoseHealth(false);
-		timer2.schedule(new Task(this), 10000);
-		health = health - schaden;
+		if(hasArmour){
+			health = health - (schaden/2); //Rüstung halbiert Schaden
+			
+		}else{
+			health = health - schaden;
+			
+		}
 		if (health <= 0){
 			lostLife();
 		}
+		
 	}
 	public void setLifes(int l){
 		this.lifes = l;
@@ -455,7 +474,7 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	}
 	
 	public void lostLife(){
-		System.out.println("Du hast ein Leben verloren, streng dich dieses mal mehr an!");
+		System.out.println("Du hast ein Leben verloren, streng dich naechstes mal mehr an!");
 		lifes--;
 		x = parent.startposx;
 		y = parent.startposy;

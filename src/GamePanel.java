@@ -38,6 +38,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Item shop;
 	Item npc;
 	Item schwert;
+	Item schild;
+	Item healthpack;
+	
 	MapDisplay map;
 	
 
@@ -64,9 +67,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	int speed = 80;
 	int x = 0;
 	int y = 0;
-	int level;
 	int startposx;
 	int startposy;
+	int room; //zeigt an im wievielten Raum man sich im Level befindet, möglich sind 1, 2 oder 3
+	int level; //zeigt an im wievielten Lebel man ist, möglich sind 1, 2 oder 3
 	
 	static int rows, columns;
 	
@@ -105,6 +109,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		attack = false;
 		
 		level = 1;
+		room = 1;
 		last = System.nanoTime();
 		gameover = 0;
 		
@@ -120,7 +125,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 		npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
+		schild = new Item(lib.getSprite("resources/pics/armour.gif", 1, 1), 100, 200, 4, 100, this);
 		schwert = new Item(lib.getSprite("resources/pics/weapon.gif", 1, 1), 100, 150, 5, 100, this);
+		healthpack = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 500, 100, 7, 100, this);
+
 
 		actors.add(enemy); 
 		actors.add(enemy2); 
@@ -129,7 +137,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(shop);
 		actors.add(npc);
 		actors.add(schwert);
-		actors.add(player); 
+		actors.add(player);
+		actors.add(schild);
+		actors.add(healthpack);
 		
 		startposx = 50;
 		startposy = 50;
@@ -137,7 +147,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		player.setCoins(100);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
-		map = new MapDisplay("resources/level/TileMap.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
@@ -146,17 +156,38 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	
 	//Vllt. lieber in doInitializations Abfrage nach Wert von level und entsprechendes Laden von Map?
-	public void doInitializations2(){
-		level = 2;
-		startposx = 400;
-		startposy = 400;
-		map = new MapDisplay("resources/level/TileMap_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this); 
+	public void doInitializations(int l, int r){ //l = level, r = room
+		level = l;
+		room = r;
+		actors.clear(); //Actors-Liste wird gelöscht und dann entsprechend der Information in TileMap_n.txt neu erstellt
+		actors.add(player); //Nur der Player bleibt bestehen
+		if((level == 1) && (room == 2)){
+			map = new MapDisplay("resources/level/TileMap_1_2.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this); 
+		}
+		else if((level == 1) && (room == 3)){
+			map = new MapDisplay("resources/level/TileMap_1_3.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
+		else if((level == 2) && (room == 1)){
+			map = new MapDisplay("resources/level/TileMap_2_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
+		else if((level == 2) && (room == 2)){
+			map = new MapDisplay("resources/level/TileMap_2_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
+		else if((level == 2) && (room == 3)){
+			map = new MapDisplay("resources/level/TileMap_2_3.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
+		else if((level == 3) && (room == 1)){
+			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
+		else if((level == 3) && (room == 2)){
+			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
+		else if((level == 3) && (room == 3)){
+			map = new MapDisplay("resources/level/TileMap_3_3.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
+		
 	}
-	
-	public void doInitializations3(){
-		level = 3;
-		map = new MapDisplay("resources/level/TileMap_3.txt", "resources/pics/tiles.gif", "resources/pics/shadow.png", 5, 1, this);
-	}
+
 	
 	private void paintMenu(){ 
 		//Idee: Vllt. lieber Menü auf unsichtbar setzen und immer wieder anzeigen, wenn benötigt? Vllt. auch praktisch für Pause...Aber was mit entsprechenden Labels?
@@ -346,14 +377,19 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		g.setColor(Color.white);
 		g.drawString("Du hast " + player.getLifes() + " Leben", 20, 610);
 		g.drawString(", " + player.getCoins() + " Münze(n)", 115, 610);
-		g.drawString(" und " + player.getMana() + " Einheit(en) Mana", 220, 610);
-		g.drawString("Lebenspunkte: " + player.getHealth() + "/100", 370, 610);
+		g.drawString(" und " + player.getMana() + " Einheit(en) Mana", 200, 610);
+		g.drawString("Lebenspunkte: " + player.getHealth() + "/100", 350, 610);
 		g.drawString("Story: ", 20, 620);
 		if(talkwithnpc == true){
 			g.drawString("Es war einmal in einem weit entfertenten Schloss...blablabla!", 60, 620);
 		}
-		g.drawString("Schaden: " + player.getDamage(), 530, 610);
-		g.drawString("Gesundheit Enemy: " + enemy.getHealth(), 600, 610);
+		g.drawString("Schaden: " + player.getDamage(), 485, 610);
+		g.drawString("Enemy: " + enemy2.getHealth(), 560, 610);
+		g.drawString("Rüstung: " + player.hasArmour(), 630, 610);
+		g.drawString("Waffe: " + player.hasWeapon(), 715, 610);
+		g.drawString("Level: " + level, 700, 620);
+		g.drawString("Raum: " + room, 750, 620);
+		
 	}
 	
 private void doLogic(){
@@ -363,7 +399,7 @@ private void doLogic(){
 			Sprite opfer;
 			angriff = player.getAttackObject();
 			if(angriff != null){
-				actors.add(player.getEffect());	//Effekt wird hinzugefügt
+				actors.add(player.getEffect());	//Effekt wird hinzugefügt zu Actors
 				attacks.add(angriff);	
 				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 					angriff = it1.next();
@@ -476,6 +512,10 @@ private void doLogic(){
 	
 	public MapDisplay getMap(){
 		return map; //gibt die Karte zurück
+	}
+	
+	public int getRoom(){
+		return room;
 	}
 	
 	

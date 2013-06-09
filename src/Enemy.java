@@ -17,6 +17,7 @@ public class Enemy extends Sprite {
 	private double diffX;
 	private double diffY;
 	private int health;
+	private boolean canLoseHealth;
 	
 	boolean locked = false; //noch kein Ziel erfasst
 	
@@ -32,10 +33,7 @@ public class Enemy extends Sprite {
 	@Override
 	public void doLogic(long delta)	{
 		super.doLogic(delta);
-		if(health <= 0){
-			remove = true;
-		}
-		
+				
 		//Zur Verfolgung des Spieler, wenn der Spieler nah genug dran ist
 		diffX = parent.player.getX() - this.getX();
 		diffY = parent.player.getY() - this.getY();
@@ -208,7 +206,6 @@ public class Enemy extends Sprite {
 	
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
-			System.out.println("Ausgabe von Enemy: Lecker, lecker Ohren!");
 			return true;
 		}
 		return false;
@@ -217,13 +214,16 @@ public class Enemy extends Sprite {
 	public int getHealth(){
 		return health;
 	}
-	public void reduceHealth(int schaden){
+	public void reduceHealth(int schaden){ //TODO: Timer einbauen mit setAbleToLoseHeatlh und canLoseHealth
 		health = health - schaden;
-		if(health <= 0){
+		if(health <= 0){ //Wenn Lebenspunkte aufgebraucht: Enemy aus ActorsListe löschen
 			remove = true;
+			parent.player.setCoins(parent.player.getCoins() + 20); //Spieler kriegt 20 Münzen für das Killen eines Gegner
 		}
 	}
-
+	public void setAbleToLoseHealth(boolean b){
+		canLoseHealth = b;
+	}
 
 	@Override
 	public int getType() {
