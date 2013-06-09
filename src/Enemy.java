@@ -13,11 +13,12 @@ public class Enemy extends Sprite {
 	private double copy_dx;
 	private double copy_dy;
 	private Color check;
-	private int speed = 50;
+	private int speed;
 	private double diffX;
 	private double diffY;
 	private int health;
 	private boolean canLoseHealth;
+	boolean stop; //Darf sich Enemy bewegen? Wird durch Zauber verursacht
 	
 	boolean locked = false; //noch kein Ziel erfasst
 	
@@ -28,6 +29,8 @@ public class Enemy extends Sprite {
 		ul = new Point();
 		ur = new Point();
 		health = 200;
+		speed = 50;
+		stop = false;
 	}
 	
 	@Override
@@ -35,26 +38,29 @@ public class Enemy extends Sprite {
 		super.doLogic(delta);
 				
 		//Zur Verfolgung des Spieler, wenn der Spieler nah genug dran ist
-		diffX = parent.player.getX() - this.getX();
-		diffY = parent.player.getY() - this.getY();
-		if(Math.abs(diffX) < 100 && Math.abs(diffY)  < 100){ //Überprüfung ob der Spieler in der Nähe ist
-			locked = true;
-			if(diffX < 0){
-				setHorizontalSpeed(-speed);
+		if(!stop){
+			diffX = parent.player.getX() - this.getX();
+			diffY = parent.player.getY() - this.getY();
+			if(Math.abs(diffX) < 100 && Math.abs(diffY)  < 100){ //Überprüfung ob der Spieler in der Nähe ist
+				locked = true;
+				if(diffX < 0){
+					setHorizontalSpeed(-speed);
+				}else{
+					setHorizontalSpeed(speed);
+				}
+				if(diffY < 0){
+					setVerticalSpeed(-speed);
+				}else{
+					setVerticalSpeed(speed);
+				}
+				
+				
 			}else{
-				setHorizontalSpeed(speed);
-			}
-			if(diffY < 0){
-				setVerticalSpeed(-speed);
-			}else{
-				setVerticalSpeed(speed);
+				locked = false;
+				setHorizontalSpeed(0);
+				setVerticalSpeed(0);
 			}
 			
-			
-		}else{
-			locked = false;
-			setHorizontalSpeed(0);
-			setVerticalSpeed(0);
 		}
 		
 		
@@ -147,56 +153,58 @@ public class Enemy extends Sprite {
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
 		//dx = Verschiebung inkl. Speed
-		
-		copy_dx = dx;
-		copy_dy = dy;
-		if(dx != 0){
-			x = x + dx*(delta/1e9);
+		if(!stop){
+			copy_dx = dx;
+			copy_dy = dy;
+			if(dx != 0){
+				x = x + dx*(delta/1e9);
+			}
+			
+			if(dy != 0){
+				y = y + dy*(delta/1e9);
+			}
+			if(getX() < 0){
+				setHorizontalSpeed(0);
+				x = 0;
+			}
+			if(getY() < 0){
+				setVerticalSpeed(0);
+				y = 0;
+			}
+			
+			if(getX()+getWidth() > parent.getWidth()){
+				setHorizontalSpeed(0);
+				x = parent.getWidth() - getWidth();
+			}
+			
+			if(getY()+getHeight() > parent.getHeight()){
+				setVerticalSpeed(0);
+				y = parent.getHeight() - getHeight();
+			}
+			
+			//Überprüfung der Farben jetzt in der move-Methode
+			corner = 1;
+			ol.setLocation((int)getX(), (int)getY());
+			Color col1 = parent.getMap().getColorForPoint(ol); //Ecke oben links
+			checkColor(col1);
+			
+			corner = 2;
+			ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+			Color col2 = parent.getMap().getColorForPoint(ur); //Ecke unten rechts
+			checkColor(col2);
+			
+			corner = 3;
+			ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
+			Color col3 = parent.getMap().getColorForPoint(ul); //Ecke unten links
+			checkColor(col3);
+			
+			
+			corner = 4;
+			or.setLocation((int)(getX() + (width - 1)), (int)getY());
+			Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
+			checkColor(col4);
 		}
 		
-		if(dy != 0){
-			y = y + dy*(delta/1e9);
-		}
-		if(getX() < 0){
-			setHorizontalSpeed(0);
-			x = 0;
-		}
-		if(getY() < 0){
-			setVerticalSpeed(0);
-			y = 0;
-		}
-		
-		if(getX()+getWidth() > parent.getWidth()){
-			setHorizontalSpeed(0);
-			x = parent.getWidth() - getWidth();
-		}
-		
-		if(getY()+getHeight() > parent.getHeight()){
-			setVerticalSpeed(0);
-			y = parent.getHeight() - getHeight();
-		}
-		
-		//Überprüfung der Farben jetzt in der move-Methode
-		corner = 1;
-		ol.setLocation((int)getX(), (int)getY());
-		Color col1 = parent.getMap().getColorForPoint(ol); //Ecke oben links
-		checkColor(col1);
-		
-		corner = 2;
-		ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
-		Color col2 = parent.getMap().getColorForPoint(ur); //Ecke unten rechts
-		checkColor(col2);
-		
-		corner = 3;
-		ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
-		Color col3 = parent.getMap().getColorForPoint(ul); //Ecke unten links
-		checkColor(col3);
-		
-		
-		corner = 4;
-		or.setLocation((int)(getX() + (width - 1)), (int)getY());
-		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
-		checkColor(col4);
 	}
 		
 	public void drawObjects(Graphics g){
@@ -229,6 +237,9 @@ public class Enemy extends Sprite {
 	public int getType() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	public void stop(){
+		stop = true;
 	}
 	
 	

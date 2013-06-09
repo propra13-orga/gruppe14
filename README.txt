@@ -12,17 +12,14 @@ FunktionalitÃ¤t zurzeit:
 - Coins
 - Anzeige der Anzahl der Coins, hier können auch einfach weitere Informationen eingearbeitet werden
 - Shop, Betreten durch Drücken von ENTER
+- Bekämpfen mit x - entweder im Kreis oder in die Richtung, in die man läuft
+- Zaubern mit c - entweder im Kreis oder in die Richtung, in die man läuft, danach kann sich der Spieler, der getroffen wird nicht mehr bewegen
+- verschiedene TileSets für die Level
+- Items
 
 TODO:
 
-
 - schönere Bilder
 - Ausarbeitung von Leveln
-- Items
-- Shops
-- NPC
 - Räume/Level
-- Checkpoints (einfach am Anfang eines Levels?)
-- Waffen
-- Zauber
-- Schadenssystem
+- Checkpoints, bzw. StartPositionen bei Tod

@@ -61,6 +61,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean enterShop = false;
 	boolean enterNPC = false;
 	boolean talkwithnpc = false;
+	boolean magic = false; //Will Spieler zaubern?
 
 	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet; Ersetzt boolean gamewon, lost
 	int pressCount;
@@ -428,10 +429,47 @@ private void doLogic(){
 					}
 					
 				}
-				
-				
 			}
 					
+		}
+		if(magic){
+			if(player.getMana() > 0){
+				player.setMana(player.getMana() -1);
+				Object angriff;
+				Sprite opfer;
+				angriff = player.getAttackObject();
+				if(angriff != null){
+					actors.add(player.getEffect());	//Effekt wird hinzugefügt zu Actors
+					attacks.add(angriff);	
+					for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
+						angriff = it1.next();
+						if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
+							Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
+							for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+								opfer = it2.next();
+								if(opfer instanceof Enemy){
+									if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
+										((Enemy)opfer).reduceHealth(player.getDamage()); 
+									}
+								}
+								
+							}
+						}else if (angriff instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
+							Line2D.Double line = (Line2D.Double) angriff;
+							for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+								opfer = it2.next();
+								if(opfer instanceof Enemy){
+									if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
+										((Enemy)opfer).stop();
+									}
+								}
+								
+							}
+						}
+						
+					}
+				}
+			}
 		}
 		
 		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
@@ -570,6 +608,9 @@ private void doLogic(){
 		if(e.getKeyCode() == KeyEvent.VK_X){
 			attack = true;
 		}
+		if (e.getKeyCode() == KeyEvent.VK_C){
+			magic = true;
+		}
 	}
 	//Taste wieder losgelassen?
 	public void keyReleased(KeyEvent e){
@@ -588,6 +629,9 @@ private void doLogic(){
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
 			attack = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_C){
+			magic = false;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			enterNPC = false;
