@@ -17,6 +17,7 @@ public class Player extends Sprite {
 	private int coins;
 	private int lifes;
 	private int mana;
+	private boolean hasArmour; //trägt Rüstung?
 	
 	private int damage;			//Schaden, den der Spieler verursacht
 	private int range;			//Reichweite seines Angriffes vertikal und horizontal
@@ -45,6 +46,7 @@ public class Player extends Sprite {
 		range = 40;
 		diagRange = (int)(range/1.4);
 		radialRange = (int)(range + height);
+		hasArmour = false;
 	}
 	
 	@Override
@@ -188,7 +190,7 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
 			//Tod durch Feuer!
-			parent.lostLife();		
+			lostHealth(20);	
 		}
 		
 		if(col.equals(Color.blue)){
@@ -215,10 +217,10 @@ public class Player extends Sprite {
 			if(s instanceof Enemy){
 				System.out.println("Ausgabe von Player: Oh nein, er hat mein Ohr abgebissen!");
 				//Nur zur Überprüfung, für den Meilenstein ist Verlust von Lebenspunkt vorgesehen!
-				parent.lostLife();
+				lostHealth(50);
 				return true;
 			}
-			if(s instanceof Item){
+			if(s instanceof Item){ //1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 				int type = s.getType();
 				
 				switch(type){
@@ -244,8 +246,21 @@ public class Player extends Sprite {
 						parent.shop();
 					}
 				break;
+				case 4:
+					System.out.println("Bravo, du hast eine Rüstung gesammelt");
+					hasArmour = true;
+				break;
+				case 5:
+					System.out.println("Bravo, du hast eine Waffe eingesammelt");
+					damage = damage + 10;
+				break;
+				case 6:
+					if(parent.enterNPC == true){
+						parent.talkwithnpc = true;
+					}
 					
-				}
+				break;
+				}	
 
 			}
 		}
@@ -300,57 +315,57 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 		Effect effect;
 		if(dx > 0){
 			if(dy > 0){			//Rechts unten
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);	//Diese Aufrufe machen Probleme, er findet die Dateien nicht
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);	//Diese Aufrufe machen Probleme, er findet die Dateien nicht
 				effect.setLoop(0, 4);
 				effect.x = ur.getX();
 				effect.y = ur.getY();
 				return effect;
 			}else if(dy < 0){	//Rechts oben
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
 				effect.setLoop(1, 9);
 				effect.x = or.getX();
 				effect.y = or.getY() - 28;
 				return effect;
 			}else{				//Nur Rechts
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.tiff", 5, 1), 40, 5, 100, this.parent);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
 				effect.x = or.getX();
 				effect.y = ((ur.getY() + or.getY())/2);
 				return effect;
 			}
 		}else if(dx < 0){
 			if(dy > 0){			//Links unten
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
 				effect.setLoop(1, 9);
 				effect.x = ul.getX() - 28;
 				effect.y = ul.getY();
 				return effect;
 			}else if(dy < 0){	//Links oben
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.tiff", 10, 1), 28, 28, 100, this.parent);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
 				effect.setLoop(0, 4);
 				effect.x = ol.getX() - 28;
 				effect.y = ol.getY() - 28;
 				return effect;
 			}else{				//Nur Links
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.tiff", 5, 1), 40, 5, 100, this.parent);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
 				effect.x = ol.getX() - 40;
 				effect.y = ((ul.getY() + ol.getY())/2);
 				return effect;
 			}
 		}else{
 			if(dy > 0){			//Nur Unten
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.tiff", 5, 1), 5, 40, 100, this.parent);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
 				effect.x = (ur.getX() + ul.getX())/2;
-				effect.y = ul.getY();
+				effect.y = ul.getY() + 20;
 				return effect;
 			}else if(dy < 0){	//Nur Oben
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.tiff", 5, 1), 5, 40, 100, this.parent);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
 				effect.x = (or.getX() + ol.getX())/2;
-				effect.y = ol.getY() + 40;
+				effect.y = ol.getY() - 40;
 				return effect;
 			}else{				//Stillstand
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRot.tiff", 5, 1), 60, 60, 100, this.parent);
-				effect.x = ol.getX() - (60-width);
-				effect.y = ol.getY() -(60-height);
+				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRot.png", 5, 1), 60, 60, 100, this.parent);
+				effect.x = ol.getX()- (40-width); //angepasst, damit Kreis direkt über Spieler!
+				effect.y = ol.getY() + (25-height); 
 				return effect;
 			}
 		}
@@ -375,6 +390,13 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 		return health;
 	}
 	
+	public void lostHealth(int h){
+		health = health - h;
+		if (health <= 0){
+			lostLife();
+		}
+		System.out.println("Lebenspunkte verloren"); //TODO: Timer, damit man nicht sofort stirbt!
+	}
 	public void setLifes(int l){
 		this.lifes = l;
 	}
@@ -420,6 +442,18 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 		// TODO Auto-generated method stub
 		return 0;
 
+	}
+	
+	public void lostLife(){
+		System.out.println("Du hast ein Leben verloren, streng dich dieses mal mehr an!");
+		lifes--;
+		x = parent.startposx;
+		y = parent.startposy;
+		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen!
+		health = 100;
+		if(lifes == 0){
+			parent.lostGame();
+		}
 	}
 }
 

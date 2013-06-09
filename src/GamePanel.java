@@ -36,6 +36,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Item coin;
 	Item mana;
 	Item shop;
+	Item npc;
 	MapDisplay map;
 	
 
@@ -54,6 +55,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean started = false;
 	boolean shopmode = false; //Ist Spieler im Shop oder nicht?
 	boolean enterShop = false;
+	boolean enterNPC = false;
+	boolean talkwithnpc = false;
 
 	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet; Ersetzt boolean gamewon, lost
 	int pressCount;
@@ -68,7 +71,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 
 	public static void main(String[] args){
-		new GamePanel(790,600); //Sonst grauer Streifen an den Rändern rechts und unten
+		new GamePanel(790,610); //Sonst grauer Streifen an den Rändern rechts und unten
 	}
 	
 	public GamePanel(int w, int h){
@@ -114,12 +117,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
 		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
+		npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
 
 		actors.add(enemy); 
 		actors.add(enemy2); 
 		actors.add(coin); 
 		actors.add(mana);
 		actors.add(shop);
+		actors.add(npc);
 		actors.add(player); 
 		
 		startposx = 50;
@@ -268,8 +273,18 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			}
 			
 		});
-		shop2.add(BorderLayout.CENTER, b1);
-		shop2.add(BorderLayout.SOUTH, b2);
+		
+		JButton b3 = new JButton("Ich will nix - danke");
+		b3.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){
+				shopmode = false;
+				enterShop = false;
+			}
+		});
+		
+		shop2.add(BorderLayout.NORTH, b1);
+		shop2.add(BorderLayout.CENTER, b2);
+		shop2.add(BorderLayout.SOUTH, b3);
 		shop2.pack();
 		shop2.setVisible(true);
 		
@@ -328,7 +343,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		g.drawString("Du hast " + player.getLifes() + " Leben", 20, 610);
 		g.drawString(", " + player.getCoins() + " Münze(n)", 115, 610);
 		g.drawString(" und " + player.getMana() + " Einheit(en) Mana", 220, 610);
-		
+		g.drawString("Lebenspunkte: " + player.getHealth() + "/100", 370, 610);
+		g.drawString("Story: ", 20, 620);
+		if(talkwithnpc == true){
+			g.drawString("Es war einmal in einem weit entfertenten Schloss...blablabla!", 60, 620);
+		}
 			
 	}
 	
@@ -339,7 +358,7 @@ private void doLogic(){
 			Sprite opfer;
 			angriff = player.getAttackObject();
 			if(angriff != null){
-				//actors.add(player.getEffect());		//Hier die Kommentierung wegnehmen, und der Fehler tritt auf
+				actors.add(player.getEffect());		//Hier die Kommentierung wegnehmen, und der Fehler tritt auf
 				attacks.add(angriff);	
 				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 					angriff = it1.next();
@@ -433,16 +452,7 @@ private void doLogic(){
 		paintMenu();
 	}
 
-	public void lostLife(){
-		System.out.println("Du hast ein Leben verloren, streng dich dieses mal mehr an!");
-		player.setLifes(player.getLifes()-1);
-		player.x = startposx;
-		player.y = startposy;
-		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen!
-		if(player.getLifes() == 0){
-			lostGame();
-		}
-	}
+	
     public boolean isStarted(){
     	return started;
     }
@@ -462,6 +472,7 @@ private void doLogic(){
 	public MapDisplay getMap(){
 		return map; //gibt die Karte zurück
 	}
+	
 	
 	private void checkKeys(){
 		
@@ -509,6 +520,7 @@ private void doLogic(){
 		}
 		if (e.getKeyCode() == KeyEvent.VK_ENTER){
 			enterShop = true;
+			enterNPC = true;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
 			attack = true;
@@ -531,6 +543,10 @@ private void doLogic(){
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
 			attack = false;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_ENTER){
+			enterNPC = false;
+			enterShop = false;
 		}
 		
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B

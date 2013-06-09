@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 
 //implementiert die Interfaces moveable und drawable
 public abstract class Sprite extends Rectangle2D.Double implements Drawable, Movable{
+	
 	private static final long serialVersionUID = 1L;
 	long delay;
 	long animation = 0;
