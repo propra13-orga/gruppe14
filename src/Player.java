@@ -32,6 +32,7 @@ public class Player extends Sprite {
 	private boolean canLoseHealth;
 	private Timer attackTimer;
 	private Timer magicTimer;
+	private Timer healthTimer;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -48,6 +49,7 @@ public class Player extends Sprite {
 		attacking = false;
 		attackTimer = new Timer();
 		magicTimer = new Timer();
+		healthTimer = new Timer();
 		canAttack = true;
 		summoning = false;
 		canSummon = true;
@@ -201,7 +203,12 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
 			if(canLoseHealth){
-				reduceHealth(10);
+				if(hasArmour){
+					reduceHealth(10);
+				}else{
+					reduceHealth(20);
+				
+				}
 			}
 		}
 		
@@ -267,6 +274,7 @@ public class Player extends Sprite {
 				case 5:
 					System.out.println("Bravo, du hast eine Waffe eingesammelt");
 					damage = damage + 10;
+					range = range + 10;
 					hasWeapon = true;
 					s.remove = true;
 				break;
@@ -552,7 +560,6 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		summoning = false;
 	}
 	
-	
 	public boolean isAttacking(){
 		return attacking;
 	}
@@ -571,6 +578,10 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	}
 	
 	public void reduceHealth(int schaden){
+		
+		setAbleToLoseHealth(false);
+		attackTimer.schedule(new HealthTask(this), 1000); //Spieler kann erst nach gewisser Zeit wieder verwundet werden
+		
 		if(hasArmour){
 			health = health - (schaden/2); //Rüstung halbiert Schaden
 			

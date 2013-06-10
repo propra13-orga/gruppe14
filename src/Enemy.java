@@ -17,7 +17,6 @@ public class Enemy extends Sprite {
 	private double diffX;
 	private double diffY;
 	private int health;
-	private boolean canLoseHealth;
 	boolean stop; //Darf sich Enemy bewegen? Wird durch Zauber verursacht
 	
 	boolean locked = false; //noch kein Ziel erfasst
@@ -229,10 +228,7 @@ public class Enemy extends Sprite {
 			parent.player.setCoins(parent.player.getCoins() + 20); //Spieler kriegt 20 Münzen für das Killen eines Gegner
 		}
 	}
-	public void setAbleToLoseHealth(boolean b){
-		canLoseHealth = b;
-	}
-
+	
 	@Override
 	public int getType() {
 		// TODO Auto-generated method stub
