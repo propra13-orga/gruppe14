@@ -25,8 +25,8 @@ public class Player extends Sprite {
 	private int diagRange;		//Diagonale Reichweite (range/Wurzel 2 (ca. 1.4))
 	private int radialRange;	//Reichweite für den Rundumangriff (range + Hälfte der Spielerhöhe))
 	private int health;
-	private boolean attacking;
-	private boolean summoning;
+	private boolean attacking;	//Angriff
+	private boolean summoning;	//Magie
 	private boolean canSummon;
 	private boolean canAttack;
 	private boolean canLoseHealth;
