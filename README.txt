@@ -13,13 +13,15 @@ FunktionalitÃ¤t zurzeit:
 - Anzeige der Anzahl der Coins, hier können auch einfach weitere Informationen eingearbeitet werden
 - Shop, Betreten durch Drücken von ENTER
 - Bekämpfen mit x - entweder im Kreis oder in die Richtung, in die man läuft
-- Zaubern mit c - entweder im Kreis oder in die Richtung, in die man läuft, danach kann sich der Spieler, der getroffen wird nicht mehr bewegen
+- Zaubern mit c - entweder im Kreis oder in die Richtung, in die man läuft, danach kann sich der Gegner, der getroffen wird nicht mehr bewegen
 - verschiedene TileSets für die Level
 - Items
+- Checkpoints
+- NPC, reden mit ENTER
 
 TODO:
 
 - schönere Bilder
-- Ausarbeitung von Leveln
+- Ausarbeitung von Leveln - man darf nach dem Betreten der Tür nicht direkt in Feuer laufen
 - Räume/Level
-- Checkpoints, bzw. StartPositionen bei Tod
+- BossGegner mit besonders viel Schlagkraft oder so im letzten Raum eines Levels, lässt sich aber auch über Map einlesen

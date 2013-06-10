@@ -580,7 +580,7 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public void reduceHealth(int schaden){
 		
 		setAbleToLoseHealth(false);
-		attackTimer.schedule(new HealthTask(this), 1000); //Spieler kann erst nach gewisser Zeit wieder verwundet werden
+		healthTimer.schedule(new HealthTask(this), 1000); //Spieler kann erst nach gewisser Zeit wieder verwundet werden
 		
 		if(hasArmour){
 			health = health - (schaden/2); //Rüstung halbiert Schaden

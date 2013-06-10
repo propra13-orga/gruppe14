@@ -185,6 +185,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		else if((level == 3) && (room == 1)){
 			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			//TODO: Hier Checkpoint berechnen, sobald Karten für Level 3 feststehen
 		}
 		else if((level == 3) && (room == 2)){
 			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
