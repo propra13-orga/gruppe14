@@ -26,12 +26,16 @@ public class Player extends Sprite {
 	private int radialRange;	//Reichweite für den Rundumangriff (range + Hälfte der Spielerhöhe))
 	private int health;
 	private boolean attacking;
+	private boolean summoning;
+	private boolean canSummon;
 	private boolean canAttack;
 	private boolean canLoseHealth;
-	private Timer timer;
+	private Timer attackTimer;
+	private Timer magicTimer;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
+		loop_to = (pics.length/ 2)-1;
 		ol = new Point();
 		or = new Point();
 		ul = new Point();
@@ -42,8 +46,11 @@ public class Player extends Sprite {
 		mana = 0;
 		health = 100;
 		attacking = false;
-		timer = new Timer();
+		attackTimer = new Timer();
+		magicTimer = new Timer();
 		canAttack = true;
+		summoning = false;
+		canSummon = true;
 		damage = 50;
 		range = 40;
 		diagRange = (int)(range/1.4);
@@ -55,6 +62,7 @@ public class Player extends Sprite {
 	@Override
 	public void doLogic(long delta)	{
 		super.doLogic(delta);
+		
 	}
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
@@ -252,6 +260,8 @@ public class Player extends Sprite {
 				case 4:
 					System.out.println("Bravo, du hast eine Rüstung gesammelt");
 					hasArmour = true;
+					loop_from = pics.length/2;
+					loop_to = pics.length - 1;
 					s.remove = true;
 				break;
 				case 5:
@@ -293,7 +303,7 @@ public class Player extends Sprite {
 		}
 		setAbleToAttack(false);
 		
-		timer.schedule(new Task(this), 2000);
+		attackTimer.schedule(new AttackTask(this), 2000);
 		
 		
 		//Hier kann je nach Ausrüstung des Spielers eine andere Sache zurückgegeben werden
@@ -323,7 +333,49 @@ public class Player extends Sprite {
 			}
 		}
 	}
-public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
+	public Object getMagicObject(){	//Liefert ein Magic-Objekt (line oder rectangle), welches mit den actors aus dem Gamepanel kollidieren kann
+		
+		
+		//Hier wird der Timer gesetzt:
+		
+		if(!canSummon || mana <= 0){
+			return null;
+		}
+		setAbleToSummon(false);
+		
+		magicTimer.schedule(new MagicTask(this), 1000);
+		
+		mana--;
+		
+		
+		//Hier kann je nach Ausrüstung des Spielers eine andere Sache zurückgegeben werden
+		if(dx > 0){
+			if(dy > 0){
+				return new Line2D.Double(ur.getX(), ur.getY(), ur.getX() + diagRange, ur.getY() + diagRange);
+			}else if(dy < 0){
+				return new Line2D.Double(or.getX(), or.getY(), or.getX() + diagRange, or.getY() - diagRange);
+			}else{
+				return new Line2D.Double(or.getX(), ((ur.getY() + or.getY())/2), or.getX() + range, ((ur.getY() + or.getY())/2));
+			}
+		}else if(dx < 0){
+			if(dy > 0){
+				return new Line2D.Double(ul.getX(), ul.getY(), ul.getX() - diagRange, ul.getY() + diagRange);
+			}else if(dy < 0){
+				return new Line2D.Double(ol.getX(), ol.getY(), ol.getX() - diagRange, ol.getY() - diagRange);
+			}else{
+				return new Line2D.Double(ol.getX(), ((ul.getY() + ol.getY())/2), ol.getX() - range, ((ul.getY() + ol.getY())/2));
+			}
+		}else{
+			if(dy > 0){
+				return new Line2D.Double(((ur.getX() + ul.getX())/2), ul.getY(), ((ur.getX() + ul.getX())/2), ul.getY() + range);
+			}else if(dy < 0){
+				return new Line2D.Double(((or.getX() + ol.getX())/2), ol.getY(), ((or.getX() + ol.getX())/2), ol.getY() - range);
+			}else{
+				return new Ellipse2D.Double((or.getX() + ol.getX())/2, (ur.getY() + or.getY())/2, radialRange, radialRange);
+			}
+		}
+	}
+public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
 		
 		
 		
@@ -331,61 +383,160 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 		Effect effect;
 		if(dx > 0){
 			if(dy > 0){			//Rechts unten
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);	//Diese Aufrufe machen Probleme, er findet die Dateien nicht
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
+				}
 				effect.setLoop(0, 4);
 				effect.x = ur.getX();
 				effect.y = ur.getY();
 				return effect;
 			}else if(dy < 0){	//Rechts oben
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}
 				effect.setLoop(5, 9);
 				effect.x = or.getX();
 				effect.y = or.getY() - 28;
 				return effect;
 			}else{				//Nur Rechts
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRotExtrem.png", 5, 1), 40, 5, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
+				}
 				effect.x = or.getX();
 				effect.y = ((ur.getY() + or.getY())/2);
 				return effect;
 			}
 		}else if(dx < 0){
 			if(dy > 0){			//Links unten
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
+				}
 				effect.setLoop(5, 9);
 				effect.x = ul.getX() - 28;
 				effect.y = ul.getY();
 				return effect;
 			}else if(dy < 0){	//Links oben
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
+				}
 				effect.setLoop(0, 4);
 				effect.x = ol.getX() - 28;
 				effect.y = ol.getY() - 28;
 				return effect;
 			}else{				//Nur Links
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRotExtrem.png", 5, 1), 40, 5, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
+				}
 				effect.x = ol.getX() - 40;
 				effect.y = ((ul.getY() + ol.getY())/2);
 				return effect;
 			}
 		}else{
 			if(dy > 0){			//Nur Unten
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRotExtrem.png", 5, 1), 5, 40, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
+				}
 				effect.x = (ur.getX() + ul.getX())/2;
 				effect.y = ul.getY() + 20;
 				return effect;
 			}else if(dy < 0){	//Nur Oben
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRotExtrem.png", 5, 1), 5, 40, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
+				}
 				effect.x = (or.getX() + ol.getX())/2;
 				effect.y = ol.getY() - 40;
 				return effect;
 			}else{				//Stillstand
-				effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRot.png", 5, 1), 60, 60, 100, this.parent);
+				if(hasWeapon){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRotExtrem.png", 5, 1), 60, 60, 100, this.parent);
+				}else{
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRot.png", 5, 1), 60, 60, 100, this.parent);
+				}
 				effect.x = ol.getX()- (40-width); //angepasst, damit Kreis direkt über Spieler!
 				effect.y = ol.getY() + (25-height); 
 				return effect;
 			}
 		}
 	}
+public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
+	
+	
+	
+	//Hier kann je nach Ausrüstung des Spielers eine andere Sache zurückgegeben werden
+	Effect effect;
+	if(dx > 0){
+		if(dy > 0){			//Rechts unten
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlau.png", 10, 1), 28, 28, 100, this.parent);	//Diese Aufrufe machen Probleme, er findet die Dateien nicht
+			effect.setLoop(0, 4);
+			effect.x = ur.getX();
+			effect.y = ur.getY();
+			return effect;
+		}else if(dy < 0){	//Rechts oben
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlau.png", 10, 1), 28, 28, 100, this.parent);
+			effect.setLoop(5, 9);
+			effect.x = or.getX();
+			effect.y = or.getY() - 28;
+			return effect;
+		}else{				//Nur Rechts
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalBlau.png", 5, 1), 40, 5, 100, this.parent);
+			effect.x = or.getX();
+			effect.y = ((ur.getY() + or.getY())/2);
+			return effect;
+		}
+	}else if(dx < 0){
+		if(dy > 0){			//Links unten
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlau.png", 10, 1), 28, 28, 100, this.parent);
+			effect.setLoop(5, 9);
+			effect.x = ul.getX() - 28;
+			effect.y = ul.getY();
+			return effect;
+		}else if(dy < 0){	//Links oben
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlau.png", 10, 1), 28, 28, 100, this.parent);
+			effect.setLoop(0, 4);
+			effect.x = ol.getX() - 28;
+			effect.y = ol.getY() - 28;
+			return effect;
+		}else{				//Nur Links
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalBlau.png", 5, 1), 40, 5, 100, this.parent);
+			effect.x = ol.getX() - 40;
+			effect.y = ((ul.getY() + ol.getY())/2);
+			return effect;
+		}
+	}else{
+		if(dy > 0){			//Nur Unten
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalBlau.png", 5, 1), 5, 40, 100, this.parent);
+			effect.x = (ur.getX() + ul.getX())/2;
+			effect.y = ul.getY() + 20;
+			return effect;
+		}else if(dy < 0){	//Nur Oben
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalBlau.png", 5, 1), 5, 40, 100, this.parent);
+			effect.x = (or.getX() + ol.getX())/2;
+			effect.y = ol.getY() - 40;
+			return effect;
+		}else{				//Stillstand
+			effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialBlau.png", 5, 1), 60, 60, 100, this.parent);
+			effect.x = ol.getX()- (40-width); //angepasst, damit Kreis direkt über Spieler!
+			effect.y = ol.getY() + (25-height); 
+			return effect;
+		}
+	}
+}
 	
 	public void setAttacking(){
 		attacking = true;
@@ -393,6 +544,14 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	public void resetAttacking(){
 		attacking = false;
 	}
+	
+	public void setSummoning(){
+		summoning = true;
+	}
+	public void resetSummoning(){
+		summoning = false;
+	}
+	
 	
 	public boolean isAttacking(){
 		return attacking;
@@ -452,6 +611,9 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	}
 	public void setAbleToAttack(boolean value){
 		canAttack = value;
+	}
+	public void setAbleToSummon(boolean value){
+		canSummon = value;
 	}
 	public int getDamage(){
 		return damage;

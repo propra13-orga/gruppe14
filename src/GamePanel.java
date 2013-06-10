@@ -119,7 +119,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		////1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 		lib = SpriteLib.getInstance();
-		player = new Player(lib.getSprite("resources/pics/player.gif", 4, 1), 50, 50, 100, this);
+		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 100, this);
 		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 100, this);
 		coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
@@ -400,7 +400,7 @@ private void doLogic(){
 			Sprite opfer;
 			angriff = player.getAttackObject();
 			if(angriff != null){
-				actors.add(player.getEffect());	//Effekt wird hinzugefügt zu Actors
+				actors.add(player.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
 				attacks.add(angriff);	
 				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 					angriff = it1.next();
@@ -430,46 +430,46 @@ private void doLogic(){
 					
 				}
 			}
+			attacks.clear();
 					
 		}
 		if(magic){
-			if(player.getMana() > 0){
-				player.setMana(player.getMana() -1);
-				Object angriff;
-				Sprite opfer;
-				angriff = player.getAttackObject();
-				if(angriff != null){
-					actors.add(player.getEffect());	//Effekt wird hinzugefügt zu Actors
-					attacks.add(angriff);	
-					for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
-						angriff = it1.next();
-						if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
-							Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
-							for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
-								opfer = it2.next();
-								if(opfer instanceof Enemy){
-									if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
-										((Enemy)opfer).reduceHealth(player.getDamage()); 
-									}
+			Object magic;
+			Sprite opfer;
+			magic = player.getMagicObject();
+			if(magic != null){
+				actors.add(player.getMagicEffect());	//Effekt wird hinzugefügt zu Actors
+				attacks.add(magic);	
+				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
+					magic = it1.next();
+					if((magic instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
+						Ellipse2D.Double circle = (Ellipse2D.Double) magic;
+						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+							opfer = it2.next();
+							if(opfer instanceof Enemy){
+								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
+									((Enemy)opfer).reduceHealth(player.getDamage()); 
 								}
-								
 							}
-						}else if (angriff instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
-							Line2D.Double line = (Line2D.Double) angriff;
-							for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
-								opfer = it2.next();
-								if(opfer instanceof Enemy){
-									if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
-										((Enemy)opfer).stop();
-									}
-								}
-								
-							}
+							
 						}
-						
+					}else if (magic instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
+						Line2D.Double line = (Line2D.Double) magic;
+						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+							opfer = it2.next();
+							if(opfer instanceof Enemy){
+								if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
+									((Enemy)opfer).stop();
+								}
+							}
+							
+						}
 					}
+					
 				}
 			}
+			
+			attacks.clear();
 		}
 		
 		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
@@ -583,6 +583,13 @@ private void doLogic(){
 		if(!attack){
 			player.resetAttacking();
 		}
+		if(magic){
+			player.setSummoning();
+		}
+		if(!magic){
+			player.resetSummoning();
+		}
+		
 	}
 	
 	

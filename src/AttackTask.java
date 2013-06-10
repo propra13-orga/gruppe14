@@ -1,10 +1,10 @@
 import java.util.TimerTask;
 
 //Klasse zur Verzögerung des Angriffes des Spielers (erweitert TimerTask)
-public class Task extends TimerTask {
+public class AttackTask extends TimerTask {
 	Player player;
 	Enemy enemy;
-	public Task(Player p){
+	public AttackTask(Player p){
 		super();
 		player = p;
 	}
