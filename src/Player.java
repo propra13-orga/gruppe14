@@ -649,13 +649,19 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public void lostLife(){
 		System.out.println("Du hast ein Leben verloren, streng dich naechstes mal mehr an!");
 		lifes--;
-		x = parent.startposx;
-		y = parent.startposy;
-		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen!
-		health = 100;
 		if(lifes == 0){
 			parent.lostGame();
 		}
+		parent.doInitializations(parent.level, 1); //Laden vom 1. Raum im jeweiligen Level
+		x = parent.checkpointx;	//Spieler im 1. Raum an die Startposition setzen
+		y = parent.checkpointy;
+		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen! Sprites müssen auch neu aus Karte ausgelesen werden
+		health = 100;
+		//TODO: hier Waffen und Rüstung bei Lebensverlust entfernen?
+		hasArmour = false;
+		hasWeapon = false;
+		//auch Münzen etc. auf Anfangswert setzen?
+		
 	}
 }
 

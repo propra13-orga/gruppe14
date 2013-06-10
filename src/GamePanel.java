@@ -68,8 +68,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	int speed = 80;
 	int x = 0;
 	int y = 0;
-	int startposx;
-	int startposy;
+	int checkpointx;
+	int checkpointy;
 	int room; //zeigt an im wievielten Raum man sich im Level befindet, möglich sind 1, 2 oder 3
 	int level; //zeigt an im wievielten Lebel man ist, möglich sind 1, 2 oder 3
 	
@@ -142,8 +142,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(schild);
 		actors.add(healthpack);
 		
-		startposx = 50;
-		startposy = 50;
+		checkpointx = 50;
+		checkpointy = 50;
 		
 		player.setCoins(100);
 		
@@ -162,7 +162,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		room = r;
 		actors.clear(); //Actors-Liste wird gelöscht und dann entsprechend der Information in TileMap_n.txt neu erstellt
 		actors.add(player); //Nur der Player bleibt bestehen
+		if((level ==1) && (room == 1)){
+			map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+		}
 		if((level == 1) && (room == 2)){
+			
 			map = new MapDisplay("resources/level/TileMap_1_2.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this); 
 		}
 		else if((level == 1) && (room == 3)){
@@ -170,6 +174,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		else if((level == 2) && (room == 1)){
 			map = new MapDisplay("resources/level/TileMap_2_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			checkpointx = 90;
+			checkpointy = 400;
 		}
 		else if((level == 2) && (room == 2)){
 			map = new MapDisplay("resources/level/TileMap_2_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
