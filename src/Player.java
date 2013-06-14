@@ -232,7 +232,8 @@ public class Player extends Sprite {
 		if(this.intersects(s)){
 			if(s instanceof Enemy){
 				if(canLoseHealth){
-					reduceHealth(10);
+					reduceHealth(((Enemy)s).getDamage());
+					System.out.println(((Enemy)s).getDamage());
 				}
 
 				return true;

@@ -17,11 +17,12 @@ public class Enemy extends Sprite {
 	private double diffX;
 	private double diffY;
 	private int health;
+	private int damage;
 	boolean stop; //Darf sich Enemy bewegen? Wird durch Zauber verursacht
 	
 	boolean locked = false; //noch kein Ziel erfasst
 	
-	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
+	public Enemy(BufferedImage[] i, double x, double y, int damage, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 		ol = new Point();
 		or = new Point();
@@ -30,6 +31,7 @@ public class Enemy extends Sprite {
 		health = 200;
 		speed = 50;
 		stop = false;
+		this.damage = damage;
 	}
 	
 	@Override
@@ -238,6 +240,12 @@ public class Enemy extends Sprite {
 		stop = true;
 	}
 	
+	public void setDamage(int d){
+		damage = d;
+	}
 	
+	public int getDamage(){
+		return damage;
+	}
 }
 

@@ -33,6 +33,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Player player;
 	Enemy enemy;
 	Enemy enemy2;
+	Enemy boss;
 	Item coin;
 	Item mana;
 	Item shop;
@@ -77,7 +78,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 
 	public static void main(String[] args){
-		new GamePanel(790,610); //Sonst grauer Streifen an den Rändern rechts und unten
+		new GamePanel(790,650); //Sonst grauer Streifen an den Rändern rechts und unten
 	}
 	
 	public GamePanel(int w, int h){
@@ -120,8 +121,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		////1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 		lib = SpriteLib.getInstance();
 		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
-		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 100, this);
-		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 100, this);
+		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);
+		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 10, 100, this);
 		coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
 		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
@@ -138,9 +139,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(shop);
 		actors.add(npc);
 		actors.add(schwert);
-		actors.add(player);
 		actors.add(schild);
 		actors.add(healthpack);
+		actors.add(player);
+		
 		
 		checkpointx = 50;
 		checkpointy = 50;
@@ -161,16 +163,49 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		level = l;
 		room = r;
 		actors.clear(); //Actors-Liste wird gelöscht und dann entsprechend der Information in TileMap_n.txt neu erstellt
-		actors.add(player); //Nur der Player bleibt bestehen
+		 //Nur der Player bleibt bestehen
 		if((level ==1) && (room == 1)){
 			map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+			player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
+			enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);
+			enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 10, 100, this);
+			coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
+			mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
+			shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
+			npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
+			schild = new Item(lib.getSprite("resources/pics/armour.gif", 1, 1), 100, 200, 4, 100, this);
+			schwert = new Item(lib.getSprite("resources/pics/weapon.gif", 1, 1), 100, 150, 5, 100, this);
+			healthpack = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 500, 100, 7, 100, this);
+			
+			actors.add(enemy); 
+			actors.add(enemy2); 
+			actors.add(coin); 
+			actors.add(mana);
+			actors.add(shop);
+			actors.add(npc);
+			actors.add(schwert);
+			actors.add(schild);
+			actors.add(healthpack);
 		}
 		if((level == 1) && (room == 2)){
 			
 			map = new MapDisplay("resources/level/TileMap_1_2.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this); 
+			coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 600, 400, 1, 100, this);
+			shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 380, 480, 3, 100, this);
+			enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 50, 450, 10, 100, this);
+			enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 490, 100, 10, 100, this);
+			
+			actors.add(enemy); 
+			actors.add(enemy2); 
+			actors.add(coin); 
+			actors.add(shop);
+
 		}
 		else if((level == 1) && (room == 3)){
 			map = new MapDisplay("resources/level/TileMap_1_3.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+			boss = new Enemy(lib.getSprite("resources/pics/boss.gif", 4, 1), 80, 460, 20, 100, this);
+			boss.reduceHealth(-100); //health = 200 -(-100) = 300
+			actors.add(boss);
 		}
 		else if((level == 2) && (room == 1)){
 			map = new MapDisplay("resources/level/TileMap_2_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
@@ -182,17 +217,20 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		else if((level == 2) && (room == 3)){
 			map = new MapDisplay("resources/level/TileMap_2_3.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			boss = new Enemy(lib.getSprite("resources/pics/boss.gif", 4, 1), 120, 80, 20, 100, this);
+			actors.add(boss);
 		}
 		else if((level == 3) && (room == 1)){
-			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
 			//TODO: Hier Checkpoint berechnen, sobald Karten für Level 3 feststehen
 		}
 		else if((level == 3) && (room == 2)){
-			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
 		}
 		else if((level == 3) && (room == 3)){
-			map = new MapDisplay("resources/level/TileMap_3_3.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			map = new MapDisplay("resources/level/TileMap_3_3.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
 		}
+		actors.add(player);
 		
 	}
 
