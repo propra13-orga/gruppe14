@@ -17,6 +17,10 @@ public class Player extends Sprite {
 	private int coins;
 	private int lifes;
 	private int mana;
+	private int oldcoins;
+	private int oldmana;
+	private boolean oldHasArmour;
+	private boolean oldHasWeapon;
 	private boolean hasArmour; //trägt Rüstung?
 	private boolean hasWeapon;
 	
@@ -233,7 +237,6 @@ public class Player extends Sprite {
 			if(s instanceof Enemy){
 				if(canLoseHealth){
 					reduceHealth(((Enemy)s).getDamage());
-					System.out.println(((Enemy)s).getDamage());
 				}
 
 				return true;
@@ -612,8 +615,16 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		coins = c;
 	}
 	
+	public void setOldCoins(int c){
+		oldcoins = c;
+	}
+	
 	public void setMana(int m){
 		mana = m;
+	}
+	
+	public void setOldMana(int m){
+		oldmana = m;
 	}
 	
 	public int getMana(){
@@ -640,6 +651,14 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public int getRange(){
 		return range;
 	}
+	
+	public void setOldWeapon(boolean b){
+		oldHasWeapon = b;
+	}
+	
+	public void setOldArmour(boolean b){
+		oldHasArmour = b;
+	}
 
 	@Override
 	public int getType() {
@@ -655,6 +674,12 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 			parent.lostGame();
 		}
 		parent.doInitializations(parent.level, 1); //Laden vom 1. Raum im jeweiligen Level
+		//Bei Lebensverlust Werte auf alte Werte vom Checkpoint setzen
+		coins = oldcoins;
+		mana = oldmana;
+		hasArmour = oldHasArmour;
+		hasWeapon = oldHasWeapon;
+		
 		x = parent.checkpointx;	//Spieler im 1. Raum an die Startposition setzen
 		y = parent.checkpointy;
 		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen! Sprites müssen auch neu aus Karte ausgelesen werden

@@ -154,6 +154,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		checkpointx = 50;
 		checkpointy = 50;
 		
+		player.setOldCoins(100);
+		player.setOldMana(0);
+		player.setOldWeapon(false);
+		player.setOldArmour(false);
 		player.setCoins(100);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
@@ -218,6 +222,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			map = new MapDisplay("resources/level/TileMap_2_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
 			checkpointx = 90;
 			checkpointy = 400;
+			//Player-Werte sichern für Checkpoint
+			player.setOldCoins(player.getCoins());
+			player.setOldMana(player.getMana());
+			player.setOldWeapon(player.hasWeapon());
+			player.setOldArmour(player.hasArmour());
 		}
 		else if((level == 2) && (room == 2)){
 			map = new MapDisplay("resources/level/TileMap_2_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
@@ -230,6 +239,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		else if((level == 3) && (room == 1)){
 			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
 			//TODO: Hier Checkpoint berechnen, sobald Karten für Level 3 feststehen
+			player.setOldCoins(player.getCoins());
+			player.setOldMana(player.getMana());
+			player.setOldWeapon(player.hasWeapon());
+			player.setOldArmour(player.hasArmour());
 		}
 		else if((level == 3) && (room == 2)){
 			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
