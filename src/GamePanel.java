@@ -30,6 +30,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	long gameover = 0;
 	
 	SpriteLib lib;
+	SoundLib soundlib;
 	Player player;
 	Enemy enemy;
 	Enemy enemy2;
@@ -44,11 +45,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 	MapDisplay map;
 	
-
 	CopyOnWriteArrayList<Object> attacks;	//Liste für die Attack-Objekte
-
 	CopyOnWriteArrayList<Sprite> actors; //beinhaltet alle Objekte im Spiel, also Gegner, Items etc.
-
 
 	boolean up;
 	boolean down;
@@ -120,6 +118,13 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		////1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 		lib = SpriteLib.getInstance();
+		
+		//TODO: Freeware-Sounds aus Internet laden
+		//TODO: Sounds können zurzeit nur aus Bin geladen werden, andere Möglichkeit muss gesucht werden
+		/*	soundlib = new SoundLib();
+		 * soundlib.loadSound("Hintergrund", "resources/sound/Greensleeves.wav");
+		soundlib.loopSound("Hintergrund");*/
+		
 		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);
 		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 10, 100, this);

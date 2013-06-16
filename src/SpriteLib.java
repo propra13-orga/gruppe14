@@ -21,8 +21,6 @@ public class SpriteLib {
 	
 	private SpriteLib(){//Konstruktor
 		
-		//ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		//gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 		sprites = new HashMap<URL, BufferedImage>(); 
 	}
 	
@@ -41,14 +39,9 @@ public class SpriteLib {
 			System.out.println("Fehler beim Image laden: " +e1);
 			return null;
 		}
-		//Methoden für die Volatile-Images Variante
-		//BufferedImage better = gc.createCompatibleImage(pic.getWidth(),pic.getHeight(), Transparency.BITMASK);
-		//Graphics g = better.getGraphics();
-		//g.drawImage(pic, 0, 0, null);
-		
+				
 		sprites.put(location, pic); //speichern des Bildes in HashMap (hier better statt pic für V.Images nehmen)
 		
-		//System.out.println("getSprite1");
 		return pic;
 	}
 	
@@ -67,10 +60,6 @@ public class SpriteLib {
 			
 			sprites.put(location, source);
 		}
-		//Methoden für die Volatile-Images Variante
-		//BufferedImage better = gc.createCompatibleImage(source.getWidth(),source.getHeight(), Transparency.BITMASK);
-		//Graphics g = better.getGraphics();
-		//g.drawImage(source, 0, 0, null);
 		
 		
 		int width = source.getWidth() / column;
