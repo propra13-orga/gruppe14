@@ -121,9 +121,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		//TODO: Freeware-Sounds aus Internet laden
 		//TODO: Sounds können zurzeit nur aus Bin geladen werden, andere Möglichkeit muss gesucht werden
-		/*	soundlib = new SoundLib();
-		 * soundlib.loadSound("Hintergrund", "resources/sound/Greensleeves.wav");
-		soundlib.loopSound("Hintergrund");*/
+		soundlib = new SoundLib();
+		soundlib.loadSound("Hintergrund", "sound/Greensleeves.wav");
+		soundlib.loopSound("Hintergrund");
 		
 		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);

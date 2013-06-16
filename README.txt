@@ -18,10 +18,17 @@ FunktionalitÃ¤t zurzeit:
 - Items
 - Checkpoints
 - NPC, reden mit ENTER
+- Sound
 
 TODO:
 
 - schönere Bilder
 - Ausarbeitung von Leveln - man darf nach dem Betreten der Tür nicht direkt in Feuer laufen
 - Räume/Level
-- BossGegner mit besonders viel Schlagkraft oder so im letzten Raum eines Levels, lässt sich aber auch über Map einlesen
+
+
+Hinweis:
+
+Ich habe mal testweise Sound eingebaut, wobei dies zuerst wieder nur aus dem bin-Ordner geladen werden konnte. Zurzeit ist es so, dass man in Eclipse ein bisschen die Einstellungen ändern muss und zwar so:
+Run -> Run Configurations -> ClassPath -> Select User Entries -> advanced -> add Folders -> resources auswählen.
+Dann sollte es eigentlich starten, wobei der resources-Eintrag glaube ich über dem Eintrag "Gruppe14" platziert sein muss.

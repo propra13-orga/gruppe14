@@ -1,10 +1,7 @@
 import java.applet.*;
-import java.io.File;
-import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
-import javax.imageio.ImageIO;
 
 public class SoundLib {
 	Hashtable<String, AudioClip> sounds; //speichert AudioClips
@@ -19,18 +16,7 @@ public class SoundLib {
 		if(sounds.containsKey(name)){//Wenn Sound schon geladen, Abbruch
 			return;
 		}
-		//andernfalls wird Sound geladen
 		URL sound_url = getClass().getClassLoader().getResource(path);
-		/*if(sound_url == null){
-			try{
-				sound_url = SoundIO.read(new File(path)); //Über ImageIO das Bild lesen
-			} catch (IOException e1){
-				System.out.println("Fehler beim Musik laden: " +e1);
-				return;
-			}
-		}*/
-		
-		System.out.println(sound_url);
 		sounds.put(name, (AudioClip)Applet.newAudioClip(sound_url));
 	}
 	
