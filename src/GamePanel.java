@@ -246,8 +246,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			map = new MapDisplay("resources/level/TileMap_2_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
 			
 			coin2 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 50,50, 1, 100, this);
-			actors.add(coin2);
 			enemy3 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 200, 200, 10, 100, this);
+			actors.add(coin2);
 			actors.add(enemy3);
 		}
 		else if((level == 2) && (room == 3)){
@@ -255,25 +255,19 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			boss = new Enemy(lib.getSprite("resources/pics/boss.gif", 4, 1), 120, 80, 20, 100, this);
 			actors.add(boss);
 		}
+		
 		else if((level == 3) && (room == 1)){
 			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
-			//TODO: Hier Checkpoint berechnen, sobald Karten für Level 3 feststehen
+			
+			checkpointx = 80;
+			checkpointy = 40;
 			player.setOldCoins(player.getCoins());
 			player.setOldMana(player.getMana());
 			player.setOldWeapon(player.hasWeapon());
 			player.setOldArmour(player.hasArmour());
-		}
-		else if((level == 3) && (room == 2)){
-			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
-		}
-		else if((level == 3) && (room == 3)){
-			map = new MapDisplay("resources/level/TileMap_3_3.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
 			
-		}
-		else if((level == 3) && (room == 1)){
-			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
-			enemy4 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 500, 10, 10, 100, this);
-			enemy5 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 200, 10, 10, 100, this);
+			enemy4 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 500, 50, 10, 100, this);
+			enemy5 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 200, 50, 10, 100, this);
 			healthpack2 = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 720, 150, 7, 100, this);
 			coin3 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 720, 190, 1, 100, this);
 
