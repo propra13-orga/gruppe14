@@ -544,6 +544,7 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 			effect.y = ol.getY() + (25-height); 
 			return effect;
 		}
+		
 	}
 }
 	
