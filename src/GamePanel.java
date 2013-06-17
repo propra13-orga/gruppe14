@@ -33,13 +33,27 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Player player;
 	Enemy enemy;
 	Enemy enemy2;
+	Enemy enemy3;
+	Enemy enemy4;
+	Enemy enemy5;
+	Enemy enemy6;
+	Enemy enemy7;
+	//Enemy enemy8;
+	//Enemy enemy9;
 	Item coin;
+	Item coin2;
+	Item coin3;
+	//Item coin4;
 	Item mana;
+	//Item mana2;
 	Item shop;
+	
 	Item npc;
 	Item schwert;
 	Item schild;
 	Item healthpack;
+	Item healthpack2;
+	//Item healthpack3;
 	
 	MapDisplay map;
 	
@@ -142,17 +156,21 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(schild);
 		actors.add(healthpack);
 		
+		
 		startposx = 50;
 		startposy = 50;
+	
 		
 		player.setCoins(100);
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
 		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+		
 		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
 		setStarted(true);
+		//doInitializations(3,2); //Zum Level jumpen
 		
 	}
 	
@@ -162,8 +180,16 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		room = r;
 		actors.clear(); //Actors-Liste wird gelöscht und dann entsprechend der Information in TileMap_n.txt neu erstellt
 		actors.add(player); //Nur der Player bleibt bestehen
+		if((level == 1) && (room == 1)){
+			
+			map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this); 
+			
+			actors.add(shop);
+			
+		}
 		if((level == 1) && (room == 2)){
 			map = new MapDisplay("resources/level/TileMap_1_2.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this); 
+			
 		}
 		else if((level == 1) && (room == 3)){
 			map = new MapDisplay("resources/level/TileMap_1_3.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
@@ -173,18 +199,37 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		else if((level == 2) && (room == 2)){
 			map = new MapDisplay("resources/level/TileMap_2_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			
+			coin2 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 50,50, 1, 100, this);
+			actors.add(coin2);
+			enemy3 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 200, 200, 100, this);
+			actors.add(enemy3);
 		}
 		else if((level == 2) && (room == 3)){
 			map = new MapDisplay("resources/level/TileMap_2_3.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			
 		}
 		else if((level == 3) && (room == 1)){
-			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			map = new MapDisplay("resources/level/TileMap_3_1.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
+			enemy4 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 500, 100, 100, this);
+			enemy5 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 200, 120, 100, this);
+			healthpack2 = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 720, 150, 7, 100, this);
+			coin3 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 720, 190, 1, 100, this);
+
+			actors.add(enemy4);
+			actors.add(enemy5);
+			actors.add(healthpack2);
+			actors.add(coin3);
 		}
 		else if((level == 3) && (room == 2)){
-			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			map = new MapDisplay("resources/level/TileMap_3_2.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
+			enemy6 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 300, 100, this);
+			actors.add(enemy6);
 		}
 		else if((level == 3) && (room == 3)){
-			map = new MapDisplay("resources/level/TileMap_3_3.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
+			map = new MapDisplay("resources/level/TileMap_3_3.txt", "resources/pics/tiles_3.gif", "resources/pics/shadow.png", 5, 1, this);
+			enemy7 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 150, 150, 100, this);
+			actors.add(enemy7);
 		}
 		
 	}

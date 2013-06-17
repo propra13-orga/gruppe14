@@ -476,8 +476,25 @@ public Effect getEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welche
 	public void lostLife(){
 		System.out.println("Du hast ein Leben verloren, streng dich naechstes mal mehr an!");
 		lifes--;
-		x = parent.startposx;
-		y = parent.startposy;
+		
+		if(parent.getLevel()==1){
+			x = parent.startposx;
+			y = parent.startposy;
+		}
+		if(parent.getLevel()==2){
+			x = 100;
+			y = 430;
+		}
+		if(parent.getLevel()==1){
+			x = parent.startposx;
+			y = parent.startposy;
+		}
+		if(parent.getLevel()==3){
+			x = parent.startposx;
+			y = parent.startposy;
+		}
+		
+		parent.doInitializations(parent.getLevel(),1);
 		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen!
 		health = 100;
 		if(lifes == 0){
