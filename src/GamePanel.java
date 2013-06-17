@@ -184,7 +184,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 	
-	//Vllt. lieber in doInitializations Abfrage nach Wert von level und entsprechendes Laden von Map?
+	/**
+	 * In der doInitializations-Klasse werden neue Level bzw. R‰ume geladen und entsprechende Sprites geladen. 
+	 * Auﬂerdem werden teilweise Checkpointwerte gespeichert
+	 */
 	public void doInitializations(int l, int r){ //l = level, r = room
 		level = l;
 		room = r;
