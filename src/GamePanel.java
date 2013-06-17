@@ -90,7 +90,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 
 	public static void main(String[] args){
-		new GamePanel(790,650); //Sonst grauer Streifen an den Rändern rechts und unten
+		new GamePanel(790,630); //Sonst grauer Streifen an den Rändern rechts und unten
 	}
 	
 	public GamePanel(int w, int h){
@@ -134,11 +134,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		lib = SpriteLib.getInstance();
 		
 
-		/*soundlib = new SoundLib();
+		soundlib = new SoundLib();
 		soundlib.loadSound("Hintergrund", "sound/Greensleeves.wav");
 		soundlib.loadSound("Angriff", "sound/Angriff.wav");
 		soundlib.loadSound("Zauber", "sound/Zauber.wav");
-		soundlib.loopSound("Hintergrund");*/
+		soundlib.loopSound("Hintergrund");
 		
 		////1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
@@ -503,7 +503,7 @@ private void doLogic(){
 			angriff = player.getAttackObject();
 			if(angriff != null){
 				actors.add(player.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
-				//soundlib.playSound("Angriff");
+				soundlib.playSound("Angriff");
 				attacks.add(angriff);	
 				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 					angriff = it1.next();
@@ -542,7 +542,7 @@ private void doLogic(){
 			magic = player.getMagicObject();
 			if(magic != null){
 				actors.add(player.getMagicEffect());	//Effekt wird hinzugefügt zu Actors
-				//soundlib.playSound("Zauber");
+				soundlib.playSound("Zauber");
 				attacks.add(magic);	
 				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 					magic = it1.next();
