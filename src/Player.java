@@ -670,6 +670,7 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public void lostLife(){
 		System.out.println("Du hast ein Leben verloren, streng dich naechstes mal mehr an!");
 		lifes--;
+
 		if(lifes == 0){
 			parent.lostGame();
 		}
