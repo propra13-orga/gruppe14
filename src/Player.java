@@ -23,6 +23,7 @@ public class Player extends Sprite {
 	private boolean oldHasWeapon;
 	private boolean hasArmour; //trägt Rüstung?
 	private boolean hasWeapon;
+	private int collectedCoins; //Innerhalb von einem Quest gesammelte Coins
 	
 	private int damage;			//Schaden, den der Spieler verursacht
 	private int range;			//Reichweite seines Angriffes vertikal und horizontal
@@ -30,13 +31,13 @@ public class Player extends Sprite {
 	private int radialRange;	//Reichweite für den Rundumangriff (range + Hälfte der Spielerhöhe))
 	private int health;
 	private boolean attacking;	//Angriff
-	private boolean summoning;	//Magie
 	private boolean canSummon;
 	private boolean canAttack;
 	private boolean canLoseHealth;
 	private Timer attackTimer;
 	private Timer magicTimer;
 	private Timer healthTimer;
+	private Quest quest;
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -55,7 +56,6 @@ public class Player extends Sprite {
 		magicTimer = new Timer();
 		healthTimer = new Timer();
 		canAttack = true;
-		summoning = false;
 		canSummon = true;
 		damage = 50;
 		range = 40;
@@ -234,6 +234,7 @@ public class Player extends Sprite {
 	
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
+			int type = s.getType();
 			if(s instanceof Enemy){
 				if(canLoseHealth){
 					reduceHealth(((Enemy)s).getDamage());
@@ -242,7 +243,6 @@ public class Player extends Sprite {
 				return true;
 			}
 			if(s instanceof Item){ //1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
-				int type = s.getType();
 				
 				switch(type){
 				
@@ -251,6 +251,9 @@ public class Player extends Sprite {
 					System.out.println("Bravo, du hast eine Münze gesammelt");
 					//Anzahl der Leben wird erhöht, eigentlich aber Kontostand
 					coins++;
+					if(parent.inquest == true){
+						collectedCoins++;
+					}
 					s.remove = true;
 				break;
 				case 2: 
@@ -298,8 +301,36 @@ public class Player extends Sprite {
 					s.remove = true;
 				break;
 				}
-							
-
+			}
+			if(s instanceof Quest){//Welche Types? Beispielsweise 1 = Matheaufgabe, 2 = Münzen sammeln, 3 = Gegner töten, 4 = Was weiß ich!
+				quest = (Quest) s;
+				switch(type){
+				
+				case 1:
+				//TODO: Mathequest
+				break;
+				case 2: 
+					
+					parent.inquest = true;
+					
+					if (collectedCoins >= quest.getQuestCoins()){
+						System.out.println("Bravo - Du hast meine Aufgabe erfüllt, hier deine Prämie: TODO");
+						parent.inquest = false;
+						collectedCoins = 0;
+						s.remove = true;
+						//TODO: Belohnung bzw. Prämie!
+					}
+				//TODO: Random Anzahl von Münzen (> x, < y?) bestimmen und dann muss Spieler diese einsammeln
+				break;
+				case 3:
+				//TODO: Random Anzahl von Enemy (> x, < y?) bestimmen und dann muss Spieler diese töten										
+				break;
+				case 4:
+				//TODO: Hier ist Kreativität gefordert!
+				break;
+				
+				}
+				
 			}
 		}
 		return false;
@@ -557,14 +588,7 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public void resetAttacking(){
 		attacking = false;
 	}
-	
-	public void setSummoning(){
-		summoning = true;
-	}
-	public void resetSummoning(){
-		summoning = false;
-	}
-	
+		
 	public boolean isAttacking(){
 		return attacking;
 	}
@@ -662,11 +686,16 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 
 	@Override
 	public int getType() {
-		// TODO Auto-generated method stub
 		return 0;
-
 	}
 	
+	public Quest getQuest(){
+		return quest;
+	}
+	
+	public int getCollectedCoins(){
+		return collectedCoins;
+	}
 	public void lostLife(){
 		System.out.println("Du hast ein Leben verloren, streng dich naechstes mal mehr an!");
 		lifes--;
@@ -683,13 +712,11 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		
 		x = parent.checkpointx;	//Spieler im 1. Raum an die Startposition setzen
 		y = parent.checkpointy;
-		//TODO: Auch Sprites insbesondere Gegner auf Startpos setzen! Sprites müssen auch neu aus Karte ausgelesen werden
+		
 		health = 100;
-		//TODO: hier Waffen und Rüstung bei Lebensverlust entfernen?
 		hasArmour = false;
 		hasWeapon = false;
-		//auch Münzen etc. auf Anfangswert setzen?
-		
+				
 	}
 }
 

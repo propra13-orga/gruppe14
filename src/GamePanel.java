@@ -41,21 +41,21 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Enemy enemy5;
 	Enemy enemy6;
 	Enemy enemy7;
-	//Enemy enemy8;
-	//Enemy enemy9;
 
 	Item coin;
 	Item coin2;
 	Item coin3;
+	Item coin4;
+	Item coin5;
 	Item mana;
 	Item shop;
-
 	Item npc;
 	Item schwert;
 	Item schild;
 	Item healthpack;
 	Item healthpack2;
-	//Item healthpack3;
+
+	Quest quest;
 	
 	MapDisplay map;
 	
@@ -75,6 +75,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean enterNPC = false;
 	boolean talkwithnpc = false;
 	boolean magic = false; //Will Spieler zaubern?
+	boolean inquest = false;
 
 	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet; Ersetzt boolean gamewon, lost
 	int pressCount;
@@ -145,23 +146,33 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);
 		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 10, 100, this);
 		coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
+		coin2 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 670, 400, 1, 100, this);
+		coin3 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 640, 400, 1, 100, this);
+		coin4 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 610, 400, 1, 100, this);
+		coin5 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 580, 400, 1, 100, this);
 		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 		npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
 		schild = new Item(lib.getSprite("resources/pics/armour.gif", 1, 1), 100, 200, 4, 100, this);
 		schwert = new Item(lib.getSprite("resources/pics/weapon.gif", 1, 1), 100, 150, 5, 100, this);
 		healthpack = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 500, 100, 7, 100, this);
+		quest = new Quest(lib.getSprite("resources/pics/quest.gif", 1, 1), 500, 200, 2, 100, this);
 
 
 		actors.add(enemy); 
 		actors.add(enemy2); 
 		actors.add(coin); 
+		actors.add(coin2); 
+		actors.add(coin3); 
+		actors.add(coin4); 
+		actors.add(coin5);
 		actors.add(mana);
 		actors.add(shop);
 		actors.add(npc);
 		actors.add(schwert);
 		actors.add(schild);
 		actors.add(healthpack);
+		actors.add(quest);
 		actors.add(player);
 		
 		checkpointx = 50;
@@ -489,6 +500,17 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		if(talkwithnpc == true){
 			g.drawString("Es war einmal in einem weit entfertenten Schloss...blablabla!", 60, 620);
 		}
+		g.drawString("Quest: ", 320, 620);
+		if(inquest == true){
+			int diff = player.getQuest().getQuestCoins() - player.getCollectedCoins();
+			if(diff <= 0){
+				diff = 0;
+			}
+			g.drawString("Du musst noch " + diff + " Münze(n) sammeln", 360, 620);
+			if(diff == 0){
+				g.drawString(" - Geh zurück zum Quest", 565, 620);
+			}
+		}
 		g.drawString("Schaden: " + player.getDamage(), 485, 610);
 		g.drawString("Enemy: " + enemy2.getHealth(), 560, 610);
 		g.drawString("Rüstung: " + player.hasArmour(), 630, 610);
@@ -689,12 +711,6 @@ private void doLogic(){
 		}
 		if(!attack){
 			player.resetAttacking();
-		}
-		if(magic){
-			player.setSummoning();
-		}
-		if(!magic){
-			player.resetSummoning();
 		}
 		
 	}
