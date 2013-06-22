@@ -228,6 +228,8 @@ public class Enemy extends Sprite {
 		if(health <= 0){ //Wenn Lebenspunkte aufgebraucht: Enemy aus ActorsListe löschen
 			remove = true;
 			parent.player.setCoins(parent.player.getCoins() + 20); //Spieler kriegt 20 Münzen für das Killen eines Gegner
+			parent.player.setXP(parent.player.getXP() + 1);			//Der Spieler bekommt Erfahrungspunkte für das Töten eines Gegners
+			
 		}
 	}
 	

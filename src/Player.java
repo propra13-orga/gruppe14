@@ -15,15 +15,30 @@ public class Player extends Sprite {
 	private double copy_dx;
 	private double copy_dy;
 	private int coins;
+	private int xp;
 	private int lifes;
 	private int mana;
 	private int oldcoins;
+	private int oldxp;
 	private int oldmana;
 	private boolean oldHasArmour;
 	private boolean oldHasWeapon;
 	private boolean hasArmour; //trägt Rüstung?
 	private boolean hasWeapon;
 	private int collectedCoins; //Innerhalb von einem Quest gesammelte Coins
+	
+	private boolean skillhealth1;	//Variablen für die Skills (Sind die Skills schon erlernt?)
+	private boolean skillhealth2;
+	private boolean skillstrength1;
+	private boolean skillstrength2;
+	
+	private boolean oldskillhealth1;
+	private boolean oldskillhealth2;
+	private boolean oldskillstrength1;
+	private boolean oldskillstrength2;
+	
+	private int maxhealth;			//Maximale Lebensenergie
+	private int oldmaxhealth;
 	
 	private int damage;			//Schaden, den der Spieler verursacht
 	private int range;			//Reichweite seines Angriffes vertikal und horizontal
@@ -39,6 +54,10 @@ public class Player extends Sprite {
 	private Timer healthTimer;
 	private Quest quest;
 	
+	
+	
+	
+	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 		loop_to = (pics.length/ 2)-1;
@@ -47,10 +66,18 @@ public class Player extends Sprite {
 		ul = new Point();
 		ur = new Point();
 		
+		skillhealth1 = false;
+		skillhealth2 = false;
+		skillstrength1 = false;
+		skillstrength2 = false;
+		
 		lifes = 3;
 		coins = 0;
+		xp = 0;
 		mana = 0;
 		health = 100;
+		maxhealth = 100;
+		oldmaxhealth = 100;
 		attacking = false;
 		attackTimer = new Timer();
 		magicTimer = new Timer();
@@ -70,6 +97,8 @@ public class Player extends Sprite {
 		super.doLogic(delta);
 		
 	}
+/*#################################################Kollision und Bewegung###############################################################################*/	
+/*######################################################################################################################################################*/	
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
 		copy_dx = dx;
@@ -292,11 +321,11 @@ public class Player extends Sprite {
 					
 				break;
 				case 7:
-					if(health < 100){
+					if(health < maxhealth){
 						health = health + 50;
 					}
-					if (health > 100){
-						health = 100;
+					if (health > maxhealth){
+						health = maxhealth;
 					}
 					s.remove = true;
 				break;
@@ -315,6 +344,7 @@ public class Player extends Sprite {
 					
 					if (collectedCoins >= quest.getQuestCoins()){
 						System.out.println("Bravo - Du hast meine Aufgabe erfüllt, hier deine Prämie: TODO");
+						xp = xp + 6;
 						parent.inquest = false;
 						collectedCoins = 0;
 						s.remove = true;
@@ -335,9 +365,14 @@ public class Player extends Sprite {
 		}
 		return false;
 	}
+/*#################################################Angriffsobjekte##############################################################################################*/	
+/*######################################################################################################################################################*/	
 	
 	public Object getAttackObject(){	//Liefert ein Attack-Objekt (line oder rectangle), welches mit den actors aus dem Gamepanel kollidieren kann
-		
+		or.setLocation((int)(getX() + (width - 1)), (int)getY());
+		ol.setLocation((int)getX(), (int)getY());
+		ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+		ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
 		
 		//Hier wird der Timer gesetzt:
 		
@@ -378,7 +413,10 @@ public class Player extends Sprite {
 	}
 	public Object getMagicObject(){	//Liefert ein Magic-Objekt (line oder rectangle), welches mit den actors aus dem Gamepanel kollidieren kann
 		
-		
+		or.setLocation((int)(getX() + (width - 1)), (int)getY());
+		ol.setLocation((int)getX(), (int)getY());
+		ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+		ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
 		//Hier wird der Timer gesetzt:
 		
 		if(!canSummon || mana <= 0){
@@ -418,9 +456,16 @@ public class Player extends Sprite {
 			}
 		}
 	}
+	
+/*#################################################Effekte##############################################################################################*/	
+/*######################################################################################################################################################*/		
+	
 public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
 		
-		
+	or.setLocation((int)(getX() + (width - 1)), (int)getY());
+	ol.setLocation((int)getX(), (int)getY());
+	ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+	ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
 		
 		//Hier kann je nach Ausrüstung des Spielers eine andere Sache zurückgegeben werden
 		Effect effect;
@@ -519,7 +564,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 	}
 public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
 	
-	
+	or.setLocation((int)(getX() + (width - 1)), (int)getY());
+	ol.setLocation((int)getX(), (int)getY());
+	ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+	ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
 	
 	//Hier kann je nach Ausrüstung des Spielers eine andere Sache zurückgegeben werden
 	Effect effect;
@@ -581,7 +629,8 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		
 	}
 }
-	
+/*#################################################Get- und Set- Methoden################################################################################*/	
+/*######################################################################################################################################################*/		
 	public void setAttacking(){
 		attacking = true;
 	}
@@ -638,9 +687,21 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public void setCoins(int c){
 		coins = c;
 	}
+	public int getXP(){
+		return xp;
+	}
+	public void setXP(int x){
+		xp = x;
+	}
 	
 	public void setOldCoins(int c){
 		oldcoins = c;
+	}
+	public void setOldXP(int x){
+		oldxp = x;
+	}
+	public int getOldXP(){
+		return oldxp;
 	}
 	
 	public void setMana(int m){
@@ -649,6 +710,78 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	
 	public void setOldMana(int m){
 		oldmana = m;
+	}
+	
+	public boolean hasSkillHealth1(){
+		return skillhealth1;
+	}
+	
+	public boolean hasSkillHealth2(){
+		return skillhealth2;
+	}
+	
+	public boolean hasSkillStrength1(){
+		return skillstrength1;
+	}
+	
+	public boolean hasSkillStrength2(){
+		return skillstrength2;
+	}
+	
+	public void setSkillHealth1(boolean b){
+		skillhealth1 = b;
+	}
+	public void setSkillHealth2(boolean b){
+		skillhealth2 = b;
+	}
+	public void setSkillStrength1(boolean b){
+		skillstrength1 = b;
+	}
+	public void setSkillStrength2(boolean b){
+		skillstrength2 = b;
+	}
+	
+	public boolean hasOldSkillHealth1(){
+		return oldskillhealth1;
+	}
+	
+	public boolean hasOldSkillHealth2(){
+		return oldskillhealth2;
+	}
+	
+	public boolean hasOldSkillStrength1(){
+		return oldskillstrength1;
+	}
+	
+	public boolean hasOldSkillStrength2(){
+		return oldskillstrength2;
+	}
+	
+	public void setOldSkillHealth1(boolean b){
+		oldskillhealth1 = b;
+	}
+	public void setOldSkillHealth2(boolean b){
+		oldskillhealth2 = b;
+	}
+	public void setOldSkillStrength1(boolean b){
+		oldskillstrength1 = b;
+	}
+	public void setOldSkillStrength2(boolean b){
+		oldskillstrength2 = b;
+	}
+	public int getMaxhealth(){
+		return maxhealth;
+	}
+	public void setMaxhealth(int m){
+		maxhealth = m;
+	}
+	
+	public int getOldMaxhealth(){
+		return oldmaxhealth;
+	}
+	
+	public void setOldMaxhealth(int m){
+		oldmaxhealth = m;
 	}
 	
 	public int getMana(){

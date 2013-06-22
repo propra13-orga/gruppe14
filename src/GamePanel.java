@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -23,6 +24,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame3;
 	JFrame frame4;
 	JFrame shop2 = new JFrame("Shop");
+	JFrame skills = new JFrame ("Skills");
 	
 	long delta = 0;
 	long last = 0;
@@ -71,6 +73,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean game_running = true;
 	boolean started = false;
 	boolean shopmode = false; //Ist Spieler im Shop oder nicht?
+	boolean skillmode = false;	//Ist der Spieler im Fertigkeitsbaum, oder nicht?
 	boolean enterShop = false;
 	boolean enterNPC = false;
 	boolean talkwithnpc = false;
@@ -86,6 +89,13 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	int checkpointy;
 	int room; //zeigt an im wievielten Raum man sich im Level befindet, möglich sind 1, 2 oder 3
 	int level; //zeigt an im wievielten Lebel man ist, möglich sind 1, 2 oder 3
+	
+	boolean skillsOnce;	//Wurde das Skills-Menü bereits initialisiert?
+	JButton t1;			//Buttons für das Skill-Menü
+	JButton t2;
+	JButton t3;
+	JButton t4;
+	JButton t5;
 	
 	static int rows, columns;
 	
@@ -116,6 +126,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 
 	private void doInitializations(JFrame menu){
+		
 		
 		up = false;
 		down = false;
@@ -178,15 +189,32 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		checkpointx = 50;
 		checkpointy = 50;
 
+		
 		player.setOldCoins(100);
+		player.setOldXP(0);
 		player.setOldMana(0);
 		player.setOldWeapon(false);
 		player.setOldArmour(false);
 		player.setCoins(100);
+		player.setXP(0);
+		player.setOldMaxhealth(100);
+		
+		player.setSkillHealth1(false);
+		player.setSkillHealth2(false);
+		player.setSkillStrength1(false);
+		player.setSkillStrength2(false);
+		
+		player.setOldSkillHealth1(false);
+		player.setOldSkillHealth2(false);
+		player.setOldSkillStrength1(false);
+		player.setOldSkillStrength2(false);
+		
+		skillsOnce = false;
 		
 		//Erstellen der Karte, wobei die ersten 3 Parameter für die Eingabedateien stehen, die erste Zahl für die Anzahl der Spalten im TileSet, die zweite für die Anzahl der Zeilen
 		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		
+		initSkills();
 		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
@@ -252,9 +280,18 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			checkpointy = 400;
 			//Player-Werte sichern für Checkpoint
 			player.setOldCoins(player.getCoins());
+			player.setOldMaxhealth(player.getMaxhealth());
+			player.setOldXP(player.getXP());
 			player.setOldMana(player.getMana());
 			player.setOldWeapon(player.hasWeapon());
 			player.setOldArmour(player.hasArmour());
+			
+			player.setOldSkillHealth1(player.hasSkillHealth1());
+			player.setOldSkillHealth2(player.hasSkillHealth2());
+			player.setOldSkillStrength1(player.hasSkillStrength1());
+			player.setOldSkillStrength2(player.hasSkillStrength2());
+			
+			
 		}
 		else if((level == 2) && (room == 2)){
 			map = new MapDisplay("resources/level/TileMap_2_2.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
@@ -276,9 +313,16 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			checkpointx = 80;
 			checkpointy = 40;
 			player.setOldCoins(player.getCoins());
+			player.setOldMaxhealth(player.getMaxhealth());
+			player.setOldXP(player.getXP());
 			player.setOldMana(player.getMana());
 			player.setOldWeapon(player.hasWeapon());
 			player.setOldArmour(player.hasArmour());
+			
+			player.setOldSkillHealth1(player.hasSkillHealth1());
+			player.setOldSkillHealth2(player.hasSkillHealth2());
+			player.setOldSkillStrength1(player.hasSkillStrength1());
+			player.setOldSkillStrength2(player.hasSkillStrength2());
 			
 			enemy4 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 500, 50, 10, 100, this);
 			enemy5 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 200, 50, 10, 100, this);
@@ -464,6 +508,148 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}	
 	}
 	
+	/*Methode zur Initialisierung des Skill-Menüs*/
+	public void initSkills(){
+		up = false;
+		down = false;
+		left = false;
+		right = false;
+		skillmode = true;
+		
+		skills.setLocation(500,300);
+		skills.setSize(800, 600);
+		//skills.pack();
+		//skills.setVisible(true);
+		
+		t1 = new JButton("Dicker Brecher (benötigt 2 Skillpunkte)");
+		t1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+				if(player.getXP() >= 2){
+					player.setXP(player.getXP()-2);
+					player.setMaxhealth(player.getMaxhealth() + 50);
+					player.setSkillHealth1(true);
+				}else{
+					System.out.println("Du hast nicht genug Erfahrung");
+				}
+				skillmode = false;
+			}
+		});
+		
+		t3 = new JButton("Kanten-Paule (benötigt 4 Skillpunkte und Dicker Brecher)");
+		t3.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+				if(player.getXP() >= 4){
+					player.setXP(player.getXP()-4);
+					player.setMaxhealth(player.getMaxhealth() + 50);
+					player.setSkillHealth2(true);
+				}else{
+					System.out.println("Du hast nicht genug Erfahrung");
+				}
+				skillmode = false;
+			}
+		});
+		
+		
+		t2 = new JButton("Brutaler Prügelknabe (benötigt 2 Skillpunkte)");
+		t2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+				if(player.getXP() >= 2){
+					player.setXP(player.getXP()-2);
+					player.setDamage(player.getDamage() + 20);
+					player.setSkillStrength1(true);
+				}else{
+					System.out.println("Du hast nicht genug Erfahrung!");
+				}
+				skillmode = false;
+			}
+				
+		});
+		
+		t4 = new JButton("Mega-Mörder brutaler Prügelknabe (benötigt 4 Skillpunkte und Brutaler Prügelknabe)");
+		t4.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+				if(player.getXP() >= 4){
+					player.setXP(player.getXP()-4);
+					player.setDamage(player.getDamage() + 30);
+					player.setSkillStrength2(true);
+				}else{
+					System.out.println("Du hast nicht genug Erfahrung!");
+				}
+				skillmode = false;
+			}
+			
+		});
+		
+		t5 = new JButton("Ich will nix - danke");
+		t5.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){
+				skillmode = false;
+			}
+		});
+		
+		skills.setLayout(new GridLayout(3,2));
+		skills.add(t1);
+		skills.add(t2);
+		skills.add(t3);
+		skills.add(t4);
+		skills.add(t5);
+	
+		if(player.hasSkillHealth1()){
+			t1.setEnabled(false);
+			t3.setEnabled(true);
+		}else{
+			t3.setEnabled(false);
+		}
+		if(player.hasSkillHealth2()){
+			t2.setEnabled(false);
+		}
+		if(player.hasSkillStrength1()){
+			t3.setEnabled(false);
+			t4.setEnabled(true);
+		}else{
+			t4.setEnabled(false);
+		}
+		if(player.hasSkillStrength2()){
+			t4.setEnabled(false);
+		}
+		
+		skills.pack();
+		//skills.setVisible(true);
+		
+	}
+	/*Methode zum Aufruf des Skill-Menüs*/
+	public void skills(){
+		up = false;
+		down = false;
+		left = false;
+		right = false;
+		skillmode = true;
+		
+		if(player.hasSkillHealth1()){
+			t1.setEnabled(false);
+			t3.setEnabled(true);
+		}else{
+			t3.setEnabled(false);
+		}
+		if(player.hasSkillHealth2()){
+			t2.setEnabled(false);
+		}
+		if(player.hasSkillStrength1()){
+			t3.setEnabled(false);
+			t4.setEnabled(true);
+		}else{
+			t4.setEnabled(false);
+		}
+		if(player.hasSkillStrength2()){
+			t4.setEnabled(false);
+		}
+		skills.setVisible(true);
+		
+	}
+	
+	
+
+	
 	private void computeDelta(){
 		delta = System.nanoTime() - last; //Errechnung der Zeit für Schleifendurchlauf in NS
 		last = System.nanoTime(); //Speichern der aktuellen Systemzeit
@@ -495,8 +681,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		g.drawString("Du hast " + player.getLifes() + " Leben", 20, 610);
 		g.drawString(", " + player.getCoins() + " Münze(n)", 115, 610);
 		g.drawString(" und " + player.getMana() + " Einheit(en) Mana", 200, 610);
-		g.drawString("Lebenspunkte: " + player.getHealth() + "/100", 350, 610);
+		g.drawString("Lebenspunkte: " + player.getHealth() + "/" + player.getMaxhealth(), 350, 610);
 		g.drawString("Story: ", 20, 620);
+		g.drawString("XP: " + player.getXP(), 20, 630);
 		if(talkwithnpc == true){
 			g.drawString("Es war einmal in einem weit entfertenten Schloss...blablabla!", 60, 620);
 		}
@@ -577,7 +764,7 @@ private void doLogic(){
 							opfer = it2.next();
 							if(opfer instanceof Enemy){
 								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
-									((Enemy)opfer).reduceHealth(player.getDamage()); 
+									((Enemy)opfer).stop();
 								}
 							}
 							
@@ -628,6 +815,9 @@ private void doLogic(){
 		
 		if (shopmode == false){
 			shop2.setVisible(false);
+		}
+		if (skillmode == false){
+			skills.setVisible(false);
 		}
 	}
 	
@@ -734,6 +924,10 @@ private void doLogic(){
 		if (e.getKeyCode() == KeyEvent.VK_ENTER){
 			enterShop = true;
 			enterNPC = true;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_S){
+			skillmode = true;
+			skills();
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
 			attack = true;

@@ -1,4 +1,4 @@
-FunktionalitÃ¤t zurzeit:
+Funktionalität zurzeit:
 
 - Steuerung eines Spielers
 - Erkennung des Untergrunds
@@ -19,16 +19,21 @@ FunktionalitÃ¤t zurzeit:
 - Checkpoints
 - NPC, reden mit ENTER
 - Sound
+- Erfahrungspunkte und Fertigkeiten, Fertigkeitsmenü kann mit S geöffnet werden. Von beiden Fertigkeiten gibt es verbesserte Varianten, die die vorangehende Variante voraussetzt.
+- Erfahrungspunkte werden durch getötete Gegner oder Quests (sehr lukrativ) erlangt.
 
+**********************************************************************************************************************************************************************************
 TODO:
 
-- schönere Bilder
-- Ausarbeitung von Leveln - man darf nach dem Betreten der Tür nicht direkt in Feuer laufen
-- Räume/Level
+- Netzwerk (Deathmatch)
+- Chat
+- Speichern und Laden von Spielständen
+
 
 
 Hinweis:
 
+(Saskia:)
 Ich habe mal testweise Sound eingebaut, wobei dies zuerst wieder nur aus dem bin-Ordner geladen werden konnte. Zurzeit ist es so, dass man in Eclipse ein bisschen die Einstellungen ändern muss und zwar so:
 Run -> Run Configurations -> ClassPath -> Select User Entries -> advanced -> add Folders -> resources auswählen.
 Dann sollte es eigentlich starten, wobei der resources-Eintrag glaube ich über dem Eintrag "Gruppe14" platziert sein muss.
