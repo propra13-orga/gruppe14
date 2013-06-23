@@ -330,14 +330,14 @@ public class Player extends Sprite {
 					s.remove = true;
 				break;
 				case Item.EISWAFFE:
-					System.out.println("Bravo, du hast eine Waffe eingesammelt");
+					System.out.println("Bravo, du hast eine Eis-Waffe eingesammelt");
 					damage = damage + 20;
 					range = range + 10;
 					hasWeapon = 1;
 					s.remove = true;
 				break;
 				case Item.FEUERWAFFE:
-					System.out.println("Bravo, du hast eine Waffe eingesammelt");
+					System.out.println("Bravo, du hast eine Feuer-Waffe eingesammelt");
 					damage = damage + 20;
 					range = range + 10;
 					hasWeapon = 2;
