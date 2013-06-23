@@ -70,9 +70,9 @@ public class Player extends Sprite {
 		skillhealth2 = false;
 		skillstrength1 = false;
 		skillstrength2 = false;
-		
-		lifes = 3;
+
 		coins = 0;
+		lifes = 3;
 		xp = 0;
 		mana = 0;
 		health = 100;
@@ -668,7 +668,8 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 			
 		}
 		if (health <= 0){
-			lostLife();
+			lostLife(); 
+			System.out.println("Leben verloren!");
 		}
 		
 	}
