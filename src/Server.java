@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 //angelehnt an ProPra12 - Gruppe 09
 public class  Server extends Thread{
 	
-	private ServerSocket serverSocket = null;
+	ServerSocket serverSocket = null;
 	private Socket clientSocket = null;
 	private int port;
 	PrintWriter out;
@@ -26,7 +26,7 @@ public class  Server extends Thread{
 	int meldungen_zaehler, x, y;
 	boolean connected = false;
 	String in_string;
-	JFrame f = new JFrame("Auf Client warten");
+	JFrame f;
 	
 	public Server(int port){
 		this.port = port; 
@@ -38,7 +38,7 @@ public class  Server extends Thread{
 		}		
 	}
 	
-	public void starten(){//s. gruppe 23
+	public void starten(){//s. Gruppe 23
 		//Client muss eine Port-Adresse zugeteilt sein, sonst IOException! Aber über 1023!
 		waitingWindow();
 		while(true){
@@ -90,27 +90,16 @@ public class  Server extends Thread{
 	
 	public void waitingWindow() {
 		// Richte JFrame ein
-		f.setLocation(400, 400);
-		f.setPreferredSize(new Dimension(300,100));
-		f.addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e) {
-				try {
-					serverSocket.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-		    }
-		});
-		
+		f = new JFrame("Auf Client warten");
+		f.setLocation(500, 300);
+		f.setSize(100, 100);	
 		// Richte JButton ein
-		JButton abbrechen = new JButton();
-		abbrechen.setText("Abbrechen");
+		JButton abbrechen = new JButton("Abbrechen");
 		
 		// Bei Klick auf abbrechen
 		abbrechen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				f.setVisible(false);
-				f.dispose();
 				try {
 					serverSocket.close();
 				} catch (IOException e) {
@@ -122,13 +111,12 @@ public class  Server extends Thread{
 		
 		// Richte Ausgabetext ein
 		JLabel text = new JLabel("Bitte warten bis Client verbindet.");
-		text.setHorizontalAlignment(JLabel.CENTER);
-		text.setVerticalAlignment(JLabel.TOP);
-		
-		f.add(text);
+
+		f.add(BorderLayout.NORTH, text);
 		f.add(BorderLayout.CENTER, abbrechen);
 		f.pack();
 		f.setVisible(true);
+		//TODO: Warum wird in Fenster nix angezeigt?
 	}
 	
 }
