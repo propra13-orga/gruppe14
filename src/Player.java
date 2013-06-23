@@ -21,10 +21,10 @@ public class Player extends Sprite {
 	private int oldcoins;
 	private int oldxp;
 	private int oldmana;
-	private boolean oldHasArmour;
-	private boolean oldHasWeapon;
-	private boolean hasArmour; //trägt Rüstung?
-	private boolean hasWeapon;
+	private int oldHasArmour;
+	private int oldHasWeapon;
+	private int hasArmour; //trägt Rüstung? -> 0 = Ne, nix, 1 = Eisrüstung, 2 = Feuerrüstung
+	private int hasWeapon;	//trägt Waffe? -> 0 = Ne, nix, 1 = Eiswaffe, 2 = Feuerwaffe
 	private int collectedCoins; //Innerhalb von einem Quest gesammelte Coins
 	
 	private boolean skillhealth1;	//Variablen für die Skills (Sind die Skills schon erlernt?)
@@ -60,7 +60,7 @@ public class Player extends Sprite {
 	
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
-		loop_to = (pics.length/ 2)-1;
+		loop_to = (pics.length/ 3)-1;
 		ol = new Point();
 		or = new Point();
 		ul = new Point();
@@ -88,7 +88,8 @@ public class Player extends Sprite {
 		range = 40;
 		diagRange = (int)(range/1.4);
 		radialRange = (int)(range + height);
-		hasArmour = false;
+		hasArmour = 0;
+		hasWeapon = 0;
 		canLoseHealth = true;
 	}
 	
@@ -236,7 +237,7 @@ public class Player extends Sprite {
 		
 		if(col.equals(Color.red)){ //rot = 255, 0, 0
 			if(canLoseHealth){
-				if(hasArmour){
+				if(hasArmour > 0){
 					reduceHealth(10);
 				}else{
 					reduceHealth(20);
@@ -266,16 +267,30 @@ public class Player extends Sprite {
 			int type = s.getType();
 			if(s instanceof Enemy){
 				if(canLoseHealth){
-					reduceHealth(((Enemy)s).getDamage());
+					if(s instanceof IceEnemy){
+						if(hasArmour() == 1){
+							reduceHealth(((Enemy)s).getDamage() / 3);
+						}else{
+							reduceHealth(((Enemy)s).getDamage());
+						}
+					}else if (s instanceof FireEnemy){
+						if(hasArmour() == 2){
+							reduceHealth(((Enemy)s).getDamage() / 3);
+						}else{
+							reduceHealth(((Enemy)s).getDamage());
+						}
+					}else{
+						reduceHealth(((Enemy)s).getDamage());
+					}
 				}
-
 				return true;
 			}
+			
 			if(s instanceof Item){ //1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 				
 				switch(type){
 				
-				case 1:
+				case Item.COIN:
 				
 					System.out.println("Bravo, du hast eine Münze gesammelt");
 					//Anzahl der Leben wird erhöht, eigentlich aber Kontostand
@@ -285,14 +300,14 @@ public class Player extends Sprite {
 					}
 					s.remove = true;
 				break;
-				case 2: 
+				case Item.MANA: 
 		
 					System.out.println("Bravo, du hast einen Manatrank gesammelt");
 					mana++;
 					s.remove = true;
 					
 				break;
-				case 3:
+				case Item.SHOP:
 					
 					if(parent.enterShop == true && parent.shopmode == false){
 						parent.shopmode = true;
@@ -300,27 +315,41 @@ public class Player extends Sprite {
 					}
 					
 				break;
-				case 4:
-					System.out.println("Bravo, du hast eine Rüstung gesammelt");
-					hasArmour = true;
-					loop_from = pics.length/2;
+				case Item.RÜSTUNGEIS:
+					System.out.println("Bravo, du hast eine Gefrierschutz-Rüstung gesammelt");
+					hasArmour = 1;
+					loop_from = (pics.length/3);
+					loop_to = (pics.length/3)*2 - 1;
+					s.remove = true;
+				break;
+				case Item.RÜSTUNGFEUER:
+					System.out.println("Bravo, du hast eine Feuerschutz-Rüstung gesammelt");
+					hasArmour = 2;
+					loop_from = (pics.length/3)*2;
 					loop_to = pics.length - 1;
 					s.remove = true;
 				break;
-				case 5:
+				case Item.EISWAFFE:
 					System.out.println("Bravo, du hast eine Waffe eingesammelt");
-					damage = damage + 10;
+					damage = damage + 20;
 					range = range + 10;
-					hasWeapon = true;
+					hasWeapon = 1;
 					s.remove = true;
 				break;
-				case 6:
+				case Item.FEUERWAFFE:
+					System.out.println("Bravo, du hast eine Waffe eingesammelt");
+					damage = damage + 20;
+					range = range + 10;
+					hasWeapon = 2;
+					s.remove = true;
+				break;
+				case Item.NPC:
 					if(parent.enterNPC == true){
 						parent.talkwithnpc = true;
 					}
 					
 				break;
-				case 7:
+				case Item.HEALTHPACK:
 					if(health < maxhealth){
 						health = health + 50;
 					}
@@ -471,8 +500,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 		Effect effect;
 		if(dx > 0){
 			if(dy > 0){			//Rechts unten
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlauExtrem.png", 10, 1), 28, 28, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
 				}
@@ -481,8 +512,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 				effect.y = ur.getY();
 				return effect;
 			}else if(dy < 0){	//Rechts oben
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlauExtrem.png", 10, 1), 28, 28, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
 				}
@@ -491,8 +524,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 				effect.y = or.getY() - 28;
 				return effect;
 			}else{				//Nur Rechts
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRotExtrem.png", 5, 1), 40, 5, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalBlauExtrem.png", 5, 1), 40, 5, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
 				}
@@ -502,8 +537,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 			}
 		}else if(dx < 0){
 			if(dy > 0){			//Links unten
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlauExtrem.png", 10, 1), 28, 28, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
 				}
@@ -512,8 +549,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 				effect.y = ul.getY();
 				return effect;
 			}else if(dy < 0){	//Links oben
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlauExtrem.png", 10, 1), 28, 28, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
 				}
@@ -522,8 +561,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 				effect.y = ol.getY() - 28;
 				return effect;
 			}else{				//Nur Links
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRotExtrem.png", 5, 1), 40, 5, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalBlauExtrem.png", 5, 1), 40, 5, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeHorizontalRot.png", 5, 1), 40, 5, 100, this.parent);
 				}
@@ -533,8 +574,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 			}
 		}else{
 			if(dy > 0){			//Nur Unten
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRotExtrem.png", 5, 1), 5, 40, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalBlauExtrem.png", 5, 1), 5, 40, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
 				}
@@ -542,8 +585,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 				effect.y = ul.getY() + 20;
 				return effect;
 			}else if(dy < 0){	//Nur Oben
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRotExtrem.png", 5, 1), 5, 40, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalBlauExtrem.png", 5, 1), 5, 40, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeVertikalRot.png", 5, 1), 5, 40, 100, this.parent);
 				}
@@ -551,8 +596,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 				effect.y = ol.getY() - 40;
 				return effect;
 			}else{				//Stillstand
-				if(hasWeapon){
+				if(hasWeapon == 2){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRotExtrem.png", 5, 1), 60, 60, 100, this.parent);
+				}else if(hasWeapon == 1){
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialBlauExtrem.png", 5, 1), 60, 60, 100, this.parent);
 				}else{
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeRadialRot.png", 5, 1), 60, 60, 100, this.parent);
 				}
@@ -641,10 +688,10 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public boolean isAttacking(){
 		return attacking;
 	}
-	public boolean hasArmour(){
+	public int hasArmour(){
 		return hasArmour;
 	}
-	public boolean hasWeapon(){
+	public int hasWeapon(){
 		return hasWeapon;
 	}
 	public void setHealth(int h){
@@ -660,7 +707,7 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		setAbleToLoseHealth(false);
 		healthTimer.schedule(new HealthTask(this), 1000); //Spieler kann erst nach gewisser Zeit wieder verwundet werden
 		
-		if(hasArmour){
+		if(hasArmour > 0){
 			health = health - (schaden/2); //Rüstung halbiert Schaden
 			
 		}else{
@@ -810,11 +857,11 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		return range;
 	}
 	
-	public void setOldWeapon(boolean b){
+	public void setOldWeapon(int b){
 		oldHasWeapon = b;
 	}
 	
-	public void setOldArmour(boolean b){
+	public void setOldArmour(int b){
 		oldHasArmour = b;
 	}
 
@@ -848,8 +895,8 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		y = parent.checkpointy;
 		
 		health = 100;
-		hasArmour = false;
-		hasWeapon = false;
+		hasArmour = 0;
+		hasWeapon = 0;
 				
 	}
 }

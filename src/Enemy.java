@@ -4,20 +4,20 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 public class Enemy extends Sprite {
-	private static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 	int corner;
-	private Point ol; //oben links
-	private Point or; //oben rechts
-	private Point ul; //unten links
-	private Point ur; //unten rechts
-	private double copy_dx;
-	private double copy_dy;
-	private Color check;
-	private int speed;
-	private double diffX;
-	private double diffY;
-	private int health;
-	private int damage;
+	protected Point ol; //oben links
+	protected Point or; //oben rechts
+	protected Point ul; //unten links
+	protected Point ur; //unten rechts
+	protected double copy_dx;
+	protected double copy_dy;
+	protected Color check;
+	protected int speed;
+	protected double diffX;
+	protected double diffY;
+	protected int health;
+	protected int damage;
 	boolean stop; //Darf sich Enemy bewegen? Wird durch Zauber verursacht
 	
 	boolean locked = false; //noch kein Ziel erfasst
