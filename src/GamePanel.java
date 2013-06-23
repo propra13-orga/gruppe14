@@ -82,8 +82,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean talkwithnpc = false;
 	boolean magic = false; //Will Spieler zaubern?
 	boolean inquest = false;
+	boolean multiplayer;
+	boolean singleplayer;
+	boolean serverMode;
+	boolean clientMode;
 
-	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet; Ersetzt boolean gamewon, lost
+	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet;
 	int pressCount;
 	int speed = 80;
 	int x = 0;
@@ -120,7 +124,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame.setResizable(false);
 		frame.addKeyListener(this);
 		
-		
 		paintMenu();
 				
 		Thread t = new Thread(this);
@@ -129,7 +132,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 
 	private void doInitializations(JFrame menu){
-
 		up = false;
 		down = false;
 		left = false;
@@ -144,10 +146,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors = new CopyOnWriteArrayList<Sprite>();
 		attacks = new CopyOnWriteArrayList<Object>();
 		
-	
 		lib = SpriteLib.getInstance();
 		
-
 		/*soundlib = new SoundLib();
 		soundlib.loadSound("Hintergrund", "sound/Greensleeves.wav");
 		soundlib.loadSound("Angriff", "sound/Angriff.wav");
@@ -217,11 +217,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		initSkills();
-		frame.setVisible(true);
 		frame.add(this);
 		menu.dispose();
 		setStarted(true);
-		//doInitializations(3,2); //Zum Level jumpen
 		
 	}
 	
@@ -351,8 +349,32 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	
 	public void doInitializationsMulti(){
+		frame4.setVisible(false);
+		System.out.println("Fenster verstecken");
+		up = false;
+		down = false;
+		left = false;
+		right = false; //sonst läuft Spieler nach Neustart einfach los
+		attack = false;
 		
-		frame4.dispose();
+		level = 1;
+		room = 1;
+		last = System.nanoTime();
+		gameover = 0;
+		
+		actors = new CopyOnWriteArrayList<Sprite>();
+		attacks = new CopyOnWriteArrayList<Object>();
+		
+		lib = SpriteLib.getInstance();
+		
+		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
+		actors.add(player);
+		
+		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+		
+		frame.add(this);
+		setStarted(true);
+		System.out.println(started);
 		//hier: wenn Server und Client soweit sind, starten!
 	}
 
@@ -371,19 +393,22 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0){
-				
+				serverMode = true;
 				server = new Server(4711);
-				server.run();
 				doInitializationsMulti();
-
+				server.run();
+				
 			}
 		});
 		
 		
 		b2.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+				clientMode = true;
 				client = new Client();
+				doInitializationsMulti();
 				client.run();
+				
 			}
 			
 		});
@@ -409,9 +434,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 			b1.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0){
-					
+					singleplayer = true;
 					doInitializations(frame3);
-	
 				}
 			});
 			
@@ -425,6 +449,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 			b3.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg1){
+					multiplayer = true;
 					paintNetworkMenu();
 				}
 			});			
@@ -532,7 +557,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	public void run(){
 		while(game_running){
-			
 			computeDelta(); //Zeit für vorausgehenden Schleifendurchlauf wird errechnet
 			//Erst Methoden abarbeiten, wenn Spiel gestartet ist
 			if(isStarted()){
@@ -701,11 +725,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	public void paintComponent(Graphics g){ //paintComponent-Methode überschreiben
 		super.paintComponent(g);
 		
-		
-		if(!isStarted()){
+		if(!started){
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
-		
 		map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte wird nur noch einmal gezeichnet, nicht für jeden Sprite in actors neu
 		
 		if(actors!=null){
@@ -741,7 +763,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			}
 		}
 		g.drawString("Schaden: " + player.getDamage(), 485, 610);
-		g.drawString("Enemy: " + enemy2.getHealth(), 560, 610);
 		g.drawString("Rüstung: " + player.hasArmour(), 630, 610);
 		g.drawString("Waffe: " + player.hasWeapon(), 715, 610);
 		g.drawString("Level: " + level, 700, 620);
@@ -953,19 +974,37 @@ private void doLogic(){
 		
 		if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
 			left = true;
+			if(clientMode){
+				client.out.write("left");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT){ //rechte Pfeiltaste
 			right = true;
+			if(clientMode){
+				client.out.write("right");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_UP){ //obere Pfeiltaste
 			up = true;
+			if(clientMode){
+				client.out.write("up");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = true;
+			if(clientMode){
+				client.out.write("down");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_ENTER){
+
 			enterShop = true;
 			enterNPC = true;
+			
 		}
 		if(e.getKeyCode() == KeyEvent.VK_S){
 			skillmode = true;

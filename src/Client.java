@@ -39,8 +39,9 @@ public class Client extends Thread{
 					System.out.println("Empfangenes Level vom Server: ");
 					level = Integer.parseInt(in.readLine());
 					System.out.println(level);
-					
 				}
+				out.write("Der Client schickt etwas an den Server");
+				
 			}
 		}catch(IOException e){
 			System.out.println("fehlerchen "+ e);
