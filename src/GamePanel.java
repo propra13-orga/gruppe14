@@ -55,8 +55,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Item mana;
 	Item shop;
 	Item npc;
-	Item schwert;
-	Item schild;
+	Item schwerteis;
+	Item schwertfeuer;
+	Item schildeis;
+	Item schildfeuer;
 	Item healthpack;
 	Item healthpack2;
 
@@ -155,8 +157,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		soundlib.loopSound("Hintergrund");*/
 		
 		////1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
-		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
+		player = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);
+		enemy3 = new IceEnemy(lib.getSprite("resources/pics/Eisgegner.gif", 4, 1), 500, 50, 10, 100, this);
+		enemy4 = new FireEnemy(lib.getSprite("resources/pics/Feuergegner.gif", 4, 1), 600, 50, 10, 100, this);
 		enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 10, 100, this);
 		coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
 		coin2 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 670, 400, 1, 100, this);
@@ -166,14 +170,18 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 		npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
-		schild = new Item(lib.getSprite("resources/pics/armour.gif", 1, 1), 100, 200, 4, 100, this);
-		schwert = new Item(lib.getSprite("resources/pics/weapon.gif", 1, 1), 100, 150, 5, 100, this);
+		schildeis = new Item(lib.getSprite("resources/pics/IceArmour.gif", 1, 1), 100, 200, 4, 100, this);
+		schildfeuer = new Item(lib.getSprite("resources/pics/FireArmour.gif", 1, 1), 150, 200, 9, 100, this);
+		schwerteis = new Item(lib.getSprite("resources/pics/IceSword.gif", 1, 1), 100, 150, 5, 100, this);
+		schwertfeuer = new Item(lib.getSprite("resources/pics/FireSword.gif", 1, 1), 150, 150, 10, 100, this);
 		healthpack = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 500, 100, 7, 100, this);
 		quest = new Quest(lib.getSprite("resources/pics/quest.gif", 1, 1), 500, 200, 2, 100, this);
 
 
 		actors.add(enemy); 
 		actors.add(enemy2); 
+		actors.add(enemy3);
+		actors.add(enemy4); 
 		actors.add(coin); 
 		actors.add(coin2); 
 		actors.add(coin3); 
@@ -182,8 +190,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(mana);
 		actors.add(shop);
 		actors.add(npc);
-		actors.add(schwert);
-		actors.add(schild);
+		actors.add(schwerteis);
+		actors.add(schildeis);
+		actors.add(schwertfeuer);
+		actors.add(schildfeuer);
 		actors.add(healthpack);
 		actors.add(quest);
 		actors.add(player);
@@ -195,8 +205,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		player.setOldCoins(100);
 		player.setOldXP(0);
 		player.setOldMana(0);
-		player.setOldWeapon(false);
-		player.setOldArmour(false);
+		player.setOldWeapon(0);
+		player.setOldArmour(0);
 		player.setCoins(100);
 		player.setXP(0);
 		player.setOldMaxhealth(100);
@@ -236,22 +246,30 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 			enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);
 			enemy2 = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 300, 200, 10, 100, this);
+			enemy3 = new IceEnemy(lib.getSprite("resources/pics/Eisgegner.gif", 4, 1), 500, 50, 10, 100, this);
+			enemy4 = new FireEnemy(lib.getSprite("resources/pics/Feuergegner.gif", 4, 1), 600, 50, 10, 100, this);
 			coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
 			mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 			shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 			npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
-			schild = new Item(lib.getSprite("resources/pics/armour.gif", 1, 1), 100, 200, 4, 100, this);
-			schwert = new Item(lib.getSprite("resources/pics/weapon.gif", 1, 1), 100, 150, 5, 100, this);
+			schildeis = new Item(lib.getSprite("resources/pics/IceArmour.gif", 1, 1), 100, 200, 4, 100, this);
+			schildfeuer = new Item(lib.getSprite("resources/pics/FireArmour.gif", 1, 1), 150, 200, 9, 100, this);
+			schwerteis = new Item(lib.getSprite("resources/pics/IceSword.gif", 1, 1), 100, 150, 5, 100, this);
+			schwertfeuer = new Item(lib.getSprite("resources/pics/FireSword.gif", 1, 1), 150, 150, 10, 100, this);
 			healthpack = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 500, 100, 7, 100, this);
 			
 			actors.add(enemy); 
 			actors.add(enemy2); 
+			actors.add(enemy3); 
+			actors.add(enemy4); 
 			actors.add(coin); 
 			actors.add(mana);
 			actors.add(shop);
 			actors.add(npc);
-			actors.add(schwert);
-			actors.add(schild);
+			actors.add(schwerteis);
+			actors.add(schildeis);
+			actors.add(schwertfeuer);
+			actors.add(schildfeuer);
 			actors.add(healthpack);
 		}else if((level == 1) && (room == 2)){
 			
