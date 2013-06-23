@@ -31,12 +31,15 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	long fps = 0;
 	long gameover = 0;
 	
+	Server server;
+	Client client; 
+	
 	SpriteLib lib;
 	SoundLib soundlib;
 	Player player;
+	
 	Enemy enemy;
 	Enemy enemy2;
-
 	Enemy boss;
 	Enemy enemy3;
 	Enemy enemy4;
@@ -126,8 +129,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 
 	private void doInitializations(JFrame menu){
-		
-		
+
 		up = false;
 		down = false;
 		left = false;
@@ -347,21 +349,60 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(player);
 		
 	}
-
 	
+	public void doInitializationsMulti(){
+		
+		frame4.dispose();
+		//hier: wenn Server und Client soweit sind, starten!
+	}
+
+	private void paintNetworkMenu(){
+		frame3.dispose();
+		
+		frame4 = new JFrame("Netzwerk");
+		frame4.setLocation(650,300);
+		frame4.setSize(100, 100);
+		JButton b1 = new JButton("Server");
+		JButton b2 = new JButton("Client");
+		frame4.add(BorderLayout.NORTH, b1);
+		frame4.add(BorderLayout.SOUTH, b2);
+		frame4.pack();
+		frame4.setVisible(true);
+
+		b1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				
+				server = new Server(4711);
+				server.run();
+				doInitializationsMulti();
+
+			}
+		});
+		
+		
+		b2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+				client = new Client();
+				client.run();
+			}
+			
+		});
+	}
 	private void paintMenu(){ 
 		//Idee: Vllt. lieber Menü auf unsichtbar setzen und immer wieder anzeigen, wenn benötigt? Vllt. auch praktisch für Pause...Aber was mit entsprechenden Labels?
 		if(spiel_status == 3){ //Spiel noch gar nicht gestartet
 			frame3 = new JFrame("Spiel starten?");
 			frame3.setLocation(650,300);
 			frame3.setSize(100, 100);
-			JButton b1 = new JButton("Spiel starten");
+			JButton b1 = new JButton("Einzelspieler");
 			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
 			JButton b2 = new JButton("Beenden");
 			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
+			JButton b3 = new JButton("Mehrspieler");
 			
 			frame3.add(BorderLayout.NORTH, b1);
 			frame3.add(BorderLayout.SOUTH, b2);
+			frame3.add(BorderLayout.CENTER, b3);
 			frame3.pack();
 			frame3.setVisible(true);
 			
@@ -382,6 +423,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				
 			});
 			
+			b3.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg1){
+					paintNetworkMenu();
+				}
+			});			
 			
 		}
 		
@@ -645,9 +691,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		skills.setVisible(true);
 		
 	}
-	
-	
-
 	
 	private void computeDelta(){
 		delta = System.nanoTime() - last; //Errechnung der Zeit für Schleifendurchlauf in NS
