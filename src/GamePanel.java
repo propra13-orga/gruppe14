@@ -688,10 +688,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			t3.setEnabled(false);
 		}
 		if(player.hasSkillHealth2()){
-			t2.setEnabled(false);
+			t3.setEnabled(false);
 		}
 		if(player.hasSkillStrength1()){
-			t3.setEnabled(false);
+			t2.setEnabled(false);
 			t4.setEnabled(true);
 		}else{
 			t4.setEnabled(false);
@@ -719,10 +719,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			t3.setEnabled(false);
 		}
 		if(player.hasSkillHealth2()){
-			t2.setEnabled(false);
+			t3.setEnabled(false);
 		}
 		if(player.hasSkillStrength1()){
-			t3.setEnabled(false);
+			t2.setEnabled(false);
 			t4.setEnabled(true);
 		}else{
 			t4.setEnabled(false);
@@ -845,7 +845,13 @@ private void doLogic(){
 							opfer = it2.next();
 							if(opfer instanceof Enemy){
 								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
-									((Enemy)opfer).stop();
+									if(opfer instanceof IceEnemy){
+										((IceEnemy)opfer).reduceHealth(-10);
+									}else if (opfer instanceof FireEnemy){
+										((FireEnemy)opfer).reduceHealth(50);
+									}else{
+										((Enemy)opfer).stop();
+									}
 								}
 							}
 							
@@ -856,7 +862,15 @@ private void doLogic(){
 							opfer = it2.next();
 							if(opfer instanceof Enemy){
 								if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
-									((Enemy)opfer).stop();
+									if(opfer instanceof IceEnemy){
+										((IceEnemy)opfer).reduceHealth(-10);
+									}else if (opfer instanceof FireEnemy){
+										((FireEnemy)opfer).reduceHealth(50);
+									}else{
+										((Enemy)opfer).stop();
+									}
+										
+									
 								}
 							}
 							
