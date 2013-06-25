@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.io.IOException;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -24,7 +23,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame2;
 	JFrame frame3;
 	JFrame frame4;
-	JFrame f;
 	JFrame shop2 = new JFrame("Shop");
 	JFrame skills = new JFrame ("Skills");
 	
@@ -235,37 +233,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 	
-	public void waitingWindow() {
-		// Richte JFrame ein
-		f = new JFrame("Auf Client warten");
-		f.setLocation(500, 300);
-		f.setSize(100, 100);	
-		// Richte JButton ein
-		JButton abbrechen = new JButton("Abbrechen");
-		
-		// Bei Klick auf abbrechen
-		abbrechen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				f.setVisible(false);
-				try {
-					server.serverSocket.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		
-		// Richte Ausgabetext ein
-		JLabel text = new JLabel("Bitte warten bis Client verbindet.");
-
-		f.add(BorderLayout.NORTH, text);
-		f.add(BorderLayout.CENTER, abbrechen);
-		f.pack();
-		f.setVisible(true);
-		//TODO: Warum wird in Fenster nix angezeigt?
-	}
-	
 	/**
 	 * In der doInitializations-Klasse werden neue Level bzw. R‰ume geladen und entsprechende Sprites geladen. 
 	 * Auﬂerdem werden teilweise Checkpointwerte gespeichert
@@ -447,9 +414,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				serverMode = true;
 				server = new Server(4711);
 				doInitializationsMulti();
-				waitingWindow();
 				server.run();
-		
 				
 			}
 		});
