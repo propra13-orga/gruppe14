@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,11 +59,6 @@ public class  Server extends Thread{
 			    
 			    out.println("Hallo Client! Hier spricht der Server");
 				out.flush();
-			    
-			    //Levelnummer schicken
-			    out.println("level");
-			    out.println(3);
-			    out.flush();
 
 			    warte();			
 				
@@ -99,7 +95,10 @@ public class  Server extends Thread{
 					posy = Integer.parseInt(in.readLine());
 				}else if(in_string.equals("Hey! Hier spricht der Client")){ 
 					f.dispose();
+					out.println("Start");
+					out.flush();
 					parent.doInitializationsMulti(parent.frame4);
+				
 				}
 			}
 		}catch (IOException e){
@@ -114,12 +113,11 @@ public class  Server extends Thread{
 	public void waitingWindow() {
 		// Richte JFrame ein
 		f = new JFrame("Auf Client warten");
-		f.setLocation(500, 300);
-		f.setSize(100, 100);	
+		f.setLocation(650, 300);
+		f.setBackground(Color.darkGray);
+		f.setSize(300, 100);	
 		// Richte JButton ein
 		JButton abbrechen = new JButton("Abbrechen");
-		
-		// Bei Klick auf abbrechen
 		abbrechen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				f.setVisible(false);
@@ -133,12 +131,13 @@ public class  Server extends Thread{
 		});
 		
 		// Richte Ausgabetext ein
-		JLabel text = new JLabel("Bitte warten bis Client verbindet.");
+		JLabel text = new JLabel("Bitte warten bis sich ein Client verbindet.");
 
 		f.add(BorderLayout.NORTH, text);
 		f.add(BorderLayout.CENTER, abbrechen);
-		f.pack();
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setVisible(true);
+		
 		//TODO: Warum wird in Fenster nix angezeigt?
 	}
 	

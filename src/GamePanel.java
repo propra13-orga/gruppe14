@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.io.IOException;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -23,6 +24,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame2;
 	JFrame frame3;
 	JFrame frame4;
+	JFrame f;
 	JFrame shop2 = new JFrame("Shop");
 	JFrame skills = new JFrame ("Skills");
 	
@@ -30,6 +32,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	long last = 0;
 	long fps = 0;
 	long gameover = 0;
+	
+	final GamePanel p = this;
 	
 	Server server;
 	Client client; 
@@ -139,6 +143,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 
+	
 	public void doInitializations(JFrame menu){
 		up = false;
 		down = false;
@@ -404,10 +409,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(player);
 		
 	}
-	
+		
 	public void doInitializationsMulti(JFrame f){
-		f.setVisible(false);
+		
+		//TODO: Hier wird nix gemalt, solange Server und Client aktiv sind -> Zwei parallel Threads? Wie implementieren?
+		f.dispose();
 		System.out.println("Netzwerk-Fenster verstecken");
+		System.out.println("doInitializationsMulti ausführen");
+		
 		up = false;
 		down = false;
 		left = false;
@@ -424,20 +433,18 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		lib = SpriteLib.getInstance();
 		
-		player = new Player(lib.getSprite("resources/pics/player.gif", 8, 1), 50, 50, 100, this);
+		player = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this);
 		actors.add(player);
 		
 		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		frame.add(this);
-		//setStarted(true);
-
-		//hier: wenn Server und Client soweit sind, starten!
+		setStarted(true);
 	}
 
 	private void paintNetworkMenu(){
 		frame3.dispose();
-		final GamePanel p = this;
+		
 		frame4 = new JFrame("Netzwerk");
 		frame4.setLocation(650,300);
 		frame4.setSize(100, 100);
@@ -783,6 +790,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		if(!started){
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
+		System.out.println("Es müsste eigentlich map gezeichnet werden");
 		map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte wird nur noch einmal gezeichnet, nicht für jeden Sprite in actors neu
 		
 		if(actors!=null){

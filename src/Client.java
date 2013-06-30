@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.JFrame;
 
 
 //Nach Vorlage von Java ist auch eine Insel
@@ -24,7 +27,6 @@ public class Client extends Thread{
 		    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		    out.println("Hey! Hier spricht der Client");
 		    out.flush();
-		    parent.doInitializations(parent.frame4);
 		    warte();
 		    
 		}catch(IOException e){
@@ -41,10 +43,12 @@ public class Client extends Thread{
 				if(in_string.equals("level")){
 					level = Integer.parseInt(in.readLine());
 					System.out.println("Der Client hat empfangen: " + level);
-				}				
+				}else if(in_string.equals("Start")){
+					parent.doInitializationsMulti(parent.frame4);
+				}
 			}
 		}catch(IOException e){
-			System.out.println("fehlerchen "+ e);
+			System.out.println("Verbindungsfehler "+ e);
 		}
 	}
 	
