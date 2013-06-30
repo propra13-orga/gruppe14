@@ -407,7 +407,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 	public void doInitializationsMulti(JFrame f){
 		f.setVisible(false);
-		System.out.println("Fenster verstecken");
+		System.out.println("Netzwerk-Fenster verstecken");
 		up = false;
 		down = false;
 		left = false;
@@ -430,8 +430,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		frame.add(this);
-		setStarted(true);
-		System.out.println(started);
+		//setStarted(true);
+
 		//hier: wenn Server und Client soweit sind, starten!
 	}
 

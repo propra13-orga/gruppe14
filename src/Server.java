@@ -51,10 +51,13 @@ public class  Server extends Thread{
 				clientSocket = serverSocket.accept(); //nimmt wartende Verbindungen an
 				//Verbindungsstatus aktualisieren:
 				connected = true;
-				System.out.println("Hallo Client!");
+				
 				//hier im GamePanel multiplayer = true
 				out = new PrintWriter(clientSocket.getOutputStream(), true);
 			    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			    
+			    out.println("Hallo Client! Hier spricht der Server");
+				out.flush();
 			    
 			    //Levelnummer schicken
 			    out.println("level");
@@ -80,7 +83,7 @@ public class  Server extends Thread{
 				if(in_string.equals("Schluss")){
 					clientSocket.close();//Schieﬂen)
 				}else{
-					out.println("Empfangene Nachricht: " + in_string);
+					System.out.println("Der Server hat empfangen: " + in_string);
 				}
 				
 				if(in_string.equals("Magic")){
@@ -96,7 +99,7 @@ public class  Server extends Thread{
 					posy = Integer.parseInt(in.readLine());
 				}else if(in_string.equals("Hey! Hier spricht der Client")){ 
 					f.dispose();
-					parent.doInitializations(parent.frame4);
+					parent.doInitializationsMulti(parent.frame4);
 				}
 			}
 		}catch (IOException e){

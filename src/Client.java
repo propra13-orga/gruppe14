@@ -23,6 +23,7 @@ public class Client extends Thread{
 			out = new PrintWriter(socket.getOutputStream(), true);
 		    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		    out.println("Hey! Hier spricht der Client");
+		    out.flush();
 		    parent.doInitializations(parent.frame4);
 		    warte();
 		    
@@ -36,11 +37,10 @@ public class Client extends Thread{
 		try {
 			while(System.in.available() == 0 & !isInterrupted()){
 				in_string = in.readLine(); //nehme Server-Nachricht entgegen
-				System.out.println(in_string);
+				System.out.println("Der Client hat empfangen: " + in_string);
 				if(in_string.equals("level")){
-					System.out.println("Empfangenes Level vom Server: ");
 					level = Integer.parseInt(in.readLine());
-					System.out.println(level);
+					System.out.println("Der Client hat empfangen: " + level);
 				}				
 			}
 		}catch(IOException e){
