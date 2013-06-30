@@ -13,15 +13,17 @@ public class Client extends Thread{
 	int x, y, level;
 	String ip;
 	String in_string, out_string;
+	GamePanel parent;
 	
-	public void starten(String IP){
+	public Client(String IP, GamePanel p){
+		parent = p;
 		this.ip = IP;
 		try{
 			socket = new Socket(ip, 4711);
 			out = new PrintWriter(socket.getOutputStream(), true);
 		    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		    out.write("Hey!");
-		    System.out.println("Hallo Server!");
+		    out.println("Hey! Hier spricht der Client");
+		    parent.doInitializations(parent.frame4);
 		    warte();
 		    
 		}catch(IOException e){
@@ -39,17 +41,12 @@ public class Client extends Thread{
 					System.out.println("Empfangenes Level vom Server: ");
 					level = Integer.parseInt(in.readLine());
 					System.out.println(level);
-				}
-				out.write("Der Client schickt etwas an den Server");
-				
+				}				
 			}
 		}catch(IOException e){
 			System.out.println("fehlerchen "+ e);
 		}
 	}
 	
-	public void run(){
-		starten("127.0.0.1");
-	}
 		
 }

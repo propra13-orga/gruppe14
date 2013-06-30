@@ -26,10 +26,14 @@ public class  Server extends Thread{
 	int meldungen_zaehler, x, y;
 	boolean connected = false;
 	String in_string;
+	int posx;
+	int posy;
+	GamePanel parent;
 	JFrame f;
 	
-	public Server(int port){
+	public Server(int port, GamePanel p){
 		this.port = port; 
+		parent = p;
 		try{
 			serverSocket = new ServerSocket(port); //erstellt ServerSocket mit Port port
 			System.out.println("serverSocket erfolgreich erstellt");
@@ -71,12 +75,28 @@ public class  Server extends Thread{
 			//Server extends Thread!
 			while(System.in.available() == 0 && !isInterrupted()){
 				in_string = in.readLine(); //Client-Nachricht entgegen nehmen
-				System.out.println(in_string);
 				//Je nach Eingabe führe verschiedene aus
+				//Mögliche Begriffe: "Magic", "Attack", "Skill", "Shop", "Position", entsprechend muss der Server reagieren, vllt. mehrere Operanden danach noch auslesen etc.
 				if(in_string.equals("Schluss")){
 					clientSocket.close();//Schießen)
 				}else{
-					out.write("Dies ist nur ein Test");
+					out.println("Empfangene Nachricht: " + in_string);
+				}
+				
+				if(in_string.equals("Magic")){
+					
+				}else if(in_string.equals("Attack")){
+					
+				}else if(in_string.equals("Skill")){
+					
+				}else if(in_string.equals("Shop")){
+					
+				}else if(in_string.equals("Position")){
+					posx = Integer.parseInt(in.readLine());
+					posy = Integer.parseInt(in.readLine());
+				}else if(in_string.equals("Hey! Hier spricht der Client")){ 
+					f.dispose();
+					parent.doInitializations(parent.frame4);
 				}
 			}
 		}catch (IOException e){

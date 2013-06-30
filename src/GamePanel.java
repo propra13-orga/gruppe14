@@ -139,7 +139,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 
-	private void doInitializations(JFrame menu){
+	public void doInitializations(JFrame menu){
 		up = false;
 		down = false;
 		left = false;
@@ -405,8 +405,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 	
-	public void doInitializationsMulti(){
-		frame4.setVisible(false);
+	public void doInitializationsMulti(JFrame f){
+		f.setVisible(false);
 		System.out.println("Fenster verstecken");
 		up = false;
 		down = false;
@@ -437,7 +437,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 
 	private void paintNetworkMenu(){
 		frame3.dispose();
-		
+		final GamePanel p = this;
 		frame4 = new JFrame("Netzwerk");
 		frame4.setLocation(650,300);
 		frame4.setSize(100, 100);
@@ -451,8 +451,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0){
 				serverMode = true;
-				server = new Server(4711);
-				doInitializationsMulti();
+				server = new Server(4711, p);
 				server.run();
 				
 			}
@@ -460,16 +459,15 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		
 		b2.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+			public void actionPerformed(ActionEvent arg1){ 
 				clientMode = true;
-				client = new Client();
-				doInitializationsMulti();
+				client = new Client("127.0.0.1", p);
 				client.run();
-				
 			}
 			
 		});
 	}
+	
 	private void paintMenu(){ 
 		//Idee: Vllt. lieber Menü auf unsichtbar setzen und immer wieder anzeigen, wenn benötigt? Vllt. auch praktisch für Pause...Aber was mit entsprechenden Labels?
 		if(spiel_status == 3){ //Spiel noch gar nicht gestartet
@@ -1059,6 +1057,7 @@ private void doLogic(){
 		if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
 			left = true;
 			if(clientMode){
+				//TODO: hier anders! Vielleicht besser die mögliche Position übergeben?
 				client.out.write("left");
 				client.out.flush();
 			}
@@ -1085,19 +1084,34 @@ private void doLogic(){
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_ENTER){
-
+			if(clientMode){
+				client.out.write("Shop");
+				client.out.flush();
+			}
 			enterShop = true;
 			enterNPC = true;
 			
 		}
 		if(e.getKeyCode() == KeyEvent.VK_S){
+			if(clientMode){
+				client.out.write("Skill");
+				client.out.flush();
+			}
 			skillmode = true;
 			skills();
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
+			if(clientMode){
+				client.out.write("Attack");
+				client.out.flush();
+			}
 			attack = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_C){
+			if(clientMode){
+				client.out.write("Magic");
+				client.out.flush();
+			}
 			magic = true;
 		}
 	}

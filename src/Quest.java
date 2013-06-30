@@ -33,7 +33,7 @@ public class Quest extends Sprite{
 	
 	public int getQuestCoins(){
 
-		return questcoins; //Gibt, falls Typ = 2 ist, Anzahl der benötigten Münzen aus
+		return questcoins; //Gibt, falls Typ = 2 oder 1 ist, Anzahl der benötigten Münzen aus
 		
 	}
 }

@@ -21,6 +21,9 @@ Funktionalität zurzeit:
 - Sound
 - Erfahrungspunkte und Fertigkeiten, Fertigkeitsmenü kann mit S geöffnet werden. Von beiden Fertigkeiten gibt es verbesserte Varianten, die die vorangehende Variante voraussetzt.
 - Erfahrungspunkte werden durch getötete Gegner oder Quests (sehr lukrativ) erlangt.
+- Schere-Stein-Papier-Prinzip 
+- Quests: Zur Zeit zwei Typen, einmal wird die Anzahl der einzusammelnden Münzen explizit genannt, einmal durch eine Rechenaufgabe. Entsprechend müssen die Münzen gesammelt werden und zurückgebracht werden
+- Netzwerk: Server muss sich zuerst anmelden, wenn sich dann auch Client einloggt kann kommuniziert werden, wobei testweise einmal die Levelnummer vom Server zum Client geschickt wird, das funktioniert soweit
 
 **********************************************************************************************************************************************************************************
 TODO:
