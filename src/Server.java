@@ -60,7 +60,7 @@ public class  Server extends Thread{
 			    out.println("Hallo Client! Hier spricht der Server");
 				out.flush();
 
-			    warte();			
+			    warte();		
 				
 			}catch (IOException e){
 				System.out.println("Verbindungsfehler: " +e);

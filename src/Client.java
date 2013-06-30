@@ -27,7 +27,6 @@ public class Client extends Thread{
 		    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		    out.println("Hey! Hier spricht der Client");
 		    out.flush();
-		    warte();
 		    
 		}catch(IOException e){
 			System.out.println("Fehler: " + e);
@@ -52,5 +51,8 @@ public class Client extends Thread{
 		}
 	}
 	
+	public void run(){
+		warte();
+	}
 		
 }

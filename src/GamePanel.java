@@ -459,7 +459,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			public void actionPerformed(ActionEvent arg0){
 				serverMode = true;
 				server = new Server(4711, p);
-				server.run();
+				server.run(); //Client starten
 				
 			}
 		});
@@ -469,7 +469,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			public void actionPerformed(ActionEvent arg1){ 
 				clientMode = true;
 				client = new Client("127.0.0.1", p);
-				client.run();
+				client.run(); //Thread starten
 			}
 			
 		});
