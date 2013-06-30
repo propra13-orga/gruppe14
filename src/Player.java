@@ -365,7 +365,27 @@ public class Player extends Sprite {
 				switch(type){
 				
 				case 1:
-				//TODO: Mathequest
+				parent.inquest = true;
+				
+				if(collectedCoins > 0){
+					if(collectedCoins == quest.getQuestCoins()){
+						System.out.println("Bravo - Du hast meine Aufgabe erfüllt, hier deine Prämie: TODO");
+						xp = xp + 6;
+						parent.inquest = false;
+						collectedCoins = 0;
+						s.remove = true;
+					} else {
+						System.out.println("Du hast leider die falsche Anzahl an Münzen mitgebracht, du verlierst 6 Erfahrungspunkte");
+						xp = xp - 6;
+						if (xp < 0){
+							xp = 0;
+						}
+						parent.inquest = false;
+						collectedCoins = 0;
+						s.remove = true;
+					}
+				}
+				
 				break;
 				case 2: 
 					

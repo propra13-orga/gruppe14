@@ -52,6 +52,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Item coin3;
 	Item coin4;
 	Item coin5;
+	Item coin6;
+	Item coin7;
+	Item coin8;
+	Item coin9;
+	Item coin10;
 	Item mana;
 	Item shop;
 	Item npc;
@@ -63,6 +68,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	Item healthpack2;
 
 	Quest quest;
+	Quest quest2;
 	
 	MapDisplay map;
 	
@@ -167,6 +173,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		coin3 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 640, 400, 1, 100, this);
 		coin4 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 610, 400, 1, 100, this);
 		coin5 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 580, 400, 1, 100, this);
+		coin6 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 100, 50, 1, 100, this);
+		coin7 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 140, 50, 1, 100, this);
+		coin8 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 180, 50, 1, 100, this);
+		coin9 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 220, 50, 1, 100, this);
+		coin10 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 260, 50, 1, 100, this);
 		mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 		shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 		npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
@@ -175,8 +186,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		schwerteis = new Item(lib.getSprite("resources/pics/IceSword.gif", 1, 1), 100, 150, 5, 100, this);
 		schwertfeuer = new Item(lib.getSprite("resources/pics/FireSword.gif", 1, 1), 150, 150, 10, 100, this);
 		healthpack = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 500, 100, 7, 100, this);
-		quest = new Quest(lib.getSprite("resources/pics/quest.gif", 1, 1), 500, 200, 2, 100, this);
-
+		quest = new Quest(lib.getSprite("resources/pics/quest.gif", 1, 1), 500, 200, 2, 100, this); //Münz-Quest
+		quest2 = new Quest(lib.getSprite("resources/pics/quest.gif", 1, 1), 100, 250, 1, 100, this); //Mathe-Münz-Quest
 
 		actors.add(enemy); 
 		actors.add(enemy2); 
@@ -187,6 +198,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(coin3); 
 		actors.add(coin4); 
 		actors.add(coin5);
+		actors.add(coin6); 
+		actors.add(coin7); 
+		actors.add(coin8); 
+		actors.add(coin9); 
+		actors.add(coin10);
 		actors.add(mana);
 		actors.add(shop);
 		actors.add(npc);
@@ -196,6 +212,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(schildfeuer);
 		actors.add(healthpack);
 		actors.add(quest);
+		actors.add(quest2);
 		actors.add(player);
 		
 		checkpointx = 50;
@@ -249,6 +266,15 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			enemy3 = new IceEnemy(lib.getSprite("resources/pics/Eisgegner.gif", 4, 1), 500, 50, 10, 100, this);
 			enemy4 = new FireEnemy(lib.getSprite("resources/pics/Feuergegner.gif", 4, 1), 600, 50, 10, 100, this);
 			coin = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 700, 400, 1, 100, this);
+			coin2 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 670, 400, 1, 100, this);
+			coin3 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 640, 400, 1, 100, this);
+			coin4 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 610, 400, 1, 100, this);
+			coin5 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 580, 400, 1, 100, this);
+			coin6 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 100, 50, 1, 100, this);
+			coin7 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 140, 50, 1, 100, this);
+			coin8 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 180, 50, 1, 100, this);
+			coin9 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 220, 50, 1, 100, this);
+			coin10 = new Item(lib.getSprite("resources/pics/coin.gif", 1, 1), 260, 50, 1, 100, this);
 			mana = new Item(lib.getSprite("resources/pics/mana.gif", 1, 1), 470, 500, 2, 100, this);
 			shop = new Item(lib.getSprite("resources/pics/shop.gif", 1, 1), 400, 500, 3, 100, this);
 			npc = new Item(lib.getSprite("resources/pics/npc.gif", 1, 1), 100, 100, 6, 100, this);
@@ -257,12 +283,23 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			schwerteis = new Item(lib.getSprite("resources/pics/IceSword.gif", 1, 1), 100, 150, 5, 100, this);
 			schwertfeuer = new Item(lib.getSprite("resources/pics/FireSword.gif", 1, 1), 150, 150, 10, 100, this);
 			healthpack = new Item(lib.getSprite("resources/pics/healthpack.gif", 1, 1), 500, 100, 7, 100, this);
+			quest = new Quest(lib.getSprite("resources/pics/quest.gif", 1, 1), 500, 200, 2, 100, this);
+			quest2 = new Quest(lib.getSprite("resources/pics/quest.gif", 1, 1), 500, 200, 1, 150, this); //Mathe-Münz-Quest
 			
 			actors.add(enemy); 
 			actors.add(enemy2); 
 			actors.add(enemy3); 
 			actors.add(enemy4); 
-			actors.add(coin); 
+			actors.add(coin);
+			actors.add(coin2); 
+			actors.add(coin3); 
+			actors.add(coin4); 
+			actors.add(coin5);
+			actors.add(coin6); 
+			actors.add(coin7); 
+			actors.add(coin8); 
+			actors.add(coin9); 
+			actors.add(coin10);
 			actors.add(mana);
 			actors.add(shop);
 			actors.add(npc);
@@ -271,6 +308,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			actors.add(schwertfeuer);
 			actors.add(schildfeuer);
 			actors.add(healthpack);
+			actors.add(quest);
+			actors.add(quest2);
 		}else if((level == 1) && (room == 2)){
 			
 			map = new MapDisplay("resources/level/TileMap_1_2.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this); 
@@ -771,14 +810,27 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		g.drawString("Quest: ", 320, 620);
 		if(inquest == true){
-			int diff = player.getQuest().getQuestCoins() - player.getCollectedCoins();
-			if(diff <= 0){
-				diff = 0;
+			if(player.getQuest().getType() == 1){
+				
+				if(player.getCollectedCoins() > 0){
+					g.drawString("Du musst ? Münzen einsammeln", 360, 620);
+				}else{
+					g.drawString("Du musst " + player.getQuest().teiler + " * " + player.getQuest().multi +" Münzen einsammeln", 360, 620);
+				}
 			}
-			g.drawString("Du musst noch " + diff + " Münze(n) sammeln", 360, 620);
-			if(diff == 0){
-				g.drawString(" - Geh zurück zum Quest", 565, 620);
+			if(player.getQuest().getType() == 2){
+				int diff = player.getQuest().getQuestCoins() - player.getCollectedCoins();
+				if(diff <= 0){
+					diff = 0;
+				}
+				
+				if(diff == 0){
+					g.drawString(" - Geh zurück zum Quest", 360, 620);
+				}else{
+					g.drawString("Du musst noch " + diff + " Münze(n) sammeln", 360, 620);
+				}
 			}
+			
 		}
 		g.drawString("Schaden: " + player.getDamage(), 485, 610);
 		g.drawString("Rüstung: " + player.hasArmour(), 630, 610);
