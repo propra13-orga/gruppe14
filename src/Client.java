@@ -44,6 +44,17 @@ public class Client extends Thread{
 					System.out.println("Der Client hat empfangen: " + level);
 				}else if(in_string.equals("Start")){
 					parent.doInitializationsMulti(parent.frame4);
+				}else if(in_string.equals("Chat")){
+					String text = in.readLine();
+					System.out.println("Der Client hat empfangen: " + text);
+					//parent.chatPane.setText(parent.chatPane.getText() + "\n" + text);
+					parent.chatPane.setText(text);
+					/*if(text.equals("")){
+						parent.chatPane.setText(parent.chatPane.getText() + "\n" + text);
+					}else{
+						parent.chatPane.setText(text);
+					}*/
+					parent.chatarea.setText("");
 				}
 			}
 		}catch(IOException e){

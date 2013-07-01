@@ -34,8 +34,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame skills = new JFrame ("Skills");
 	
 	JEditorPane chatPane;
-	JTextField chatarea = new JTextField("Deine Nachricht: ");
-	
+	JTextField chatarea = new JTextField();
 	long delta = 0;
 	long last = 0;
 	long fps = 0;
@@ -422,6 +421,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		//TODO: Hier wird nix gemalt, solange Server und Client aktiv sind -> Zwei parallel Threads? Wie implementieren?
 		f.dispose();
+		chat();
 		System.out.println("Netzwerk-Fenster verstecken");
 		System.out.println("doInitializationsMulti ausführen");
 		
@@ -761,25 +761,24 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		skillmode = true;
 		
 		chat.setLocation(500,300);
-		chat.setSize(200, 100);
+		chat.setSize(300, 300);
 		
 		chatPane = new JEditorPane();
 		chatarea.addKeyListener(this);
 		JScrollPane schieber = new JScrollPane(chatPane);
 		schieber.setBounds(20, 50, 400, 200);
 		chatPane.setEnabled(false);
-		chat.add(BorderLayout.NORTH, chatPane);
-		chat.add(BorderLayout.CENTER, chatarea);
-		chat.add(BorderLayout.SOUTH, schieber);
-		chat.setVisible(true);
-		
-		
+	
 		JButton close = new JButton("Chat verbergen");
 		close.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg1){
 				chatmode = false;
 			}
 		});
+		chat.add(BorderLayout.NORTH, chatPane);
+		chat.add(BorderLayout.CENTER, chatarea);
+		chat.add(BorderLayout.SOUTH, close);
+
 	}
 	/*Methode zum Aufruf des Skill-Menüs*/
 	public void skills(){
@@ -1099,33 +1098,53 @@ private void doLogic(){
 		if(chatmode){
 			char key = e.getKeyChar();
 			if(key == KeyEvent.VK_ENTER){
-				if(!chatPane.getText().equals("")){
-					chatPane.setText(chatPane.getText() + "\n" + chatarea.getText());
-				}else{
-					chatPane.setText(chatarea.getText());
+				if(clientMode){
+					client.out.println("Chat");
+					if(!chatPane.getText().equals("")){
+						client.out.println("\n" + chatarea.getText());
+						chatPane.setText(chatPane.getText() + "\n" + chatarea.getText());
+					}else{
+						client.out.println(chatarea.getText());
+						chatPane.setText(chatarea.getText());
+					}
+					chatarea.setText("");
+					client.out.flush();
+				}else if(serverMode){
+					server.out.println("Chat");
+					if(!chatPane.getText().equals("")){
+						server.out.println("\n" + chatarea.getText());
+						chatPane.setText(chatPane.getText() + "\n" + chatarea.getText());
+					}else{
+						server.out.println(chatarea.getText());
+						chatPane.setText(chatarea.getText());
+					}
+					chatarea.setText("");
+					server.out.flush();
 				}
-				chatarea.setText("");
+				
 			}
+			
+			
 		}else{
 			if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
 				left = true;
 				if(clientMode){
 					//TODO: hier anders! Vielleicht besser die mögliche Position übergeben?
-					client.out.write("left");
+					client.out.println("left");
 					client.out.flush();
 				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT){ //rechte Pfeiltaste
 				right = true;
 				if(clientMode){
-					client.out.write("right");
+					client.out.println("right");
 					client.out.flush();
 				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_UP){ //obere Pfeiltaste
 				up = true;
 				if(clientMode){
-					client.out.write("up");
+					client.out.println("up");
 					client.out.flush();
 				}
 			}
@@ -1138,7 +1157,7 @@ private void doLogic(){
 			}
 			if (e.getKeyCode() == KeyEvent.VK_ENTER){
 				if(clientMode){
-					client.out.write("Shop");
+					client.out.println("Shop");
 					client.out.flush();
 				}
 				enterShop = true;
@@ -1147,7 +1166,7 @@ private void doLogic(){
 			}
 			if(e.getKeyCode() == KeyEvent.VK_S){
 				if(clientMode){
-					client.out.write("Skill");
+					client.out.println("Skill");
 					client.out.flush();
 				}
 				skillmode = true;
@@ -1156,20 +1175,21 @@ private void doLogic(){
 			if(e.getKeyCode() == KeyEvent.VK_T){
 				if(multiplayer){
 					chatmode = true;
-					chat();
+					chat.setVisible(true);
+					
 				}
 				
 			}
 			if(e.getKeyCode() == KeyEvent.VK_X){
 				if(clientMode){
-					client.out.write("Attack");
+					client.out.println("Attack");
 					client.out.flush();
 				}
 				attack = true;
 			}
 			if (e.getKeyCode() == KeyEvent.VK_C){
 				if(clientMode){
-					client.out.write("Magic");
+					client.out.println("Magic");
 					client.out.flush();
 				}
 				magic = true;
