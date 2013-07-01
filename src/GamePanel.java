@@ -17,6 +17,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	private static final long serialVersionUID = 1L;
@@ -25,6 +28,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame3;
 	JFrame frame4;
 	JFrame f;
+	JFrame chat = new JFrame ("Chat");
 	JFrame shop2 = new JFrame("Shop");
 	JFrame skills = new JFrame ("Skills");
 	
@@ -98,6 +102,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean singleplayer;
 	boolean serverMode;
 	boolean clientMode;
+	boolean chatmode;
 
 	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet;
 	int pressCount;
@@ -648,9 +653,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		skills.setLocation(500,300);
 		skills.setSize(800, 600);
-		//skills.pack();
-		//skills.setVisible(true);
-		
+			
 		t1 = new JButton("Dicker Brecher (benötigt 2 Skillpunkte)");
 		t1.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
@@ -744,8 +747,34 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		
 		skills.pack();
-		//skills.setVisible(true);
 		
+	}
+	
+	public void chat(){
+		up = false;
+		down = false;
+		left = false;
+		right = false;
+		skillmode = true;
+		
+		chat.setLocation(500,300);
+		chat.setSize(200, 100);
+		
+		JTextArea textarea = new JTextArea();
+		JTextField chatarea = new JTextField();
+		JScrollPane schieber = new JScrollPane(textarea);
+		schieber.setBounds(20, 50, 400, 200);
+		chat.add(BorderLayout.NORTH, textarea);
+		chat.add(BorderLayout.CENTER, chatarea);
+		chat.add(BorderLayout.SOUTH, schieber);
+		chat.setVisible(true);
+		
+		JButton close = new JButton("Chat verbergen");
+		close.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){
+				chatmode = false;
+			}
+		});
 	}
 	/*Methode zum Aufruf des Skill-Menüs*/
 	public void skills(){
@@ -789,7 +818,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		if(!started){
 			return; //es wird erst gezeichnet, wenn Spiel gestartet ist
 		}
-		System.out.println("Es müsste eigentlich map gezeichnet werden");
 		map.drawVisibleMap(g); //Erst Karte, dann Objekte! Karte wird nur noch einmal gezeichnet, nicht für jeden Sprite in actors neu
 		
 		if(actors!=null){
@@ -971,6 +999,9 @@ private void doLogic(){
 		if (skillmode == false){
 			skills.setVisible(false);
 		}
+		if (chatmode == false){
+			chat.setVisible(false);
+		}
 	}
 	
 	private void moveObjects(){
@@ -1106,6 +1137,13 @@ private void doLogic(){
 			}
 			skillmode = true;
 			skills();
+		}
+		if(e.getKeyCode() == KeyEvent.VK_T){
+			if(multiplayer){
+				chatmode = true;
+				chat();
+			}
+			
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
 			if(clientMode){

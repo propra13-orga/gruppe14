@@ -115,7 +115,7 @@ public class  Server extends Thread{
 		f = new JFrame("Auf Client warten");
 		f.setLocation(650, 300);
 		f.setBackground(Color.darkGray);
-		f.setSize(300, 100);	
+		f.setSize(200, 100);	
 		// Richte JButton ein
 		JButton abbrechen = new JButton("Abbrechen");
 		abbrechen.addActionListener(new ActionListener() {
@@ -124,7 +124,6 @@ public class  Server extends Thread{
 				try {
 					serverSocket.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -137,8 +136,7 @@ public class  Server extends Thread{
 		f.add(BorderLayout.CENTER, abbrechen);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setVisible(true);
-		
-		//TODO: Warum wird in Fenster nix angezeigt?
+
 	}
 	
 }
