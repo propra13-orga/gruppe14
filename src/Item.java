@@ -5,8 +5,8 @@ public class Item extends Sprite{
 	public final static int COIN = 1;
 	public final static int MANA = 2;
 	public final static int SHOP = 3;
-	public final static int RÜSTUNGEIS = 4;
-	public final static int RÜSTUNGFEUER = 9;
+	public final static int RUESTUNGEIS = 4;
+	public final static int RUESTUNGFEUER = 9;
 	public final static int EISWAFFE = 5;
 	public final static int FEUERWAFFE = 10;
 	public final static int NPC = 6;

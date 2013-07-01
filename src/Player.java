@@ -315,14 +315,14 @@ public class Player extends Sprite {
 					}
 					
 				break;
-				case Item.RÜSTUNGEIS:
+				case Item.RUESTUNGEIS:
 					System.out.println("Bravo, du hast eine Gefrierschutz-Rüstung gesammelt");
 					hasArmour = 1;
 					loop_from = (pics.length/3);
 					loop_to = (pics.length/3)*2 - 1;
 					s.remove = true;
 				break;
-				case Item.RÜSTUNGFEUER:
+				case Item.RUESTUNGFEUER:
 					System.out.println("Bravo, du hast eine Feuerschutz-Rüstung gesammelt");
 					hasArmour = 2;
 					loop_from = (pics.length/3)*2;

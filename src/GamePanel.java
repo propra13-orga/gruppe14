@@ -249,7 +249,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		initSkills();
-		frame.add(this);
 		menu.dispose();
 		setStarted(true);
 		
@@ -459,7 +458,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			public void actionPerformed(ActionEvent arg0){
 				serverMode = true;
 				server = new Server(4711, p);
-				server.run(); //Client starten
+				server.start(); //Client starten; Auf gar keinen Fall mit run starten!
 				
 			}
 		});
@@ -469,7 +468,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			public void actionPerformed(ActionEvent arg1){ 
 				clientMode = true;
 				client = new Client("127.0.0.1", p);
-				client.run(); //Thread starten
+				client.start(); //Thread starten; Auf gar keinen Fall mit run starten!
 			}
 			
 		});
