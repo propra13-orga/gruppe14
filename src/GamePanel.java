@@ -126,11 +126,18 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 	static int rows, columns;
 	
-
+	/**
+	 * Mainmethode, die lediglich ein GamePanel generiert
+	 */
 	public static void main(String[] args){
 		new GamePanel(790,630); //Sonst grauer Streifen an den Rändern rechts und unten
 	}
 	
+	/**
+	 * Konstruktor der GamePanel-Klasse. Hier wird das Hauptfenster generiert und der Spielthread gestartet. Außerdem wird das Menü gezeichnet
+	 * @param w Breite des Fensters
+	 * @param h Höhe des Fensters
+	 */
 	public GamePanel(int w, int h){
 		
 		this.setPreferredSize(new Dimension(w,h));
@@ -151,7 +158,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 
-	
+	/**
+	 * In der doInitializations-Methode werden grundlegende Objekte zum Spielstart instanziert
+	 * Insbesondere werden die Spieler und Gegner generiert, die Karte geladen etc.
+	 * @param menu Fenster, welches geschlossen wird
+	 */
 	public void doInitializations(JFrame menu){
 		up = false;
 		down = false;
@@ -263,8 +274,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	
 	/**
-	 * In der doInitializations-Klasse werden neue Level bzw. Räume geladen und entsprechende Sprites geladen. 
-	 * Außerdem werden teilweise Checkpointwerte gespeichert
+	 * In der doInitializations-Methode werden neue Level bzw. Räume geladen und entsprechende Sprites geladen. 
+	 * Außerdem sind Checkpoints generiert und es werden die Zwischenstände, wie Anzahl der Münzen etc. gespeichert
+	 * @param l Levelnummer, die übergeben werden, um zu bestimmen, welches Level geladen wird
+	 * @param r Raumnummer, die übergeben wird, um zu bestimmen, welcher Raum geladen wird
 	 */
 	public void doInitializations(int l, int r){ //l = level, r = room
 		level = l;
