@@ -117,10 +117,10 @@ public class  Server extends Thread{
 	
 	public void waitingWindow() {
 		// Richte JFrame ein
-		f = new JFrame("Auf Client warten");
+		f = new JFrame("Warte auf Client");
 		f.setLocation(650, 300);
 		f.setBackground(Color.darkGray);
-		f.setSize(200, 100);	
+		f.setSize(100, 90);	
 		// Richte JButton ein
 		JButton abbrechen = new JButton("Abbrechen");
 		abbrechen.addActionListener(new ActionListener() {
@@ -135,7 +135,7 @@ public class  Server extends Thread{
 		});
 		
 		// Richte Ausgabetext ein
-		JLabel text = new JLabel("Bitte warten bis sich ein Client verbindet.");
+		JLabel text = new JLabel("Warte auf Client");
 
 		f.add(BorderLayout.NORTH, text);
 		f.add(BorderLayout.CENTER, abbrechen);
