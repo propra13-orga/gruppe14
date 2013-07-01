@@ -23,16 +23,13 @@ Funktionalität zurzeit:
 - Erfahrungspunkte werden durch getötete Gegner oder Quests (sehr lukrativ) erlangt.
 - Schere-Stein-Papier-Prinzip 
 - Quests: Zur Zeit zwei Typen, einmal wird die Anzahl der einzusammelnden Münzen explizit genannt, einmal durch eine Rechenaufgabe. Entsprechend müssen die Münzen gesammelt werden und zurückgebracht werden
-- Netzwerk: Server muss sich zuerst anmelden, wenn sich dann auch Client einloggt kann kommuniziert werden, wobei testweise einmal die Levelnummer vom Server zum Client geschickt wird, das funktioniert soweit
+- Netzwerk: Server muss sich zuerst anmelden, wenn sich dann auch Client einloggt kann kommuniziert werden, wobei sobald der Client da ist, das Spiel gestartet wird, zur Zeit läuft das Spiel aber bei jedem Spieler lokal.
+- Chat: Spieler können untereinander über den Chat kommunizieren, öffnen mit T. Kann auch verborgen werden und dann wieder geöffnet werden. Darstellung noch nicht optimal, Farbe zum Unterscheiden wäre z.B. gut
 
 **********************************************************************************************************************************************************************************
 TODO:
 
 - Netzwerk (Deathmatch)
-- Chat
-- Speichern und Laden von Spielständen
-
-
 
 Hinweis:
 

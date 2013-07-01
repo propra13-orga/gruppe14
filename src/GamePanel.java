@@ -1100,23 +1100,25 @@ private void doLogic(){
 			if(key == KeyEvent.VK_ENTER){
 				if(clientMode){
 					client.out.println("Chat");
+					client.out.flush();
 					if(!chatPane.getText().equals("")){
-						client.out.println("\n" + chatarea.getText());
-						chatPane.setText(chatPane.getText() + "\n" + chatarea.getText());
+						client.out.println(chatarea.getText());
+						chatPane.setText(chatPane.getText() + "\n" + "Ich: " + chatarea.getText());
 					}else{
 						client.out.println(chatarea.getText());
-						chatPane.setText(chatarea.getText());
+						chatPane.setText("Ich: " + chatarea.getText());
 					}
 					chatarea.setText("");
 					client.out.flush();
 				}else if(serverMode){
 					server.out.println("Chat");
+					server.out.flush();
 					if(!chatPane.getText().equals("")){
-						server.out.println("\n" + chatarea.getText());
-						chatPane.setText(chatPane.getText() + "\n" + chatarea.getText());
+						server.out.println(chatarea.getText());
+						chatPane.setText(chatPane.getText() + "\n" + "Ich: " + chatarea.getText());
 					}else{
 						server.out.println(chatarea.getText());
-						chatPane.setText(chatarea.getText());
+						chatPane.setText("Ich" + chatarea.getText());
 					}
 					chatarea.setText("");
 					server.out.flush();
