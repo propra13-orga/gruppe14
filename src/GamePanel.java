@@ -14,6 +14,7 @@ import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +32,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame chat = new JFrame ("Chat");
 	JFrame shop2 = new JFrame("Shop");
 	JFrame skills = new JFrame ("Skills");
+	
+	JEditorPane chatPane;
+	JTextField chatarea = new JTextField("Deine Nachricht: ");
 	
 	long delta = 0;
 	long last = 0;
@@ -544,7 +548,6 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				}
 			});
 			
-			
 			JButton b2 = new JButton("Es reicht mir...");
 			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
 			b2.addActionListener(new ActionListener(){
@@ -760,14 +763,16 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		chat.setLocation(500,300);
 		chat.setSize(200, 100);
 		
-		JTextArea textarea = new JTextArea();
-		JTextField chatarea = new JTextField();
-		JScrollPane schieber = new JScrollPane(textarea);
+		chatPane = new JEditorPane();
+		chatarea.addKeyListener(this);
+		JScrollPane schieber = new JScrollPane(chatPane);
 		schieber.setBounds(20, 50, 400, 200);
-		chat.add(BorderLayout.NORTH, textarea);
+		chatPane.setEnabled(false);
+		chat.add(BorderLayout.NORTH, chatPane);
 		chat.add(BorderLayout.CENTER, chatarea);
 		chat.add(BorderLayout.SOUTH, schieber);
 		chat.setVisible(true);
+		
 		
 		JButton close = new JButton("Chat verbergen");
 		close.addActionListener(new ActionListener(){
@@ -1091,74 +1096,86 @@ private void doLogic(){
 	
 	//Tastaturabfragen zur Steuerung
 	public void keyPressed(KeyEvent e){
+		if(chatmode){
+			char key = e.getKeyChar();
+			if(key == KeyEvent.VK_ENTER){
+				if(!chatPane.getText().equals("")){
+					chatPane.setText(chatPane.getText() + "\n" + chatarea.getText());
+				}else{
+					chatPane.setText(chatarea.getText());
+				}
+				chatarea.setText("");
+			}
+		}else{
+			if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
+				left = true;
+				if(clientMode){
+					//TODO: hier anders! Vielleicht besser die mögliche Position übergeben?
+					client.out.write("left");
+					client.out.flush();
+				}
+			}
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT){ //rechte Pfeiltaste
+				right = true;
+				if(clientMode){
+					client.out.write("right");
+					client.out.flush();
+				}
+			}
+			if (e.getKeyCode() == KeyEvent.VK_UP){ //obere Pfeiltaste
+				up = true;
+				if(clientMode){
+					client.out.write("up");
+					client.out.flush();
+				}
+			}
+			if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
+				down = true;
+				if(clientMode){
+					client.out.write("down");
+					client.out.flush();
+				}
+			}
+			if (e.getKeyCode() == KeyEvent.VK_ENTER){
+				if(clientMode){
+					client.out.write("Shop");
+					client.out.flush();
+				}
+				enterShop = true;
+				enterNPC = true;
+				
+			}
+			if(e.getKeyCode() == KeyEvent.VK_S){
+				if(clientMode){
+					client.out.write("Skill");
+					client.out.flush();
+				}
+				skillmode = true;
+				skills();
+			}
+			if(e.getKeyCode() == KeyEvent.VK_T){
+				if(multiplayer){
+					chatmode = true;
+					chat();
+				}
+				
+			}
+			if(e.getKeyCode() == KeyEvent.VK_X){
+				if(clientMode){
+					client.out.write("Attack");
+					client.out.flush();
+				}
+				attack = true;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_C){
+				if(clientMode){
+					client.out.write("Magic");
+					client.out.flush();
+				}
+				magic = true;
+			}
+		}
 		
-		if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
-			left = true;
-			if(clientMode){
-				//TODO: hier anders! Vielleicht besser die mögliche Position übergeben?
-				client.out.write("left");
-				client.out.flush();
-			}
-		}
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT){ //rechte Pfeiltaste
-			right = true;
-			if(clientMode){
-				client.out.write("right");
-				client.out.flush();
-			}
-		}
-		if (e.getKeyCode() == KeyEvent.VK_UP){ //obere Pfeiltaste
-			up = true;
-			if(clientMode){
-				client.out.write("up");
-				client.out.flush();
-			}
-		}
-		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
-			down = true;
-			if(clientMode){
-				client.out.write("down");
-				client.out.flush();
-			}
-		}
-		if (e.getKeyCode() == KeyEvent.VK_ENTER){
-			if(clientMode){
-				client.out.write("Shop");
-				client.out.flush();
-			}
-			enterShop = true;
-			enterNPC = true;
-			
-		}
-		if(e.getKeyCode() == KeyEvent.VK_S){
-			if(clientMode){
-				client.out.write("Skill");
-				client.out.flush();
-			}
-			skillmode = true;
-			skills();
-		}
-		if(e.getKeyCode() == KeyEvent.VK_T){
-			if(multiplayer){
-				chatmode = true;
-				chat();
-			}
-			
-		}
-		if(e.getKeyCode() == KeyEvent.VK_X){
-			if(clientMode){
-				client.out.write("Attack");
-				client.out.flush();
-			}
-			attack = true;
-		}
-		if (e.getKeyCode() == KeyEvent.VK_C){
-			if(clientMode){
-				client.out.write("Magic");
-				client.out.flush();
-			}
-			magic = true;
-		}
 	}
 	//Taste wieder losgelassen?
 	public void keyReleased(KeyEvent e){
