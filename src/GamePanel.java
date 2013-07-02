@@ -48,6 +48,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	SpriteLib lib;
 	SoundLib soundlib;
 	Player player;
+	Player player2;
 	
 	Enemy enemy;
 	Enemy enemy2;
@@ -435,6 +436,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		//TODO: Hier wird nix gemalt, solange Server und Client aktiv sind -> Zwei parallel Threads? Wie implementieren?
 		f.dispose();
 		chat();
+
 		System.out.println("Netzwerk-Fenster verstecken");
 		System.out.println("doInitializationsMulti ausführen");
 		
@@ -454,12 +456,24 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		lib = SpriteLib.getInstance();
 		
-		player = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this);
-		actors.add(player);
+		if(serverMode){
+			player = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this); //player immer eigener Spieler, player 2 der andere
+			player2 = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 500, 100, this);
+			actors.add(player);
+			actors.add(player2);
+		}else{
+			player = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 500, 100, this);
+			player2 = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this);
+			actors.add(player2);
+			actors.add(player);
+		}
 		
-		map = new MapDisplay("resources/level/TileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+		
+		
+		map = new MapDisplay("resources/level/MultiTileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		frame.add(this);
+		initSkills();
 		setStarted(true);
 	}
 
@@ -639,22 +653,58 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	public void run(){
 		while(game_running){
-			computeDelta(); //Zeit für vorausgehenden Schleifendurchlauf wird errechnet
-			//Erst Methoden abarbeiten, wenn Spiel gestartet ist
-			if(isStarted()){
-				
-				checkKeys(); //Tastaturabfrage
-				doLogic(); //Ausführung der Logik
-				moveObjects(); //Bewegen von Objekten
-				
-			}
+			if(singleplayer){
+				computeDelta(); //Zeit für vorausgehenden Schleifendurchlauf wird errechnet
+				//Erst Methoden abarbeiten, wenn Spiel gestartet ist
+				if(isStarted()){
+					
+					checkKeys(); //Tastaturabfrage
+					doLogic(); //Ausführung der Logik
+					moveObjects(); //Bewegen von Objekten
+					
+				}
 
-			repaint();
-			
-			try{
-				Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+				repaint();
 				
-			}catch (InterruptedException e){}
+				try{
+					Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+					
+				}catch (InterruptedException e){}
+			} else{
+				if(serverMode){
+					computeDelta(); //Zeit für vorausgehenden Schleifendurchlauf wird errechnet
+					//Erst Methoden abarbeiten, wenn Spiel gestartet ist
+					if(isStarted()){
+						
+						checkKeys(); //Tastaturabfrage
+						doLogic(); //Ausführung der Logik
+						moveObjects(); //Bewegen von Objekten
+						
+					}
+
+					repaint();
+					
+					try{
+						Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+						
+					}catch (InterruptedException e){}
+				}else if(clientMode){
+					computeDelta();
+					if(isStarted()){
+						checkKeys();
+						doLogic();
+						moveObjects();
+					}
+				
+					repaint();
+					
+					try{
+						Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+						
+					}catch (InterruptedException e){}
+				}
+			}
+			
 			
 		}	
 	}
@@ -1147,7 +1197,7 @@ private void doLogic(){
 					//TODO: hier anders! Vielleicht besser die mögliche Position übergeben?
 					client.out.println("left");
 					client.out.flush();
-				}
+				} 
 			}
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT){ //rechte Pfeiltaste
 				right = true;
@@ -1166,7 +1216,7 @@ private void doLogic(){
 			if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 				down = true;
 				if(clientMode){
-					client.out.write("down");
+					client.out.println("down");
 					client.out.flush();
 				}
 			}
@@ -1217,25 +1267,53 @@ private void doLogic(){
 				
 		if (e.getKeyCode() == KeyEvent.VK_LEFT){//linke Pfeiltaste
 			left = false;
+			if(clientMode){
+				client.out.println("notleft");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT){//rechte Pfeiltaste
 			right = false;
+			if(clientMode){
+				client.out.println("notright");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_UP){//obere Pfeiltaste
 			up = false;
+			if(clientMode){
+				client.out.println("notup");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = false;
+			if(clientMode){
+				client.out.println("notdown");
+				client.out.flush();
+			}
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
 			attack = false;
+			if(clientMode){
+				client.out.println("notattack");
+				client.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_C){
 			magic = false;
+			if(clientMode){
+				client.out.println("notmagic");
+				client.out.flush();
+			}
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			enterNPC = false;
 			enterShop = false;
+			if(clientMode){
+				client.out.println("notenter");
+				client.out.flush();
+			}
 		}
 		
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B

@@ -31,6 +31,12 @@ public class  Server extends Thread{
 	int posy;
 	GamePanel parent;
 	JFrame f;
+
+	boolean up;
+	boolean down;
+	boolean left;
+	boolean right;
+	boolean attack;
 	
 	public Server(int port, GamePanel p){
 		this.port = port; 
@@ -88,11 +94,30 @@ public class  Server extends Thread{
 					
 				}else if(in_string.equals("Skill")){
 					
-				}else if(in_string.equals("Shop")){
-					
-				}else if(in_string.equals("Position")){
-					posx = Integer.parseInt(in.readLine());
-					posy = Integer.parseInt(in.readLine());
+				}else if(in_string.equals("up")){
+					up = true;
+					checkKeys();					
+				}else if(in_string.equals("left")){
+					left = true;
+					checkKeys();					
+				}else if(in_string.equals("right")){
+					right = true;
+					checkKeys();
+				}else if(in_string.equals("down")){
+					down = true;
+					checkKeys();
+				}else if(in_string.equals("notup")){
+					up = false;
+					checkKeys();					
+				}else if(in_string.equals("notleft")){
+					left = false;
+					checkKeys();					
+				}else if(in_string.equals("notright")){
+					right = false;
+					checkKeys();
+				}else if(in_string.equals("notdown")){
+					down = false;
+					checkKeys();
 				}else if(in_string.equals("Hey! Hier spricht der Client")){ 
 					f.dispose();
 					out.println("Start");
@@ -144,4 +169,30 @@ public class  Server extends Thread{
 
 	}
 	
+	public void checkKeys(){
+		if(left){
+			parent.player2.setHorizontalSpeed(-parent.speed);
+		}
+		if(right){
+			parent.player2.setHorizontalSpeed(parent.speed);
+		}
+		if(down){
+			parent.player2.setVerticalSpeed(parent.speed);
+		}
+		if(up){
+			parent.player2.setVerticalSpeed(-parent.speed);
+		}
+		if(!up&&!down){ 						//wenn weder up noch down gedrückt
+			parent.player2.setVerticalSpeed(0);
+		}
+		if(!left&&!right){ 						//wenn weder left noch rechts gedrückt
+			parent.player2.setHorizontalSpeed(0);
+		}
+		if(attack){
+			parent.player2.setAttacking();
+		}
+		if(!attack){
+			parent.player2.resetAttacking();
+		}
+	}
 }
