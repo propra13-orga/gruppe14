@@ -904,16 +904,21 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		if(lifes == 0){
 			parent.lostGame();
 		}
-		parent.doInitializations(parent.level, 1); //Laden vom 1. Raum im jeweiligen Level
+		if(parent.singleplayer){
+			parent.doInitializations(parent.level, 1); //Laden vom 1. Raum im jeweiligen Level
+			x = parent.checkpointx;	//Spieler im 1. Raum an die Startposition setzen
+			y = parent.checkpointy;
+		}else if(parent.multiplayer){
+			x = 650;
+			y = 500;
+		}
+		
 		//Bei Lebensverlust Werte auf alte Werte vom Checkpoint setzen
 		coins = oldcoins;
 		mana = oldmana;
 		hasArmour = oldHasArmour;
 		hasWeapon = oldHasWeapon;
-		
-		x = parent.checkpointx;	//Spieler im 1. Raum an die Startposition setzen
-		y = parent.checkpointy;
-		
+				
 		health = 100;
 		hasArmour = 0;
 		hasWeapon = 0;
