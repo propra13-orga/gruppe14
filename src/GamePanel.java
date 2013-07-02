@@ -940,7 +940,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 	
-private void doLogic(){
+	public  void doLogic(){
 		
 		if(attack){	//Wenn der Spieler angreifen will
 			Object angriff;
@@ -1101,31 +1101,6 @@ private void doLogic(){
 	}
 
 	
-    public boolean isStarted(){
-    	return started;
-    }
-    
-    public void setStarted(boolean started){
-    	this.started = started;
-    }
-    
-	public void setLevel(int level){
-		this.level = level;
-	}
-	
-	public int getLevel(){
-		return level;
-	}
-	
-	public MapDisplay getMap(){
-		return map; //gibt die Karte zurück
-	}
-	
-	public int getRoom(){
-		return room;
-	}
-	
-	
 	private void checkKeys(){
 		
 		if(left){
@@ -1194,16 +1169,23 @@ private void doLogic(){
 			if (e.getKeyCode() == KeyEvent.VK_LEFT){ //linke Pfeiltaste
 				left = true;
 				if(clientMode){
-					//TODO: hier anders! Vielleicht besser die mögliche Position übergeben?
 					client.out.println("left");
 					client.out.flush();
 				} 
+				if(serverMode){
+					server.out.println("left");
+					server.out.flush();
+				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT){ //rechte Pfeiltaste
 				right = true;
 				if(clientMode){
 					client.out.println("right");
 					client.out.flush();
+				}
+				if(serverMode){
+					server.out.println("right");
+					server.out.flush();
 				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_UP){ //obere Pfeiltaste
@@ -1212,6 +1194,10 @@ private void doLogic(){
 					client.out.println("up");
 					client.out.flush();
 				}
+				if(serverMode){
+					server.out.println("up");
+					server.out.flush();
+				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 				down = true;
@@ -1219,21 +1205,19 @@ private void doLogic(){
 					client.out.println("down");
 					client.out.flush();
 				}
+				if(serverMode){
+					server.out.println("down");
+					server.out.flush();
+				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_ENTER){
-				if(clientMode){
-					client.out.println("Shop");
-					client.out.flush();
-				}
+				
 				enterShop = true;
 				enterNPC = true;
 				
 			}
 			if(e.getKeyCode() == KeyEvent.VK_S){
-				if(clientMode){
-					client.out.println("Skill");
-					client.out.flush();
-				}
+				
 				skillmode = true;
 				skills();
 			}
@@ -1250,12 +1234,20 @@ private void doLogic(){
 					client.out.println("Attack");
 					client.out.flush();
 				}
+				if(serverMode){
+					server.out.println("Attack");
+					server.out.flush();
+				}
 				attack = true;
 			}
 			if (e.getKeyCode() == KeyEvent.VK_C){
 				if(clientMode){
 					client.out.println("Magic");
 					client.out.flush();
+				}
+				if(serverMode){
+					server.out.println("Magic");
+					server.out.flush();
 				}
 				magic = true;
 			}
@@ -1271,12 +1263,20 @@ private void doLogic(){
 				client.out.println("notleft");
 				client.out.flush();
 			}
+			if(serverMode){
+				server.out.println("notleft");
+				server.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT){//rechte Pfeiltaste
 			right = false;
 			if(clientMode){
 				client.out.println("notright");
 				client.out.flush();
+			}
+			if(serverMode){
+				server.out.println("notright");
+				server.out.flush();
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_UP){//obere Pfeiltaste
@@ -1285,12 +1285,20 @@ private void doLogic(){
 				client.out.println("notup");
 				client.out.flush();
 			}
+			if(serverMode){
+				server.out.println("notup");
+				server.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_DOWN){//untere Pfeiltaste
 			down = false;
 			if(clientMode){
 				client.out.println("notdown");
 				client.out.flush();
+			}
+			if(serverMode){
+				server.out.println("notdown");
+				server.out.flush();
 			}
 		}
 		if(e.getKeyCode() == KeyEvent.VK_X){
@@ -1299,6 +1307,10 @@ private void doLogic(){
 				client.out.println("notattack");
 				client.out.flush();
 			}
+			if(serverMode){
+				server.out.println("notattack");
+				server.out.flush();
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_C){
 			magic = false;
@@ -1306,14 +1318,15 @@ private void doLogic(){
 				client.out.println("notmagic");
 				client.out.flush();
 			}
+			if(serverMode){
+				server.out.println("notmagic");
+				server.out.flush();
+			}
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			enterNPC = false;
 			enterShop = false;
-			if(clientMode){
-				client.out.println("notenter");
-				client.out.flush();
-			}
+	
 		}
 		
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE){//Escape zum B
@@ -1332,4 +1345,30 @@ private void doLogic(){
 		
 	}
 
+
+    public boolean isStarted(){
+    	return started;
+    }
+    
+    public void setStarted(boolean started){
+    	this.started = started;
+    }
+    
+	public void setLevel(int level){
+		this.level = level;
+	}
+	
+	public int getLevel(){
+		return level;
+	}
+	
+	public MapDisplay getMap(){
+		return map; //gibt die Karte zurück
+	}
+	
+	public int getRoom(){
+		return room;
+	}
+	
+	
 }
