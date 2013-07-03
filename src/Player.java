@@ -537,7 +537,7 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 				}else if(hasWeapon == 1){
 					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalBlauExtrem.png", 10, 1), 28, 28, 100, this.parent);
 				}else{
-					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRotExtrem.png", 10, 1), 28, 28, 100, this.parent);
+					effect = new Effect(parent.lib.getSprite("resources/pics/AttackeDiagonalRot.png", 10, 1), 28, 28, 100, this.parent);
 				}
 				effect.setLoop(5, 9);
 				effect.x = or.getX();

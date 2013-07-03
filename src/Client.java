@@ -57,7 +57,11 @@ public class Client extends Thread{
 				}else if(in_string.equals("Magic")){
 					
 				}else if(in_string.equals("Attack")){
-					
+					attack = true;
+					checkKeys();
+				}else if(in_string.equals("notattack")){
+					attack = false;
+					checkKeys();
 				}else if(in_string.equals("Skill")){
 					
 				}else if(in_string.equals("up")){
@@ -115,10 +119,10 @@ public class Client extends Thread{
 			parent.player2.setHorizontalSpeed(0);
 		}
 		if(attack){
-			parent.player2.setAttacking();
+			parent.attack2 = true;
 		}
 		if(!attack){
-			parent.player2.resetAttacking();
+			parent.attack2 = false;
 		}
 	}
 }

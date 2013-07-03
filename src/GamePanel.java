@@ -91,7 +91,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean down;
 	boolean left;
 	boolean right;
-	boolean attack;	//Spieler will attackieren
+	boolean attack;	//Spieler1 will attackieren
+	boolean attack2; //Spieler2 will attackieren
 	boolean waitingForKeyPress;
 	boolean game_running = true;
 	boolean started = false;
@@ -170,6 +171,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		left = false;
 		right = false; //sonst läuft Spieler nach Neustart einfach los
 		attack = false;
+		attack2 = false;
 		
 		level = 1;
 		room = 1;
@@ -262,6 +264,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		player.setOldSkillHealth2(false);
 		player.setOldSkillStrength1(false);
 		player.setOldSkillStrength2(false);
+		
 		
 		skillsOnce = false;
 		
@@ -445,6 +448,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		left = false;
 		right = false; //sonst läuft Spieler nach Neustart einfach los
 		attack = false;
+		attack2 = false;
 		
 		level = 1;
 		room = 1;
@@ -667,13 +671,17 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				repaint();
 				
 				try{
-					Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+					if(System.nanoTime()-last < 16666666){
+						Thread.sleep((16666666 - (System.nanoTime() - last))/1000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+					}
+					
 					
 				}catch (InterruptedException e){}
 			} else{
 				if(serverMode){
-					computeDelta(); //Zeit für vorausgehenden Schleifendurchlauf wird errechnet
+					 //Zeit für vorausgehenden Schleifendurchlauf wird errechnet
 					//Erst Methoden abarbeiten, wenn Spiel gestartet ist
+					computeDelta();
 					if(isStarted()){
 						
 						checkKeys(); //Tastaturabfrage
@@ -684,9 +692,16 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 
 					repaint();
 					
+					//System.out.println(System.nanoTime() - last);
 					try{
-						Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
-						
+						if(!isStarted()){
+							Thread.sleep(20);
+						}else if(System.nanoTime()-last < 16666666){
+							Thread.sleep((16666666 - (System.nanoTime() - last))/1000000);
+						}
+//						if(System.nanoTime()-last < 16666666){
+//							Thread.sleep((16666666 - (System.nanoTime() - last))/1000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+//						}
 					}catch (InterruptedException e){}
 				}else if(clientMode){
 					computeDelta();
@@ -698,9 +713,17 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				
 					repaint();
 					
+					//System.out.println(System.nanoTime() - last);
 					try{
-						Thread.sleep((1000000000 - (System.nanoTime() - last))/60000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
-						
+						//Thread.sleep(20);
+						if(!isStarted()){
+							Thread.sleep(20);
+						}else if(System.nanoTime()-last < 16666666){
+							Thread.sleep((16666666 - (System.nanoTime() - last))/1000000);
+						}
+//						if(System.nanoTime()-last < 16666666){
+//							Thread.sleep((16666666 - (System.nanoTime() - last))/1000000); //Zum flüssigen Spiellauf und stabiler FPS-Rate
+//						}
 					}catch (InterruptedException e){}
 				}
 			}
@@ -941,134 +964,143 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	}
 	
 	public  void doLogic(){
-		
-		if(attack){	//Wenn der Spieler angreifen will
-			Object angriff;
-			Sprite opfer;
-			angriff = player.getAttackObject();
-			if(angriff != null){
-				actors.add(player.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
-				//soundlib.playSound("Angriff");
-				attacks.add(angriff);	
-				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
-					angriff = it1.next();
-					if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
-						Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
-						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
-							opfer = it2.next();
-							if(opfer instanceof Enemy){
-								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
-									((Enemy)opfer).reduceHealth(player.getDamage()); 
-								}
-							}
-							
-						}
-					}else if (angriff instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
-						Line2D.Double line = (Line2D.Double) angriff;
-						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
-							opfer = it2.next();
-							if(opfer instanceof Enemy){
-								if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
-									((Enemy)opfer).reduceHealth(player.getDamage());
-								}
-							}
-							
-						}
-					}
-					
-				}
-			}
-			attacks.clear();
-					
-		}
-		if(magic){
-			Object magic;
-			Sprite opfer;
-			magic = player.getMagicObject();
-			if(magic != null){
-				actors.add(player.getMagicEffect());	//Effekt wird hinzugefügt zu Actors
-				//soundlib.playSound("Zauber");
-				attacks.add(magic);	
-				for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
-					magic = it1.next();
-					if((magic instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
-						Ellipse2D.Double circle = (Ellipse2D.Double) magic;
-						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
-							opfer = it2.next();
-							if(opfer instanceof Enemy){
-								if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
-									if(opfer instanceof IceEnemy){
-										((IceEnemy)opfer).reduceHealth(-10);
-									}else if (opfer instanceof FireEnemy){
-										((FireEnemy)opfer).reduceHealth(50);
-									}else{
-										((Enemy)opfer).stop();
+		if(singleplayer){
+				if(attack){	//Wenn der Spieler angreifen will
+					Object angriff;
+					Sprite opfer;
+					angriff = player.getAttackObject();
+					if(angriff != null){
+						
+						actors.add(player.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
+						//soundlib.playSound("Angriff");
+						attacks.add(angriff);	
+						for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
+							angriff = it1.next();
+							if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
+								Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
+								for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+									opfer = it2.next();
+									if(opfer instanceof Enemy){
+										if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
+											((Enemy)opfer).reduceHealth(player.getDamage()); 
+										}
 									}
+									
 								}
-							}
-							
-						}
-					}else if (magic instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
-						Line2D.Double line = (Line2D.Double) magic;
-						for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
-							opfer = it2.next();
-							if(opfer instanceof Enemy){
-								if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
-									if(opfer instanceof IceEnemy){
-										((IceEnemy)opfer).reduceHealth(-10);
-									}else if (opfer instanceof FireEnemy){
-										((FireEnemy)opfer).reduceHealth(50);
-									}else{
-										((Enemy)opfer).stop();
+							}else if (angriff instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
+								Line2D.Double line = (Line2D.Double) angriff;
+								for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+									opfer = it2.next();
+									if(opfer instanceof Enemy){
+										if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
+											((Enemy)opfer).reduceHealth(player.getDamage());
+										}
 									}
-										
 									
 								}
 							}
 							
 						}
 					}
+					attacks.clear();
+				}	
+			}else{
 					
+					/*   					Attacke vom Spieler 1 auf Spieler 2											*/
+					/*#############################################################################################################*/
+					
+					Object angriff;
+					if(attack){
+						angriff = player.getAttackObject();
+						if(angriff != null){
+							System.out.println("Attacke-Effekt Spieler 1");
+							actors.add(player.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
+							//soundlib.playSound("Angriff");
+							
+								if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
+									
+									Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
+									if (circle.intersects(player2.getX(), player2.getY(), player2.getWidth(), player2.getHeight())){ //falls Kreis Enemy trifft
+										player2.reduceHealth(player.getDamage()); 
+									}
+								}else if (angriff instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
+									
+									Line2D.Double line = (Line2D.Double) angriff;
+										if (line.intersects(player2.getX(), player2.getY(), player2.getWidth(), player2.getHeight())){ //falls Linie Enemy trifft
+												player2.reduceHealth(player.getDamage());
+										}
+								}
+						}
+					}
+					
+					
+					/*   					Attacke vom Spieler 2 auf Spieler 1											*/
+					/*#############################################################################################################*/
+					if(attack2){
+						angriff = player2.getAttackObject();
+						if(angriff != null){
+							System.out.println("Attacke-Effekt Spieler 2");
+							actors.add(player2.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
+							//soundlib.playSound("Angriff");
+							
+								if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
+									
+									Ellipse2D.Double circle = (Ellipse2D.Double) angriff;
+									if (circle.intersects(player.getX(), player.getY(), player.getWidth(), player.getHeight())){ //falls Kreis Enemy trifft
+										player.reduceHealth(player2.getDamage()); 
+									}
+								}else if (angriff instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
+									
+									Line2D.Double line = (Line2D.Double) angriff;
+										if (line.intersects(player.getX(), player.getY(), player.getWidth(), player.getHeight())){ //falls Linie Enemy trifft
+												player.reduceHealth(player2.getDamage());
+										}
+								}
+						}
+					}
+		
+			
+			
+				
+			}
+			
+			//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
+			for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
+				Sprite r = it.next();
+				r.doLogic(delta);
+			
+				if(r.remove){
+					actors.remove(r);//Löschen von Sprite, remove == true; Wichtig für z.B. damit eine Münze nach dem Einsammeln nicht mehr angezeigt wird
 				}
 			}
 			
-			attacks.clear();
-		}
-		
-		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
-		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();){
-			Sprite r = it.next();
-			r.doLogic(delta);
-		
-			if(r.remove){
-				actors.remove(r);//Löschen von Sprite, remove == true; Wichtig für z.B. damit eine Münze nach dem Einsammeln nicht mehr angezeigt wird
-			}
-		}
-		
-		
-		if(gameover == 1){
-			if(System.currentTimeMillis() - gameover > 3000){
-				stopGame();
-			}
-		}
-		
-		for (int n = 0; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
-				
-				Sprite s2 = actors.get(n);
-				
-				player.collidedWith(s2); //Überprüfung ob Spieler kollidiert ist
 			
-		}
+			if(gameover == 1){
+				if(System.currentTimeMillis() - gameover > 3000){
+					stopGame();
+				}
+			}
+			
+			for (int n = 0; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
+					
+					Sprite s2 = actors.get(n);
+					
+					player.collidedWith(s2); //Überprüfung ob Spieler kollidiert ist
+				
+			}
+			
+			if (shopmode == false){
+				shop2.setVisible(false);
+			}
+			if (skillmode == false){
+				skills.setVisible(false);
+			}
+			if (chatmode == false){
+				chat.setVisible(false);
+			}
 		
-		if (shopmode == false){
-			shop2.setVisible(false);
-		}
-		if (skillmode == false){
-			skills.setVisible(false);
-		}
-		if (chatmode == false){
-			chat.setVisible(false);
-		}
+			
+		
 	}
 	
 	private void moveObjects(){
