@@ -43,7 +43,7 @@ public class Client extends Thread{
 		try {
 			while(System.in.available() == 0 & !isInterrupted()){
 				in_string = in.readLine(); //nehme Server-Nachricht entgegen
-				System.out.println("Der Client hat empfangen: " + in_string);
+				//System.out.println("Der Client hat empfangen: " + in_string);
 				if(in_string.equals("level")){
 					level = Integer.parseInt(in.readLine());
 					System.out.println("Der Client hat empfangen: " + level);

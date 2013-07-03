@@ -462,19 +462,39 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		if(serverMode){
 			player = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this); //player immer eigener Spieler, player 2 der andere
-			player2 = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 500, 100, this);
+			player2 = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 50, 100, this);
 			actors.add(player);
 			actors.add(player2);
 		}else{
-			player = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 500, 100, this);
+			player = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 50, 100, this);
 			player2 = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this);
 			actors.add(player2);
 			actors.add(player);
 		}
+		schwerteis = new Item(lib.getSprite("resources/pics/IceSword.gif", 1, 1), 100, 500, 5, 100, this);
+		schwertfeuer = new Item(lib.getSprite("resources/pics/FireSword.gif", 1, 1), 600, 500, 10, 100, this);
 		
+		Item xp1 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 50,  530, 11, 100, this);
+		Item xp2 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 100, 530, 11, 100, this);
+		Item xp3 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 150, 530, 11, 100, this);
+		Item xp4 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 200, 530, 11, 100, this);
+		Item xp5 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 250, 530, 11, 100, this);
+		Item xp6 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 300, 530, 11, 100, this);
+		Item xp7 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 350, 530, 11, 100, this);
+		Item xp8 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 400, 530, 11, 100, this);
 		
+		actors.add(schwerteis);
+		actors.add(schwertfeuer);
+		actors.add(xp1);
+		actors.add(xp2);
+		actors.add(xp3);
+		actors.add(xp4);
+		actors.add(xp5);
+		actors.add(xp6);
+		actors.add(xp7);
+		actors.add(xp8);
 		
-		map = new MapDisplay("resources/level/MultiTileMap_1_1.txt", "resources/pics/tiles_1.gif", "resources/pics/shadow.png", 5, 1, this);
+		map = new MapDisplay("resources/level/MultiTileMap_1_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
 		
 		frame.add(this);
 		initSkills();
@@ -844,7 +864,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		down = false;
 		left = false;
 		right = false;
-		skillmode = true;
+		skillmode = false;
 		
 		chat.setLocation(500,300);
 		chat.setSize(300, 300);
@@ -1086,6 +1106,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					Sprite s2 = actors.get(n);
 					
 					player.collidedWith(s2); //Überprüfung ob Spieler kollidiert ist
+					player2.collidedWith(s2);
 				
 			}
 			
@@ -1126,6 +1147,13 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	
 	public void lostGame(){
 		System.out.println("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
+		if(!singleplayer){
+			if(player.getLifes() == 0){
+				System.out.println("Spieler 2 gewinnt!");
+			}else{
+				System.out.println("Spieler 1 gewinnt!");
+			}
+		}
 		stopGame();
 		started = false;
 		spiel_status = 0;
@@ -1401,6 +1429,5 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	public int getRoom(){
 		return room;
 	}
-	
 	
 }

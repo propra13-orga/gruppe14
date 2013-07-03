@@ -358,6 +358,10 @@ public class Player extends Sprite {
 					}
 					s.remove = true;
 				break;
+				case Item.XPDINGS:
+					xp++;
+					s.remove = true;
+				break;
 				}
 			}
 			if(s instanceof Quest){//Welche Types? Beispielsweise 1 = Matheaufgabe, 2 = Münzen sammeln, 3 = Gegner töten, 4 = Was weiß ich!

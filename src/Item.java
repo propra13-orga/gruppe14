@@ -11,6 +11,7 @@ public class Item extends Sprite{
 	public final static int FEUERWAFFE = 10;
 	public final static int NPC = 6;
 	public final static int HEALTHPACK = 7;
+	public final static int XPDINGS = 11;
 	
 	
 	private static final long serialVersionUID = 1L;

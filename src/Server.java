@@ -85,7 +85,7 @@ public class  Server extends Thread{
 				if(in_string.equals("Schluss")){
 					clientSocket.close();//Schieﬂen)
 				}else{
-					System.out.println("Der Server hat empfangen: " + in_string);
+					//System.out.println("Der Server hat empfangen: " + in_string);
 				}
 				
 				if(in_string.equals("Magic")){
