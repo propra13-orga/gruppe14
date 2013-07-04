@@ -10,7 +10,10 @@ public class Effect extends Sprite {
 		super(i, x, y, delay, p);
 		
 	}
-
+	/**
+	 * Logik-Methode, die einmal ueber die Einzelbilder iteriert und danach die Freigabe zum Loeschen des Effekts gibt.
+	 * @param delta, long-Wert, der die Differenz zum letzen Haupt-Schleifendurchlauf angibt. Fuer fluessige Bewegung.
+	 * **/
 	@Override
 	public void doLogic(long delta){
 		old_pic = currentpic;
@@ -19,11 +22,17 @@ public class Effect extends Sprite {
 			remove = true;
 		}
 	}
-	
+	/**
+	 * Immer false;
+	 * @return false
+	 * **/
 	public boolean collidedWith(Sprite s){
 		return false;
 	}
-
+	/**
+	 * Immer 0
+	 * @return 0
+	 * **/
 	@Override
 	public int getType() {
 		// TODO Auto-generated method stub

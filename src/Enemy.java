@@ -22,6 +22,16 @@ public class Enemy extends Sprite {
 	
 	boolean locked = false; //noch kein Ziel erfasst
 	
+	/**
+	 * Konstruktor fuer einen Gegner. Erzeugt den Gegner.
+	 * 
+	 * @param i, BufferedImage-Array fuer die Animation des Gegners
+	 * @param x, x-Koordinate des Gegners
+	 * @param y, y-Koordinate des Gegners
+	 * @param damage, Schaden, den der Gegner verursachen kann
+	 * @param delay, Differenz zum Schleifendurchlauf
+	 * @param p, Gamepanel, in dem der Gegner erzeugt wird.
+	 * **/
 	public Enemy(BufferedImage[] i, double x, double y, int damage, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 		ol = new Point();
@@ -33,7 +43,10 @@ public class Enemy extends Sprite {
 		stop = false;
 		this.damage = damage;
 	}
-	
+	/**
+	 * Logik des Gegners. Greift selbstaendig an.
+	 * @param delta, Differenz seit dem letzten Schleifendurchlauf
+	 * **/
 	@Override
 	public void doLogic(long delta)	{
 		super.doLogic(delta);
@@ -151,6 +164,10 @@ public class Enemy extends Sprite {
 		}
 
 	}
+	/**
+	 * Bewegungsmethode. Bewegt sich, nach einem in der Logik vorgegebenen Prinzip (Annaeherung an Spieler). Kollisionen werden beruecksichtigt.
+	 * @param delta, Differenz zum letzen Schleifendurchlauf
+	 * **/
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
 		//dx = Verschiebung inkl. Speed
@@ -207,22 +224,37 @@ public class Enemy extends Sprite {
 		}
 		
 	}
-		
+	/**
+	 * Zeichnet den Spieler.
+	 * @param g, Graphics-Objekt fuer die Angabe des Ortes zum Zeichnen
+	 * **/	
 	public void drawObjects(Graphics g){
 		super.drawObjects(g);
 		g.setColor(Color.ORANGE);
 	}
-	
+	/**
+	 * Prueft auf Kollsionen.
+	 * @param s, Sprite mit dem die Kollision ueberprueft wird.
+	 * @return true, falls Kollision stattgefunden hat, false anderfalls.
+	 * **/
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
 			return true;
 		}
 		return false;
 	}
-
+	/**
+	 * Liefert die Lebensenergie des Gegners zurueck.
+	 * @return die Lebensenergie des Gegners
+	 * **/
 	public int getHealth(){
 		return health;
 	}
+	/**
+	 * Reduziert die Gesundheit des Gegners. Erreicht die Gesundheit 0, so wird der Gegner fuer die Entfernung markiert.
+	 * @param schaden, int-Wert, der Schaden, den der Gegner erleiden soll.
+	 * 
+	 * **/
 	public void reduceHealth(int schaden){ //TODO: Timer einbauen mit setAbleToLoseHeatlh und canLoseHealth
 		health = health - schaden;
 		if(health <= 0){ //Wenn Lebenspunkte aufgebraucht: Enemy aus ActorsListe löschen
@@ -238,14 +270,25 @@ public class Enemy extends Sprite {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	/**
+	 * Haelt den Gegner an (als Zauber gedacht). Er bewegt sich von nun an nicht mehr.
+	 * 
+	 * **/
 	public void stop(){
 		stop = true;
 	}
-	
+	/**
+	 * Setzt das Schadenspotenzial des Gegners auf d.
+	 * @param d, neuer Schaden des Gegners
+	 * @return der Schaden des Gegners.
+	 * **/
 	public void setDamage(int d){
 		damage = d;
 	}
-	
+	/**
+	 * Liefert den Schaden, den der Gegner anrichten kann zurueck
+	 * @return int-Wert, Schaden den der Gegner ausfuehren kann
+	 * **/
 	public int getDamage(){
 		return damage;
 	}

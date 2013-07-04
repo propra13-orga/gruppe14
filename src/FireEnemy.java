@@ -8,6 +8,10 @@ public class FireEnemy extends Enemy{
 		super(i, x, y, damage, delay, p);
 		
 	}
+	/**
+	 * Reduziert die Gesundheit des Gegners. Der tatsaechliche Schaden ist abhaengig von der Waffe des Spielers.
+	 * @param schaden int-Wert, Schaden, den der Gegner erleiden soll (veraendert sich je nach Waffe des Spielers)
+	 * **/
 	@Override
 	public void reduceHealth(int schaden){ //TODO: Timer einbauen mit setAbleToLoseHeatlh und canLoseHealth
 		int w = parent.player.hasWeapon();

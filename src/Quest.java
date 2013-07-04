@@ -7,6 +7,15 @@ public class Quest extends Sprite{
 	int multi;
 	
 	private int type; //Welche Types? Beispielsweise 1 = Matheaufgabe, 2 = Münzen sammeln, 3 = Gegner töten, 4 = Was weiß ich!
+
+	/**
+	 * Konstruktor für das Quest
+	 * @param i, BufferedImage-Array, gibt die Graphik des Quests an
+	 * @param x, double-Wert: X-Position des Quests.
+	 * @param y, double-Wert: Y-Position des Quests.
+	 * @param type, int-Wert: Art des Quests. (1=Matheaufgabe, 2=Muenzen sammeln, 3=Gegner toeten).
+	 * @param delay, long-Wert: Differenz zum letzten Schleifendurchlauf
+	 * **/
 	public Quest(BufferedImage[] i, double x, double y, int type, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 		this.type = type;
@@ -26,11 +35,17 @@ public class Quest extends Sprite{
 			multi = questcoins / teiler;
 		}
 	}
-	
+	/**
+	 * Liefert den Typ des Quests (1 = Matheaufgabe, 2 = Muenzen-Sammeln, 3 = Gegner toeten)
+	 * @return int-Wert, der Typ des Quests
+	 * **/
 	public int getType(){
 		return type;
 	}
-	
+	/**
+	 *Liefert die Anzahl der fuer das Quest noetigen Muenzen
+	 *@return int-Wert, Anzahl der Muenzen. 
+	 * **/
 	public int getQuestCoins(){
 
 		return questcoins; //Gibt, falls Typ = 2 oder 1 ist, Anzahl der benötigten Münzen aus

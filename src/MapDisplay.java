@@ -17,7 +17,14 @@ public class MapDisplay extends Rectangle{
 	private Tile t;
 	
 	
-	
+	/**
+	 * Konstruktor fuer das MapDisplay
+	 * @param level, String fuer den Levelnamen (txt-Datei)
+	 * @param picpath, String fuer den Pfad der Tiles
+	 * @param shadowpath, String fuer den Pfad der Shadow-Tiles
+	 * @param column, int Wert-Anzahl der Spalten der Level
+	 * @param row
+	 * **/
 	public MapDisplay(String level, String picpath, String shadowpath, int column, int row, GamePanel p){
 		tiles = new Vector<Tile> ();
 		sprites = new Vector<Sprite> ();
@@ -30,7 +37,10 @@ public class MapDisplay extends Rectangle{
 		display = new Rectangle2D.Double(0,0,800,600);
 		
 	}
-
+	/**
+	 * Laedt die Leveldateien ein
+	 * @param level, String, der den Levelnamen angibt
+	 * **/
 	private void loadLevelData(String level){
 		try{
 			FileReader fr = new FileReader(level);
@@ -83,7 +93,10 @@ public class MapDisplay extends Rectangle{
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Zeichnet die Karte (Iteriert ueber alle Tiles)
+	 * @param g Graphics-Objekt, fuer den Ort des Zeichnens wichtig
+	 * **/
 	public void drawVisibleMap(Graphics g){
 		
 		for(ListIterator<Tile> it = tiles.listIterator();it.hasNext();){
@@ -94,7 +107,11 @@ public class MapDisplay extends Rectangle{
 		}
 		
 	}
-	
+	/**
+	 * Liefert die Farbe der Schattenmap fuer diesen Punkt zurueck
+	 * @param p, Point, Punkt an dem die "Probe" genommen wird
+	 * @return Liefert die Farbe der Schattenmap an diesem Punkt.
+	 * **/
 	public Color getColorForPoint(Point p){//TODO: Finale Version schaffen + Problem mit ArrayIndexOutOfBounds (ab x = 160)
 		//
 		for(ListIterator<Tile> it = tiles.listIterator();it.hasNext();){ //alle Tiles werden überprüft

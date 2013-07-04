@@ -17,12 +17,22 @@ public class Item extends Sprite{
 	private static final long serialVersionUID = 1L;
 	
 	private int type; //1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC, 7 = healthpack
+	/**
+	 * Konstruktor fuer ein Item.
+	 * @param i, BufferedImage-Array fuer die Graphik des Items
+	 * @param x, double-X-Koordinate
+	 * @param y, double-Y-Koordinate
+	 * @param type, int-Wert fuer den Typ des Items (siehe final static int - Werte)
+	 * **/
 	public Item(BufferedImage[] i, double x, double y, int type, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 		this.type = type;
 		// TODO Auto-generated constructor stub
 	}
-	
+	/**
+	 * Liefert den Typ des Items zurueck (siehe final static int - Werte)
+	 * @return int-Typ des Items
+	 * **/
 	public int getType(){
 		return type;
 	}

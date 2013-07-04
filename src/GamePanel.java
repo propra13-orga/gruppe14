@@ -433,7 +433,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		actors.add(player);
 		
 	}
-		
+	/**
+	 * Hier werden die multiplayerspezifischen Initialisierungen vorgenommen: zwei Spieler werden initialisiert, die entsprechende Karte geladen und das Spiel auf "gestartet" gesetzt
+	 * @param f	Fenster, welches geschlossen wird
+	 * **/	
 	public void doInitializationsMulti(JFrame f){
 		
 		//TODO: Hier wird nix gemalt, solange Server und Client aktiv sind -> Zwei parallel Threads? Wie implementieren?
@@ -500,7 +503,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		initSkills();
 		setStarted(true);
 	}
-
+	/**
+	 * Zeichnet das Netzwerk-Menue: Der Spieler kann auswaehlen, ob er Server oder Client ist und wartet auf eine eingehende Verbindung.
+	 * Hier werden Server bzw. Client erzeugt, die als separate Threads fuer die Entgegennahme von Nachrichten verantwortlich sind und dementsprechend den nicht lokalen Spieler 2 bewegen usw..
+	 * 
+	 * **/
 	private void paintNetworkMenu(){
 		frame3.dispose();
 		
@@ -533,7 +540,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 		});
 	}
-	
+	/**
+	 * Zeichnet das Hauptmenue, indem der Spielmodus (Einzelspieler bzw. Multiplayer) ausgewaehlt oder das Spiel beendet werden kann.
+	 * **/
 	private void paintMenu(){ 
 		//Idee: Vllt. lieber Menü auf unsichtbar setzen und immer wieder anzeigen, wenn benötigt? Vllt. auch praktisch für Pause...Aber was mit entsprechenden Labels?
 		if(spiel_status == 3){ //Spiel noch gar nicht gestartet
@@ -616,7 +625,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		spiel_status = 0; // Daraus folgt, dass wenn man das Spiel per ESC-taste verlässt, man verliert.
 		
 	}
-
+	/**
+	 * Ruft den Shop auf, indem Spielobjekte (Manatrank, Leben) gekauft werden koennen.
+	 * **/
 	public void shop(){
 		up = false;
 		down = false;
@@ -675,6 +686,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		shop2.setVisible(true);
 		
 	}
+	/**
+	 * Spielschleife, fuehrt die Zeitberechnung fuer fluessige Darstellung, Tastenabfrage, Logik, Bewegung und Neuzeichnung aus.
+	 * **/
 	public void run(){
 		while(game_running){
 			if(singleplayer){
@@ -752,7 +766,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}	
 	}
 	
-	/*Methode zur Initialisierung des Skill-Menüs*/
+	/**
+	 * Methode zur Initialisierung des Skill-Menues, muss einmal vor Aufruf von skills() ausgefuehrt werden.
+	 * 
+	 * **/
 	public void initSkills(){
 		up = false;
 		down = false;
@@ -858,7 +875,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		skills.pack();
 		
 	}
-	
+	/**
+	 * Erzeugt das Chatfenster.
+	 * **/
 	public void chat(){
 		up = false;
 		down = false;
@@ -886,7 +905,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		chat.add(BorderLayout.SOUTH, close);
 
 	}
-	/*Methode zum Aufruf des Skill-Menüs*/
+	/**
+	 * 
+	 * Methode zum Aufruf des Skill-Menues (Faehigkeiten koennen gegen Erfahrung erlernt werden). Vorher muss initSkills() aufgerufen werden.
+	 * 
+	 * **/
 	public void skills(){
 		up = false;
 		down = false;
@@ -921,6 +944,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		last = System.nanoTime(); //Speichern der aktuellen Systemzeit
 		fps = ((long) 1e9)/delta; //Errechnen der Framerate
 	}
+	
+	/**
+	 * Zeichnet die Spielobjekte.
+	 * 
+	 * @param g	Graphics-Objekt zur Angabe des Ortes zum Zeichnen.
+	 * **/
 	@Override
 	public void paintComponent(Graphics g){ //paintComponent-Methode überschreiben
 		super.paintComponent(g);
@@ -982,7 +1011,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		g.drawString("Raum: " + room, 750, 620);
 		
 	}
-	
+	/**
+	 * Fuehrt die Spiellogik aus. Prueft auf erfolgte Angriffe und löscht Objekte, die nicht mehr gezeichnet werden sollen.
+	 * **/
 	public  void doLogic(){
 		if(singleplayer){
 				if(attack){	//Wenn der Spieler angreifen will
@@ -1024,7 +1055,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					}
 					attacks.clear();
 				}	
-			}else{
+			}else if(clientMode || serverMode){
 					
 					/*   					Attacke vom Spieler 1 auf Spieler 2											*/
 					/*#############################################################################################################*/
@@ -1101,13 +1132,23 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				}
 			}
 			
-			for (int n = 0; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
+			if(singleplayer){
+				for (int n = 0; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
+						
+						Sprite s2 = actors.get(n);
+						
+						player.collidedWith(s2); //Überprüfung ob Spieler kollidiert ist
+					
+				}
+			}else{
+				for (int n = 0; n < actors.size(); n++){ //Es werden alle weiteren Sprites zur Überprüfung durchlaufen
 					
 					Sprite s2 = actors.get(n);
 					
 					player.collidedWith(s2); //Überprüfung ob Spieler kollidiert ist
 					player2.collidedWith(s2);
 				
+			}
 			}
 			
 			if (shopmode == false){
@@ -1136,7 +1177,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		setStarted(false);
 		gameover = 1;
 	}
-	
+	/**
+	 * Laesst den Spieler das Spiel gewinnen, fragt nach Neustart bzw. Beenden.
+	 * **/
 	public void wonGame(){
 		System.out.println("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
 		stopGame();
@@ -1144,7 +1187,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		spiel_status = 1;
 		paintMenu();
 	}
-	
+	/**
+	 * Laesst den Spieler verlieren, fragt nach Neustart bzw. Beenden.
+	 * **/
 	public void lostGame(){
 		System.out.println("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
 		if(!singleplayer){
@@ -1160,7 +1205,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		paintMenu();
 	}
 
-	
+
 	private void checkKeys(){
 		
 		if(left){
@@ -1190,7 +1235,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 	
-	
+	/**
+	 * Prueft auf Tastendruecke und setzt entsprechende Boolean-Variablen zur Steuerrung des Spielers, Aufrufen von Menues usw.
+	 * 
+	 * @param e KeyEvent fuer den KeyListener
+	 * **/
 	//Tastaturabfragen zur Steuerung
 	public void keyPressed(KeyEvent e){
 		if(chatmode){
@@ -1314,7 +1363,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		
 	}
-	//Taste wieder losgelassen?
+	/**
+	 * Prueft auf Tastendruecke (Loslassen) und setzt entsprechende Boolean-Variablen zur Steuerrung des Spielers, Aufrufen von Menues usw.
+	 * 
+	 * @param e KeyEvent fuer den KeyListener
+	 * **/
 	public void keyReleased(KeyEvent e){
 				
 		if (e.getKeyCode() == KeyEvent.VK_LEFT){//linke Pfeiltaste
@@ -1405,27 +1458,46 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 	}
 
-
+	/**
+	 * Gibt zurueck, ob das Spiel gestartet ist, oder nicht
+	 * @return ist das Spiel gestartet?
+	 * **/
     public boolean isStarted(){
     	return started;
     }
-    
+    /**
+	 * Setzt das Spiel auf den Zustand started (wichtig, ob noch das Menue oder bereits das Spielfeld gezeichnet werden soll)
+	 * @param started boolean-Wert, hierauf wird der Spielzustand gesetzt
+	 * 
+	 * **/
     public void setStarted(boolean started){
     	this.started = started;
     }
-    
+    /**
+	 * Setzt das aktuelle Level auf level
+	 * @param level, die Levelnummer, auf das das Ingame-Level gesetzt wird
+	 * **/
 	public void setLevel(int level){
 		this.level = level;
 	}
-	
+	/**
+	 * Liefert das aktuelle Level zurueck
+	 * @return int, die aktuelle Levelnummer
+	 * **/
 	public int getLevel(){
 		return level;
 	}
-	
+	/**
+	 * Gibt die aktuelle Karte zurueck
+	 * @return MapDisplay, die Karte auf der sich der/die Spieler spielen.
+	 * **/
 	public MapDisplay getMap(){
 		return map; //gibt die Karte zurück
 	}
-	
+	/**
+	 * Gibt die aktuelle Raumnummre zurueck
+	 * @return int, die Raumnummer
+	 * **/
 	public int getRoom(){
 		return room;
 	}

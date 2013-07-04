@@ -57,7 +57,14 @@ public class Player extends Sprite {
 	
 	
 	
-	
+	/**
+	 * Konstruktor fuer den Spieler
+	 * 
+	 * @param i 	das BufferedImage-Array zum Einlesen der Grafik
+	 * @param x 	die x-Koordinate des Spielers
+	 * @param y 	die y-Koordinate des Spielers
+	 * @param p 	das zugehoerige Gamepanel
+	 * **/
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 		loop_to = (pics.length/ 3)-1;
@@ -93,6 +100,7 @@ public class Player extends Sprite {
 		canLoseHealth = true;
 	}
 	
+
 	@Override
 	public void doLogic(long delta)	{
 		super.doLogic(delta);
@@ -100,6 +108,10 @@ public class Player extends Sprite {
 	}
 /*#################################################Kollision und Bewegung###############################################################################*/	
 /*######################################################################################################################################################*/	
+	/**
+	 * move Methode zum Bewegen des Spielers. Bewegt den Spieler abhängig von den Variablen dx und dy. Verwendet eine Kollisionserkennung fuer die statische Umgebung.
+	 * @param delta		long Variable, die den zeitlichen Abstand seit dem letzen Schleifendurchlauf darstellt, wird verwendet um fluessige Bewegung zu garantieren.
+	 * **/
 	@Override
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
 		copy_dx = dx;
@@ -152,6 +164,7 @@ public class Player extends Sprite {
 		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
 		checkColor(col4);
 	}
+	
 	private void checkColor(Color col){
 		switch(corner){
 		case 1:
@@ -262,6 +275,12 @@ public class Player extends Sprite {
 		}
 	}
 	
+	/**
+	 * Methode, die prueft, ob der Spieler mit dem uebergebenen Sprite kollidiert ist.
+	 * @param s		Sprite s, mit dem die Kollision geprueft wird.
+	 * @return		Gibt true zurueck, falls der Spieler kollidiert ist, andernfalls false.
+	 * 
+	 * **/
 	public boolean collidedWith(Sprite s){
 		if(this.intersects(s)){
 			int type = s.getType();
@@ -415,12 +434,17 @@ public class Player extends Sprite {
 				}
 				
 			}
+			return true;
 		}
 		return false;
 	}
 /*#################################################Angriffsobjekte##############################################################################################*/	
 /*######################################################################################################################################################*/	
 	
+	/**
+	 * Gibt ein Angriffsobjekt zurueck, sofern der Spieler attackieren kann
+	 * @return		das Angriffsobjekt (Linie oder Kreis) wird zurueckgeliefert
+	 * **/
 	public Object getAttackObject(){	//Liefert ein Attack-Objekt (line oder rectangle), welches mit den actors aus dem Gamepanel kollidieren kann
 		or.setLocation((int)(getX() + (width - 1)), (int)getY());
 		ol.setLocation((int)getX(), (int)getY());
@@ -464,6 +488,10 @@ public class Player extends Sprite {
 			}
 		}
 	}
+	/**
+	 * Gibt ein Magieobjekt zurueck, sofern der Spieler zaubern kann
+	 * @return		das Magieobjekt (Linie oder Kreis) wird zurueckgeliefert
+	 * **/
 	public Object getMagicObject(){	//Liefert ein Magic-Objekt (line oder rectangle), welches mit den actors aus dem Gamepanel kollidieren kann
 		
 		or.setLocation((int)(getX() + (width - 1)), (int)getY());
@@ -512,7 +540,10 @@ public class Player extends Sprite {
 	
 /*#################################################Effekte##############################################################################################*/	
 /*######################################################################################################################################################*/		
-	
+	/**
+	 * Gibt einen Effekt fuer die Attacke zurueck
+	 * @return		der Angriffseffekt wird zurueckgeliefert
+	 * **/	
 public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
 		
 	or.setLocation((int)(getX() + (width - 1)), (int)getY());
@@ -633,6 +664,10 @@ public Effect getAttackEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), 
 			}
 		}
 	}
+/**
+ * Gibt einen Effekt fuer die Attacke zurueck
+ * @return		der Angriffseffekt wird zurueckgeliefert
+ * **/	
 public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), welches im Gamepanel zu den actors hinzugefuegt wird um dort ein paar mal gezeichnet zu werden und dann zu verschwinden 
 	
 	or.setLocation((int)(getX() + (width - 1)), (int)getY());
@@ -702,30 +737,64 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 }
 /*#################################################Get- und Set- Methoden################################################################################*/	
 /*######################################################################################################################################################*/		
+	/**
+	 * Setzt den Spieler in den Status "will attackieren"
+	 * **/
 	public void setAttacking(){
 		attacking = true;
 	}
+	/**
+	 * Setzt den Status "will attackieren" zurueck
+	 * **/
 	public void resetAttacking(){
 		attacking = false;
 	}
-		
+	/**
+	 * Gibt zurueck, ober der Spieler attackieren will
+	 * 
+	 *@return	boolean, will der Spieler attackieren?
+	 * **/	
 	public boolean isAttacking(){
 		return attacking;
 	}
+	/**
+	 * Gibt zurueck, ob der Spieler eine Ruestung traegt
+	 * 
+	 * @return		int, 0 = keine Ruestung, 1 = Eisruestung, 2 = Feuerruestung
+	 * **/
 	public int hasArmour(){
 		return hasArmour;
 	}
+	/**
+	 * Gibt zurueck, ob der Spieler eine Waffe traegt
+	 * 
+	 * @return		int, 0 = keine Waffe, 1 = Eisschwert, 2 = Feuerschwert
+	 * **/
 	public int hasWeapon(){
 		return hasWeapon;
 	}
+	/**
+	 * Setzt die Lebensenergie des Spielers auf den Wert von h
+	 * @param h		int-Wert fuer die Lebensenergie
+	 * **/
 	public void setHealth(int h){
 		health = h;
 	}
-	
+	/**
+	 * Gibt zurueck, wie viel Lebensenergie der Spieler noch hat
+	 * 
+	 * @return		integer-Wert der Lebensenergie des Spielers
+	 * **/
 	public int getHealth(){
 		return health;
 	}
 	
+	/**
+	 * Reduziert die Lebensenergie des Spielers um den gegebenen Schaden. Falls der Spieler eine Ruestung traegt, wird der Schaden abhaengig vom Ruestungstyp und Gegnertyp, der den Schaden verursacht veraendert.
+	 * @param schaden		Schaden, um den die Lebensenergie unter Beruecksichtigung von Ruestung und Waffe reduziert wird.
+	 * 
+	 * @return		int, 0 = keine Ruestung, 1 = Eisruestung, 2 = Feuerruestung
+	 * **/
 	public void reduceHealth(int schaden){
 		
 		setAbleToLoseHealth(false);
@@ -744,18 +813,35 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		}
 		
 	}
+	/**
+	 * Setzt die Anzahl der Leben
+	 * 
+	 * @param l		Anzahl der Leben
+	 * **/
 	public void setLifes(int l){
 		this.lifes = l;
 	}
-	
+	/**
+	 * Gibt zurueck, wie viele Leben der Spieler hat
+	 * 
+	 * @return		int, Anzahl der Leben
+	 * **/
 	public int getLifes(){
 		return lifes;
 	}
-	
+	/**
+	 * Gibt zurueck, wie viele Muenzen der Spieler hat
+	 * 
+	 * @return		int, Anzahl der Muenzen
+	 * **/
 	public int getCoins(){
 		return coins;
 	}
-	
+	/**
+	 * Setzt die Anzahl der Muenzen
+	 * 
+	 * @param c		int, Anzahl der Muenzen
+	 * **/
 	public void setCoins(int c){
 		coins = c;
 	}
@@ -893,7 +979,11 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public int getType() {
 		return 0;
 	}
-	
+	/**
+	 * Gibt das Quest zurueck, indem sich der Spieler befindet
+	 * 
+	 * @return Quest, in dem sich der Spieler befindet
+	 * **/
 	public Quest getQuest(){
 		return quest;
 	}
@@ -901,6 +991,12 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public int getCollectedCoins(){
 		return collectedCoins;
 	}
+	
+	/**
+	 * Verringert die Anzahl der Leben, setzt den Spieler an einen Checkpoint zurueck, beendet das Spiel, wenn die Anzahl der Leben nun 0 ist.
+	 * 
+	 * 
+	 * **/
 	public void lostLife(){
 		System.out.println("Du hast ein Leben verloren, streng dich naechstes mal mehr an!");
 		lifes--;
