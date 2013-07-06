@@ -608,11 +608,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				}
 			});
 			
-			JButton b2 = new JButton("Es reicht mir...");
+			JButton b2 = new JButton("Zurück zum Hauptmenü");
 			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
 			b2.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
-					System.exit(0);
+					spiel_status=3;
+					paintMenu();
+					frame2.setVisible(false);
+					
 				}
 				
 			});
