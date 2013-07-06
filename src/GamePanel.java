@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -21,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JRadioButton;
 
 public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	private static final long serialVersionUID = 1L;
@@ -28,6 +31,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame2;
 	JFrame frame3;
 	JFrame frame4;
+	JFrame frame5;
 	JFrame f;
 	JFrame chat = new JFrame ("Chat");
 	JFrame shop2 = new JFrame("Shop");
@@ -516,8 +520,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame4.setSize(100, 100);
 		JButton b1 = new JButton("Server");
 		JButton b2 = new JButton("Client");
+		JButton b3 = new JButton("Zurück");
 		frame4.add(BorderLayout.NORTH, b1);
-		frame4.add(BorderLayout.SOUTH, b2);
+		frame4.add(BorderLayout.CENTER, b2);
+		frame4.add(BorderLayout.SOUTH, b3);
+
 		frame4.pack();
 		frame4.setVisible(true);
 
@@ -539,7 +546,55 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			}
 			
 		});
+		
+		b3.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg1){ 
+				spiel_status=3;
+				paintMenu();
+				frame4.setVisible(false);
+			}
+			
+		});
 	}
+	private void paintSettingMenu(){
+		frame3.dispose();
+		
+		frame5 = new JFrame("Einstellungen");
+		frame5.setLocation(650,300);
+		frame5.setSize(100, 100);
+		JButton b1 = new JButton("Zurück");
+		JRadioButton sound_on = new JRadioButton("Sound An");
+        JRadioButton sound_off = new JRadioButton("Sound Aus");
+        
+        ButtonGroup gruppe = new ButtonGroup();
+        gruppe.add(sound_on);
+        gruppe.add(sound_off);
+        
+        sound_on.setSelected(true);
+      
+		
+		frame5.setLayout(new GridLayout(3,1));
+		
+		frame5.add(sound_on);
+		frame5.add(sound_off);
+		frame5.add(b1);
+
+		frame5.pack();
+		frame5.setVisible(true);
+
+		b1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				spiel_status=3;
+				paintMenu();
+				frame4.setVisible(false);
+				
+			}
+		});
+	}
+	
+	
+	
+	
 	/**
 	 * Zeichnet das Hauptmenue, indem der Spielmodus (Einzelspieler bzw. Multiplayer) ausgewaehlt oder das Spiel beendet werden kann.
 	 * **/
@@ -554,10 +609,15 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			JButton b2 = new JButton("Beenden");
 			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
 			JButton b3 = new JButton("Mehrspieler");
+			JButton b4 = new JButton("Einstellungen");
 			
-			frame3.add(BorderLayout.NORTH, b1);
-			frame3.add(BorderLayout.SOUTH, b2);
-			frame3.add(BorderLayout.CENTER, b3);
+			//Neues Layout. 4 Zeilen, 1 Spalte. 
+			frame3.setLayout(new GridLayout(4,1));
+			frame3.add(b1);
+			frame3.add(b3);
+			frame3.add(b4);
+			frame3.add(b2);
+
 			frame3.pack();
 			frame3.setVisible(true);
 			
@@ -583,6 +643,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					paintNetworkMenu();
 				}
 			});			
+			
+			b4.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg1){
+					paintSettingMenu();
+				}
+			});
 			
 		}
 		
