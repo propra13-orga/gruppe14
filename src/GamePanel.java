@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
@@ -113,6 +115,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean serverMode;
 	boolean clientMode;
 	boolean chatmode;
+	boolean sound_running = false;
 
 	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet;
 	int pressCount;
@@ -188,12 +191,15 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		
 		lib = SpriteLib.getInstance();
 		
-		/*soundlib = new SoundLib();
+		
+		soundlib = new SoundLib();
 		soundlib.loadSound("Hintergrund", "sound/Greensleeves.wav");
 		soundlib.loadSound("Angriff", "sound/Angriff.wav");
 		soundlib.loadSound("Zauber", "sound/Zauber.wav");
-		soundlib.loopSound("Hintergrund");*/
-		
+		if(sound_running == true){
+		soundlib.loopSound("Hintergrund");
+		}
+			
 		////1 = Coins, 2 = Mana, 3 = Shop, 4 = Rüstung, 5 = Waffe, 6 = NPC
 		player = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this);
 		enemy = new Enemy(lib.getSprite("resources/pics/enemy.gif", 4, 1), 100, 500, 10, 100, this);
@@ -572,7 +578,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
         gruppe.add(sound_on);
         gruppe.add(sound_off);
         
-        sound_on.setSelected(true);
+        if(sound_running){
+             sound_on.setSelected(true);
+        }else{
+        	sound_off.setSelected(true);
+        }
       
 		
 		frame5.setLayout(new GridLayout(4,1));
@@ -585,12 +595,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame5.pack();
 		frame5.setVisible(true);
 
+	    
+
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0){
 				spiel_status=3;
 				paintMenu();
 				frame5.dispose();
-				
+					
 				
 			}
 		});
@@ -603,7 +615,20 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				
 			}
 		});
+		
+		sound_on.addActionListener(new ActionListener(){
+		    public void actionPerformed(ActionEvent e) {
+		      sound_running= true;
+		    }
+		});
+		sound_off.addActionListener(new ActionListener(){
+		    public void actionPerformed(ActionEvent e) {
+		      sound_running= false;
+		    }
+		});
+	
 	}
+	
 	private void paintKeySettingMenu(){
 		frame5.dispose();
 		
@@ -640,6 +665,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	 * Zeichnet das Hauptmenue, indem der Spielmodus (Einzelspieler bzw. Multiplayer) ausgewaehlt oder das Spiel beendet werden kann.
 	 * **/
 	private void paintMenu(){ 
+		
 		//Idee: Vllt. lieber Menü auf unsichtbar setzen und immer wieder anzeigen, wenn benötigt? Vllt. auch praktisch für Pause...Aber was mit entsprechenden Labels?
 		if(spiel_status == 3){ //Spiel noch gar nicht gestartet
 			frame3 = new JFrame("Spiel starten?");
@@ -722,7 +748,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
 			b1.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
-
+					soundlib.stopLoopingSound();
 					doInitializations(frame2);
 	
 				}
@@ -732,9 +758,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
 			b2.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+					soundlib.stopLoopingSound();
 					spiel_status=3;
 					paintMenu();
 					frame2.setVisible(false);
+					
+			
 					
 				}
 				
@@ -1146,7 +1175,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					if(angriff != null){
 						
 						actors.add(player.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
-						//soundlib.playSound("Angriff");
+						if(sound_running == true){
+							soundlib.playSound("Angriff");
+						}
 						attacks.add(angriff);	
 						for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 							angriff = it1.next();
@@ -1189,7 +1220,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 						if(angriff != null){
 							System.out.println("Attacke-Effekt Spieler 1");
 							actors.add(player.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
-							//soundlib.playSound("Angriff");
+							if(sound_running == true){
+								soundlib.playSound("Angriff");
+							}
+						
 							
 								if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
 									
@@ -1215,7 +1249,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 						if(angriff != null){
 							System.out.println("Attacke-Effekt Spieler 2");
 							actors.add(player2.getAttackEffect());	//Effekt wird hinzugefügt zu Actors
-							//soundlib.playSound("Angriff");
+							if(sound_running == true){
+								soundlib.playSound("Angriff");
+							}
 							
 								if((angriff instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
 									
@@ -1624,5 +1660,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	public int getRoom(){
 		return room;
 	}
+
+	
 	
 }
