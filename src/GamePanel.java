@@ -32,6 +32,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	JFrame frame3;
 	JFrame frame4;
 	JFrame frame5;
+	JFrame frame6;
 	JFrame f;
 	JFrame chat = new JFrame ("Chat");
 	JFrame shop2 = new JFrame("Shop");
@@ -563,6 +564,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		frame5.setLocation(650,300);
 		frame5.setSize(100, 100);
 		JButton b1 = new JButton("Zurück");
+		JButton b2 = new JButton("Tastaturbelegung");
 		JRadioButton sound_on = new JRadioButton("Sound An");
         JRadioButton sound_off = new JRadioButton("Sound Aus");
         
@@ -573,10 +575,11 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
         sound_on.setSelected(true);
       
 		
-		frame5.setLayout(new GridLayout(3,1));
+		frame5.setLayout(new GridLayout(4,1));
 		
 		frame5.add(sound_on);
 		frame5.add(sound_off);
+		frame5.add(b2);
 		frame5.add(b1);
 
 		frame5.pack();
@@ -586,7 +589,45 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			public void actionPerformed(ActionEvent arg0){
 				spiel_status=3;
 				paintMenu();
-				frame4.setVisible(false);
+				frame5.dispose();
+				
+				
+			}
+		});
+		b2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				
+				paintKeySettingMenu();
+				
+				
+				
+			}
+		});
+	}
+	private void paintKeySettingMenu(){
+		frame5.dispose();
+		
+		frame6 = new JFrame("Einstellungen");
+		frame6.setLocation(650,300);
+		frame6.setSize(100, 100);
+		JButton b1 = new JButton("Zurück");
+		        
+       
+      
+		
+		frame6.setLayout(new GridLayout(3,1));
+		
+		frame6.add(b1);
+
+		frame6.pack();
+		frame6.setVisible(true);
+
+		b1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				
+				paintSettingMenu();
+				frame6.dispose();
+				
 				
 			}
 		});
@@ -610,12 +651,14 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
 			JButton b3 = new JButton("Mehrspieler");
 			JButton b4 = new JButton("Einstellungen");
+			JButton b5 = new JButton("Handbuch");
 			
 			//Neues Layout. 4 Zeilen, 1 Spalte. 
-			frame3.setLayout(new GridLayout(4,1));
+			frame3.setLayout(new GridLayout(5,1));
 			frame3.add(b1);
 			frame3.add(b3);
 			frame3.add(b4);
+			frame3.add(b5);
 			frame3.add(b2);
 
 			frame3.pack();
@@ -647,6 +690,17 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			b4.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg1){
 					paintSettingMenu();
+				}
+			});
+			
+			b5.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg1){
+					try {
+						Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler "+ "resources\\handbuch\\Handbuch.pdf");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 			
