@@ -164,7 +164,11 @@ public class Player extends Sprite {
 		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
 		checkColor(col4);
 	}
-	
+	/**
+	 * Überprüft die Farbe, der aktuellen Position des Spielers auf der Shadowmap
+	 * Gray = Wand, Red = Fläche die Schaden macht, Blue = eine Tür, Yellow = Pokal
+	 * @param col die Farbe auf der Shadowmap
+	 */
 	private void checkColor(Color col){
 		switch(corner){
 		case 1:

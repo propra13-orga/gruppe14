@@ -23,7 +23,6 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	boolean remove;
 	
 
-	
 	public Sprite(BufferedImage[] i, double x, double y, long delay, GamePanel p ){
 		pics = i;
 		this.x = x;
@@ -35,7 +34,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		loop_from = 0;
 		loop_to = pics.length-1;
 	}
-	
+	/**
+	 * Zeichnet eine Komponente an einer x,y Koordinate
+	 */
 	public void drawObjects(Graphics g){
 		g.drawImage(pics[currentpic], (int) x, (int) y, null); //x, y runden
 	}
@@ -47,7 +48,10 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 			computeAnimation();
 		}
 	}
-	
+	/**
+	 * Anmiert die Bilder, in dem die Variable currentpic um 1 erhöht wird.
+	 * Dadurch wird das nachste Bild einer Animation beim nächsten Durchlauf gezeichnet
+	 */
 	private void computeAnimation(){
 		currentpic++;
 		
@@ -55,6 +59,11 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 			currentpic = loop_from;
 		}
 	}
+	/**
+	 * Setzt die Länge eines Loops fest
+	 * @param from Position des ersten Bild
+	 * @param to Position des letzten Bild
+	 */
 	public void setLoop(int from, int to){
 		loop_from = from;
 		loop_to = to;

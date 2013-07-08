@@ -563,6 +563,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 		});
 	}
+	/**
+	 * Zeichnet das Einstellungsmenü. Es wird durch das Hauptmenü aufgerufen.
+	 * Hier kann der Sound ein und aus geschaltet werden.
+	 */
 	private void paintSettingMenu(){
 		frame3.dispose();
 		
@@ -628,7 +632,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		});
 	
 	}
-	
+	/**
+	 * Zeichnet das Menü, in dem man die Tastaturbelegung ändern kann.
+	 * Noch nicht intigriert.
+	 */
 	private void paintKeySettingMenu(){
 		frame5.dispose();
 		
@@ -1332,6 +1339,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			r.move(delta);
 		}
 	}
+	/**
+	 * Beendet das Spiel, indem die Variablen setStarted und gameover geändert werden.
+	 * Damit wird der Thread des Spiels beendet.
+	 */
 	private void stopGame(){
 		setStarted(false);
 		gameover = 1;
@@ -1363,8 +1374,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		spiel_status = 0;
 		paintMenu();
 	}
-
-
+	/**
+	 * Hier wird dauerhaft die Tastatureingabe für die Bewegung und dem Angriff überprüft und
+	 * ggf. wird der Player angepasst.
+	 */
 	private void checkKeys(){
 		
 		if(left){
