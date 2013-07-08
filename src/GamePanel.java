@@ -937,7 +937,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		skillmode = true;
 		
 		skills.setLocation(500,300);
-		skills.setSize(800, 600);
+		skills.setSize(400,300);
 			
 		t1 = new JButton("Dicker Brecher (benötigt 2 Skillpunkte)");
 		t1.addActionListener(new ActionListener(){
