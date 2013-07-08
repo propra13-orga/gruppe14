@@ -1216,6 +1216,61 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					}
 					attacks.clear();
 				}	
+				if(magic){
+					Object magic;
+					Sprite opfer;
+					magic = player.getMagicObject();
+					if(magic != null){
+						actors.add(player.getMagicEffect());	//Effekt wird hinzugefügt zu Actors
+						//soundlib.playSound("Zauber");
+						attacks.add(magic);	
+						for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
+								magic = it1.next();
+								if((magic instanceof java.awt.geom.Ellipse2D.Double)){ //wenn Angriff Kreis
+									Ellipse2D.Double circle = (Ellipse2D.Double) magic;
+									for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+										opfer = it2.next();
+										if(opfer instanceof Enemy){
+											if (circle.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Kreis Enemy trifft
+												if(opfer instanceof IceEnemy){
+													((IceEnemy)opfer).reduceHealth(-10);
+												}else if (opfer instanceof FireEnemy){
+													((FireEnemy)opfer).reduceHealth(50);
+												}else{
+													((Enemy)opfer).stop();
+												}
+											}
+										}
+
+									}
+								}else if (magic instanceof java.awt.geom.Line2D.Double){ //wenn Angriff Linie
+									Line2D.Double line = (Line2D.Double) magic;
+									for (ListIterator<Sprite> it2 = actors.listIterator(); it2.hasNext();){
+										opfer = it2.next();
+										if(opfer instanceof Enemy){
+											if (line.intersects(opfer.getX(), opfer.getY(), opfer.getWidth(), opfer.getHeight())){ //falls Linie Enemy trifft
+												if(opfer instanceof IceEnemy){
+													((IceEnemy)opfer).reduceHealth(-10);
+												}else if (opfer instanceof FireEnemy){
+													((FireEnemy)opfer).reduceHealth(50);
+												}else{
+													((Enemy)opfer).stop();
+												}
+
+
+											}
+										}
+
+									}
+								}
+
+						}
+						}
+
+						attacks.clear();
+					}
+
+
 			}else if(clientMode || serverMode){
 					
 					/*   					Attacke vom Spieler 1 auf Spieler 2											*/
