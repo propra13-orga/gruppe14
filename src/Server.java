@@ -1,10 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-//angelehnt an ProPra12 - Gruppe 09
+
 public class  Server extends Thread{
 	
 	ServerSocket serverSocket = null;
@@ -38,6 +35,11 @@ public class  Server extends Thread{
 	boolean right;
 	boolean attack;
 	
+	/**
+	 * Konstruktor für den Server, es wird ein neues ServerSocket erstellt
+	 * @param port gibt den Port an, mit dem das ServerSocket erstellt wird
+	 * @param p gibt das GamePanel an, damit Zugriff zu dessen Methoden möglich ist
+	 */
 	public Server(int port, GamePanel p){
 		this.port = port; 
 		parent = p;
@@ -49,7 +51,10 @@ public class  Server extends Thread{
 		}		
 	}
 	
-	public void starten(){//s. Gruppe 23
+	/**
+	 * Hier wird gewartet, bis sich ein Client verbindet und dann eien Willkommensnachricht versendet
+	 */
+	public void starten(){
 		//Client muss eine Port-Adresse zugeteilt sein, sonst IOException! Aber über 1023!
 		waitingWindow();
 		while(true){
@@ -75,6 +80,11 @@ public class  Server extends Thread{
 		
 	}
 	
+	/**
+	 * In dieser Dauerschleife wird zeilenweise ausgelesen, was der Client schickt
+	 * Entsprechend den übermittelten Zeilen wird Logik für den 2. Spieler ausgeführt und dargestellt
+	 * Auch der Chat wird hier realisiert, indem zuerst das Stichwort "Chat" gesendet wird und daraufhin die nächste Zeile im entsprechenden Fenster dargestellt wird
+	 */
 	public void warte(){
 		try{
 			//Server extends Thread!
@@ -140,10 +150,17 @@ public class  Server extends Thread{
 		}
 	}
 	
+	/**
+	 * Run-Methode des Threads
+	 */
 	public void run(){
 		starten();
 	}
 	
+	/**
+	 * Methode zur Darstellung eiens Wartefensters bis sich der Client verbindet
+	 * Dieses Fenster wird angezeigt, solange sich der Client noch nicht verbunden hat. Der User hat in dieser Zeit die Möglichkeit die Verbindung zu unterbrechen, falls es ihm zu lange dauert
+	 */
 	public void waitingWindow() {
 		// Richte JFrame ein
 		f = new JFrame("Warte auf Client");
@@ -173,6 +190,10 @@ public class  Server extends Thread{
 
 	}
 	
+	/**
+	 * Methode zur Logik des Gegenspielers
+	 * Erhält der Server Information zu Spieler 2 wird hier entsprechend der boolean-Werte der Spieler manipuliert
+	 */
 	public void checkKeys(){
 		if(left){
 			parent.player2.setHorizontalSpeed(-parent.speed);

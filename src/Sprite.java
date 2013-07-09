@@ -70,6 +70,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		currentpic = from;
 	}
 	
+	/**
+	 * Bewegt das Sprite entsprechend von delta
+	 */
 	public void move(long delta){ //Wenn delta ungleich null, werden Positionen verändert
 		if(dx != 0){
 			x = x + dx*(delta/1e9);

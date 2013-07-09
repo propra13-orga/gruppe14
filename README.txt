@@ -29,7 +29,9 @@ Funktionalität zurzeit:
 **********************************************************************************************************************************************************************************
 TODO:
 
-- Netzwerk (Deathmatch)
+- Handbuch
+- Bug beim Spielstarten in checkColor ausräumen
+- Bug beim Tod im Multiplayer!
 
 Hinweis:
 

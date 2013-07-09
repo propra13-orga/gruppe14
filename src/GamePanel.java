@@ -1492,7 +1492,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 						chatPane.setText(chatPane.getText() + "\n" + "Ich: " + chatarea.getText());
 					}else{
 						server.out.println(chatarea.getText());
-						chatPane.setText("Ich" + chatarea.getText());
+						chatPane.setText("Ich: " + chatarea.getText());
 					}
 					chatarea.setText("");
 					server.out.flush();

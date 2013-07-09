@@ -24,6 +24,11 @@ public class SpriteLib {
 		sprites = new HashMap<URL, BufferedImage>(); 
 	}
 	
+	/**
+	 * liefert BufferedImage zurück für übergebenden Pfad
+	 * @param path Pfad, an dem das Bild liegt
+	 * @return BufferedImage, welches im path liegt
+	 */
 	public BufferedImage getSprite(String path){//liest aus URL Bild aus und speichert es in pic
 		BufferedImage pic = null;
 		URL location = getURLfromResource(path);
@@ -45,6 +50,13 @@ public class SpriteLib {
 		return pic;
 	}
 	
+	/**
+	 * liefert BufferedImage zurück für übergebenden Pfad, speziell für Animation
+	 * @param path Pfad, an dem das Bild liegt
+	 * @param column Spalte im Bild
+	 * @param row Zeile im Bild
+	 * @return BufferedImage, welches im path liegt
+	 */
 	public BufferedImage [] getSprite(String path, int column, int row){//liest aus URL Bild bzw. Animation aus und speichert es in pics
 		BufferedImage source = null;
 		URL location = getURLfromResource(path);

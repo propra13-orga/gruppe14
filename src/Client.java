@@ -3,10 +3,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.JFrame;
-
 
 //Nach Vorlage von Java ist auch eine Insel
 public class Client extends Thread{
@@ -23,6 +19,11 @@ public class Client extends Thread{
 	boolean right;
 	boolean attack;
 	
+	/**
+	 * Konstruktor des Clients, Initialisierung der wichtigsten Dinge
+	 * @param IP Gibt gewünschte IP-Adresse an
+	 * @param p Gibt GamePanel an, damit Zugriff auf dessen Methoden möglich ist
+	 */
 	public Client(String IP, GamePanel p){
 		parent = p;
 		this.ip = IP;
@@ -39,6 +40,11 @@ public class Client extends Thread{
 		
 	}
 	
+	/**
+	 * In dieser Dauerschleife wird zeilenweise ausgelesen, was der Server schickt
+	 * Entsprechend den übermittelten Zeilen wird Logik für den 2. Spieler ausgeführt und dargestellt
+	 * Auch der Chat wird hier realisiert, indem zuerst das Stichwort "Chat" gesendet wird und daraufhin die nächste Zeile im entsprechenden Fenster dargestellt wird
+	 */
 	public void warte(){
 		try {
 			while(System.in.available() == 0 & !isInterrupted()){
@@ -95,10 +101,17 @@ public class Client extends Thread{
 		}
 	}
 	
+	/**
+	 * Run-Methode des Threads
+	 */
 	public void run(){
 		warte();
 	}
-		
+	
+	/**
+	 * Methode zur Logik des Gegenspielers
+	 * Erhält der Server Information zu Spieler 2 wird hier entsprechend der boolean-Werte der Spieler manipuliert
+	 */
 	public void checkKeys(){
 		if(left){
 			parent.player2.setHorizontalSpeed(-parent.speed);
