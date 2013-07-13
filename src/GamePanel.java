@@ -116,7 +116,8 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	boolean clientMode;
 	boolean chatmode;
 	boolean sound_running = false;
-
+	String out;
+	
 	int spiel_status = 3; // 0 = Verloren, 1 = Gewonnen, 2 = Pause, 3 = noch nicht gestartet;
 	int pressCount;
 	int speed = 80;
@@ -473,40 +474,49 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		attacks = new CopyOnWriteArrayList<Object>();
 		
 		lib = SpriteLib.getInstance();
+		soundlib = new SoundLib();
+		soundlib.loadSound("Hintergrund", "sound/Greensleeves.wav");
+		soundlib.loadSound("Angriff", "sound/Angriff.wav");
+		soundlib.loadSound("Zauber", "sound/Zauber.wav");
+		if(sound_running == true){
+		soundlib.loopSound("Hintergrund");
+		}
 		
 		if(serverMode){
 			player = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this); //player immer eigener Spieler, player 2 der andere
 			player2 = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 50, 100, this);
+			player2.setRemote(true);
 			actors.add(player);
 			actors.add(player2);
 		}else{
 			player = new Player(lib.getSprite("resources/pics/player2.gif", 12, 1), 650, 50, 100, this);
 			player2 = new Player(lib.getSprite("resources/pics/player.gif", 12, 1), 50, 50, 100, this);
+			player2.setRemote(true);
 			actors.add(player2);
 			actors.add(player);
 		}
 		schwerteis = new Item(lib.getSprite("resources/pics/IceSword.gif", 1, 1), 100, 500, 5, 100, this);
 		schwertfeuer = new Item(lib.getSprite("resources/pics/FireSword.gif", 1, 1), 600, 500, 10, 100, this);
 		
-		Item xp1 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 50,  530, 11, 100, this);
-		Item xp2 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 100, 530, 11, 100, this);
-		Item xp3 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 150, 530, 11, 100, this);
-		Item xp4 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 200, 530, 11, 100, this);
-		Item xp5 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 250, 530, 11, 100, this);
-		Item xp6 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 300, 530, 11, 100, this);
-		Item xp7 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 350, 530, 11, 100, this);
-		Item xp8 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 400, 530, 11, 100, this);
+//		Item xp1 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 50,  530, 11, 100, this);
+//		Item xp2 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 100, 530, 11, 100, this);
+//		Item xp3 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 150, 530, 11, 100, this);
+//		Item xp4 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 200, 530, 11, 100, this);
+//		Item xp5 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 250, 530, 11, 100, this);
+//		Item xp6 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 300, 530, 11, 100, this);
+//		Item xp7 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 350, 530, 11, 100, this);
+//		Item xp8 = new Item(lib.getSprite("resources/pics/Doughnut.gif", 1, 1), 400, 530, 11, 100, this);
 		
 		actors.add(schwerteis);
 		actors.add(schwertfeuer);
-		actors.add(xp1);
-		actors.add(xp2);
-		actors.add(xp3);
-		actors.add(xp4);
-		actors.add(xp5);
-		actors.add(xp6);
-		actors.add(xp7);
-		actors.add(xp8);
+//		actors.add(xp1);
+//		actors.add(xp2);
+//		actors.add(xp3);
+//		actors.add(xp4);
+//		actors.add(xp5);
+//		actors.add(xp6);
+//		actors.add(xp7);
+//		actors.add(xp8);
 		
 		map = new MapDisplay("resources/level/MultiTileMap_1_1.txt", "resources/pics/tiles_2.gif", "resources/pics/shadow.png", 5, 1, this);
 		
@@ -740,47 +750,87 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 		}
 		
 		if(spiel_status == 1|| spiel_status == 0){ //Wenn Spiel gewonnen oder verloren
-			frame2 = new JFrame("Neustart?");
-			frame2.setLocation(500,300);
-			frame2.setSize(100, 100);
-			JLabel label;
-			if(spiel_status == 1){
-				label = new JLabel("Bravo, du hast gewonnen! Möchtest du noch einmal spielen?");
-			}else{
-				label = new JLabel("Schade, du hast verloren. Möchtest du es noch einmal versuchen?");
-			}
-			
-			frame2.add(BorderLayout.NORTH, label);
-			JButton b1 = new JButton("Ich möchte nocheinmal spielen");
-			b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
-			b1.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
-					soundlib.stopLoopingSound();
-					doInitializations(frame2);
-	
-				}
-			});
-			
-			JButton b2 = new JButton("Zurück zum Hauptmenü");
-			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
-			b2.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
-					soundlib.stopLoopingSound();
-					spiel_status=3;
-					paintMenu();
-					frame2.setVisible(false);
-					
-			
-					
+//			if (!multiplayer){
+				frame2 = new JFrame("Neues Einzelspielerspiel?");
+				frame2.setLocation(500,300);
+				frame2.setSize(100, 100);
+				JLabel label;
+				if(spiel_status == 1){
+					label = new JLabel("Bravo, du hast gewonnen! Neues Einzelspielerspiel?");
+				}else{
+					if(player.getLifes() == 0){
+						label = new JLabel("Schade, du hast verloren! Neues Einzelspielerspiel?");
+					}else{
+						label = new JLabel("Du hast gewonnen! Neues Einzelspielerspiel?");
+					}
 				}
 				
-			});
-			frame2.add(BorderLayout.CENTER, b1);
-			frame2.add(BorderLayout.SOUTH, b2);
-			frame2.pack();
-			frame2.setVisible(true);
-			spiel_status = 0;
-		}
+				frame2.add(BorderLayout.NORTH, label);
+				JButton b1 = new JButton("Neues Einzelspielerspiel");
+				b1.setMnemonic(KeyEvent.VK_ENTER);//Shortcut Enter
+				b1.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent arg0){ //bzgl. Starten
+						soundlib.stopLoopingSound();
+						doInitializations(frame2);
+		
+					}
+				});
+				
+				JButton b2 = new JButton("Zurück zum Hauptmenü");
+				b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
+				b2.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+						soundlib.stopLoopingSound();
+						spiel_status=3;
+						paintMenu();
+						frame2.setVisible(false);
+						
+				
+						
+					}
+					
+				});
+				frame2.add(BorderLayout.CENTER, b1);
+				frame2.add(BorderLayout.SOUTH, b2);
+				frame2.pack();
+				frame2.setVisible(true);
+				spiel_status = 0;
+			}
+//		}else{
+//			frame2 = new JFrame("Ende");
+//			frame2.setLocation(500,300);
+//			frame2.setSize(100, 100);
+//			JLabel label;
+//			if(player.getLifes() == 0){
+//				label = new JLabel("Du Lusche hast verloren!");
+//			}else{
+//				label = new JLabel("Boom-Headshot! Du hast gewonnen!");
+//			}
+//			
+//			frame2.add(BorderLayout.NORTH, label);
+//			
+//			JButton b2 = new JButton("Zurück zum Hauptmenü");
+//			b2.setMnemonic(KeyEvent.VK_ESCAPE);//Shortcut Escape
+//			b2.addActionListener(new ActionListener(){
+//				public void actionPerformed(ActionEvent arg1){ //bzgl. Schließen
+//					if(sound_running){
+//						soundlib.stopLoopingSound();
+//					}
+//					spiel_status=3;
+//					paintMenu();
+//					frame2.setVisible(false);
+//					frame2.dispose();
+//					
+//			
+//					
+//				}
+//				
+//			});
+//			frame2.add(BorderLayout.CENTER, b2);
+//			frame2.pack();
+//			frame2.setVisible(true);
+//			spiel_status = 0;
+//		}
 		spiel_status = 0; // Daraus folgt, dass wenn man das Spiel per ESC-taste verlässt, man verliert.
 		
 	}
@@ -1222,7 +1272,9 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					magic = player.getMagicObject();
 					if(magic != null){
 						actors.add(player.getMagicEffect());	//Effekt wird hinzugefügt zu Actors
-						//soundlib.playSound("Zauber");
+						if(sound_running == true){
+							soundlib.playSound("Zauber");
+						}
 						attacks.add(magic);	
 						for (ListIterator<Object> it1 = attacks.listIterator(); it1.hasNext();){
 								magic = it1.next();
@@ -1276,6 +1328,17 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 					/*   					Attacke vom Spieler 1 auf Spieler 2											*/
 					/*#############################################################################################################*/
 					
+					out = convert((int)player.x, 4);
+					out = out + " " + convert((int)player.y, 4);
+					out = "pos " + out;
+					//System.out.println(out);
+					if(serverMode){
+						server.out.println(out);
+						server.out.flush();
+					}else{
+						client.out.println(out);
+						client.out.flush();
+					}
 					Object angriff;
 					if(attack){
 						angriff = player.getAttackObject();
@@ -1385,7 +1448,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			
 		
 	}
-	
+	public String convert(int number, int digit) {
+	    String buffer = String.valueOf(number);
+	    while(buffer.length() != digit)
+	        buffer="0" + buffer;
+	    return buffer;
+	}
 	private void moveObjects(){
 
 		//Neuerdings mit Iterator, der ist nämlich sicher vor Concurent-Modification-Exception (ist ja ne CopyOnWriteArrayList)
@@ -1401,6 +1469,12 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 	private void stopGame(){
 		setStarted(false);
 		gameover = 1;
+		if(serverMode){
+			server.schliesse();
+		}else if(clientMode){
+			client.schliesse();
+		}
+		
 	}
 	/**
 	 * Laesst den Spieler das Spiel gewinnen, fragt nach Neustart bzw. Beenden.
@@ -1423,6 +1497,7 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 			}else{
 				System.out.println("Spieler 1 gewinnt!");
 			}
+		
 		}
 		stopGame();
 		started = false;
@@ -1553,9 +1628,10 @@ public class GamePanel extends JPanel  implements Runnable, KeyListener{
 				
 			}
 			if(e.getKeyCode() == KeyEvent.VK_S){
-				
-				skillmode = true;
-				skills();
+				if(!multiplayer){
+					skillmode = true;
+					skills();
+				}
 			}
 			if(e.getKeyCode() == KeyEvent.VK_T){
 				if(multiplayer){

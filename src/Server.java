@@ -34,6 +34,8 @@ public class  Server extends Thread{
 	boolean left;
 	boolean right;
 	boolean attack;
+	boolean stop;
+	boolean pos;
 	
 	/**
 	 * Konstruktor für den Server, es wird ein neues ServerSocket erstellt
@@ -43,6 +45,7 @@ public class  Server extends Thread{
 	public Server(int port, GamePanel p){
 		this.port = port; 
 		parent = p;
+		stop = false;
 		try{
 			serverSocket = new ServerSocket(port); //erstellt ServerSocket mit Port port
 			System.out.println("serverSocket erfolgreich erstellt");
@@ -52,12 +55,29 @@ public class  Server extends Thread{
 	}
 	
 	/**
+	 * Schliesst den Server ordnungsgemaess, um einen Neustart zu ermoeglichen
+	 * **/
+	public void schliesse(){
+		stop = true;
+		try {
+			clientSocket.close();
+			serverSocket.close();
+		} catch (IOException e) {
+			System.out.println("Schliessen von Server fehlgeschlagen");
+			e.printStackTrace();
+		}
+		
+	}
+	/**
 	 * Hier wird gewartet, bis sich ein Client verbindet und dann eien Willkommensnachricht versendet
 	 */
 	public void starten(){
 		//Client muss eine Port-Adresse zugeteilt sein, sonst IOException! Aber über 1023!
 		waitingWindow();
 		while(true){
+			if(stop == true){
+				return;
+			}
 			try{
 				
 				clientSocket = serverSocket.accept(); //nimmt wartende Verbindungen an
@@ -89,11 +109,16 @@ public class  Server extends Thread{
 		try{
 			//Server extends Thread!
 			while(System.in.available() == 0 && !isInterrupted()){
+				if(stop == true){
+					return;
+				}
 				in_string = in.readLine(); //Client-Nachricht entgegen nehmen
 				//Je nach Eingabe führe verschiedene aus
 				//Mögliche Begriffe: "Magic", "Attack", "Skill", "Shop", "Position", entsprechend muss der Server reagieren, vllt. mehrere Operanden danach noch auslesen etc.
 				if(in_string.equals("Schluss")){
-					clientSocket.close();//Schießen)
+					if(clientSocket != null){
+						clientSocket.close();//Schießen)
+					}
 				}else{
 					//System.out.println("Der Server hat empfangen: " + in_string);
 				}
@@ -137,7 +162,11 @@ public class  Server extends Thread{
 					out.println("Start");
 					out.flush();
 					parent.doInitializationsMulti(parent.frame4);
-				
+				}else if(in_string.length() >= 13 && in_string.substring(0, 3).equals("pos")){
+					posx = Integer.parseInt(in_string.substring(4, 8));
+					posy = Integer.parseInt(in_string.substring(9, 13));
+					pos = true;
+//					System.out.println("Server: pos = true, posx = "+posx+", posy = "+posy);
 				}else if(in_string.equals("Chat")){
 					String text = in.readLine();
 					System.out.println("Der Server hat empfangen: " + text);
@@ -155,6 +184,9 @@ public class  Server extends Thread{
 	 */
 	public void run(){
 		starten();
+		if(stop == true){
+			return;
+		}
 	}
 	
 	/**
@@ -218,6 +250,10 @@ public class  Server extends Thread{
 		}
 		if(!attack){
 			parent.attack2 = false;
+		}
+		if(pos){
+			pos = false;
+			parent.player2.setPosition(posx, posy);
 		}
 	}
 }

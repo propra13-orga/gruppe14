@@ -18,6 +18,10 @@ public class Client extends Thread{
 	boolean left;
 	boolean right;
 	boolean attack;
+	boolean stop;
+	boolean pos;
+	int posx;
+	int posy;
 	
 	/**
 	 * Konstruktor des Clients, Initialisierung der wichtigsten Dinge
@@ -25,6 +29,7 @@ public class Client extends Thread{
 	 * @param p Gibt GamePanel an, damit Zugriff auf dessen Methoden möglich ist
 	 */
 	public Client(String IP, GamePanel p){
+		stop = false;
 		parent = p;
 		this.ip = IP;
 		try{
@@ -41,15 +46,32 @@ public class Client extends Thread{
 	}
 	
 	/**
+	 * Schliesst den Client ordnungsgemaess, um einen Neustart zu ermoeglichen
+	 * **/
+	public void schliesse(){
+		stop = true;
+		try {
+			socket.close();
+		} catch (IOException e) {
+			System.out.println("Schliessen von Client fehlgeschlagen");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * In dieser Dauerschleife wird zeilenweise ausgelesen, was der Server schickt
 	 * Entsprechend den übermittelten Zeilen wird Logik für den 2. Spieler ausgeführt und dargestellt
 	 * Auch der Chat wird hier realisiert, indem zuerst das Stichwort "Chat" gesendet wird und daraufhin die nächste Zeile im entsprechenden Fenster dargestellt wird
 	 */
 	public void warte(){
+		if (stop == true){
+			return;
+		}
 		try {
 			while(System.in.available() == 0 & !isInterrupted()){
 				in_string = in.readLine(); //nehme Server-Nachricht entgegen
-				//System.out.println("Der Client hat empfangen: " + in_string);
+//				System.out.println("Der Client hat empfangen: " + in_string);
+				
 				if(in_string.equals("level")){
 					level = Integer.parseInt(in.readLine());
 					System.out.println("Der Client hat empfangen: " + level);
@@ -61,7 +83,11 @@ public class Client extends Thread{
 					parent.chatPane.setText(parent.chatPane.getText()  + "\n" + "Server: " + text);
 					parent.chatarea.setText("");
 				}else if(in_string.equals("Magic")){
-					
+				}else if(in_string.length() >= 13 && in_string.substring(0, 3).equals("pos")){
+					posx = Integer.parseInt(in_string.substring(4, 8));
+					posy = Integer.parseInt(in_string.substring(9, 13));
+					pos = true;
+//					System.out.println("Client: pos = true, posx = "+posx+", posy = "+posy);
 				}else if(in_string.equals("Attack")){
 					attack = true;
 					checkKeys();
@@ -106,6 +132,9 @@ public class Client extends Thread{
 	 */
 	public void run(){
 		warte();
+		if (stop == true){
+			return;
+		}
 	}
 	
 	/**
@@ -136,6 +165,10 @@ public class Client extends Thread{
 		}
 		if(!attack){
 			parent.attack2 = false;
+		}
+		if(pos){
+			pos = false;
+			parent.player2.setPosition(posx, posy);
 		}
 	}
 }

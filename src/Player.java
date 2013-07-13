@@ -37,6 +37,8 @@ public class Player extends Sprite {
 	private boolean oldskillstrength1;
 	private boolean oldskillstrength2;
 	
+	private boolean remote;
+	
 	private int maxhealth;			//Maximale Lebensenergie
 	private int oldmaxhealth;
 	
@@ -54,6 +56,8 @@ public class Player extends Sprite {
 	private Timer healthTimer;
 	private Quest quest;
 	
+	private int i;
+	
 	
 	
 	
@@ -67,6 +71,7 @@ public class Player extends Sprite {
 	 * **/
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
+		remote = false;
 		loop_to = (pics.length/ 3)-1;
 		ol = new Point();
 		or = new Point();
@@ -146,35 +151,52 @@ public class Player extends Sprite {
 		corner = 1;
 		ol.setLocation((int)getX(), (int)getY());
 		Color col1 = parent.getMap().getColorForPoint(ol); //Ecke oben links
-		checkColor(col1);
+		if(!remote){
+			checkColor(col1);
+		}else{
+			checkColorRemote(col1);
+		}
 		
 		corner = 2;
 		ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
 		Color col2 = parent.getMap().getColorForPoint(ur); //Ecke unten rechts
-		checkColor(col2);
+		if(!remote){
+			checkColor(col2);
+		}else{
+			checkColorRemote(col2);
+		}
 		
 		corner = 3;
 		ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
 		Color col3 = parent.getMap().getColorForPoint(ul); //Ecke unten links
-		checkColor(col3);
-		
+		if(!remote){
+			checkColor(col3);
+		}else{
+			checkColorRemote(col3);
+		}
 		
 		corner = 4;
 		or.setLocation((int)(getX() + (width - 1)), (int)getY());
 		Color col4 = parent.getMap().getColorForPoint(or); //Ecke oben rechts
-		checkColor(col4);
+		if(!remote){
+			checkColor(col4);
+		}else{
+			checkColorRemote(col4);
+		}
 	}
 	/**
 	 * Überprüft die Farbe, der aktuellen Position des Spielers auf der Shadowmap
 	 * Gray = Wand, Red = Fläche die Schaden macht, Blue = eine Tür, Yellow = Pokal
 	 * @param col die Farbe auf der Shadowmap
 	 */
+
 	private void checkColor(Color col){
+//		i=0;
 		switch(corner){
 		case 1:
 			if(col.equals(Color.gray)){ //grau = 128, 128, 128
-				while(parent.getMap().getColorForPoint(ol).equals(Color.gray)){
-					
+				while(parent.getMap().getColorForPoint(ol).equals(Color.gray) && (copy_dy < 0 || copy_dy < 0)){
+//					System.out.println("Move-Problem ol: Copy dx = "+copy_dx+" Copy dy = " +copy_dy);
 					if(copy_dy < 0){
 						setVerticalSpeed(0);
 						y = y + 1;
@@ -194,8 +216,12 @@ public class Player extends Sprite {
 		case 2:
 			if(col.equals(Color.gray)){
 				
-				while(parent.getMap().getColorForPoint(ur).equals(Color.gray)){
-					
+				while(parent.getMap().getColorForPoint(ur).equals(Color.gray) && (copy_dy > 0 || copy_dx > 0)){
+//					System.out.println("Move-Problem ur: Copy dx = "+copy_dx+" Copy dy = " +copy_dy);
+//					i++;
+//					if(i>20){
+//						System.out.println("-");
+//					}
 					if(copy_dy > 0){
 						setVerticalSpeed(0);
 						y = y - 1;
@@ -212,8 +238,8 @@ public class Player extends Sprite {
 			break;
 		case 3:
 			if(col.equals(Color.gray)){
-				while(parent.getMap().getColorForPoint(ul).equals(Color.gray)){
-					
+				while(parent.getMap().getColorForPoint(ul).equals(Color.gray) && (copy_dy > 0 || copy_dx < 0)){
+//					System.out.println("Move-Problem ul: Copy dx = "+copy_dx+" Copy dy = " +copy_dy);
 					if(copy_dy > 0){
 						setVerticalSpeed(0);
 						y = y - 1;
@@ -230,7 +256,8 @@ public class Player extends Sprite {
 			break;
 		case 4:
 			if(col.equals(Color.gray)){
-				while(parent.getMap().getColorForPoint(or).equals(Color.gray)){
+				while(parent.getMap().getColorForPoint(or).equals(Color.gray) && (copy_dy < 0 || copy_dx > 0)){
+//					System.out.println("Move-Problem or: Copy dx = "+copy_dx+" Copy dy = " +copy_dy);
 					if(copy_dy < 0){
 						setVerticalSpeed(0);
 						y = y + 1;
@@ -246,6 +273,7 @@ public class Player extends Sprite {
 			}
 			break;
 		}
+		
 	
 
 		if(col.equals(Color.green)){ //grün = 0, 255, 0
@@ -278,7 +306,125 @@ public class Player extends Sprite {
 			parent.wonGame();
 		}
 	}
-	
+		/**
+		 * Überprüft die Farbe, der aktuellen Position des Spielers auf der Shadowmap
+		 * Gray = Wand, Red = Fläche die Schaden macht, Blue = eine Tür, Yellow = Pokal
+		 * @param col die Farbe auf der Shadowmap
+		 */
+
+			private void checkColorRemote(Color col){
+				i = 0;
+				switch(corner){
+				case 1:
+					if(col.equals(Color.gray)){ //grau = 128, 128, 128
+						while(parent.getMap().getColorForPoint(ol).equals(Color.gray) && i<=10){
+							System.out.println("Move-Problem "+ i);
+							if(copy_dy < 0){
+								setVerticalSpeed(0);
+								y = y + 1;
+							}
+							if(copy_dx < 0){
+								setHorizontalSpeed(0);
+								x = x + 1;
+							}
+							
+							
+							ol.setLocation((int)getX(), (int)getY());
+							i++;
+						}
+					
+					}
+					break;
+				case 2:
+					if(col.equals(Color.gray)){
+						
+						while(parent.getMap().getColorForPoint(ur).equals(Color.gray) && i<= 10){
+							System.out.println("Move-Problem "+ i);
+							if(copy_dy > 0){
+								setVerticalSpeed(0);
+								y = y - 1;
+							}
+							
+							if(copy_dx > 0){
+								setHorizontalSpeed(0);
+								x = x - 1;
+							}
+							ur.setLocation((int)(getX() + (width - 1)), (int)(getY() + (height - 1)));
+							i++;
+						}
+					}
+					break;
+				case 3:
+					if(col.equals(Color.gray)){
+						while(parent.getMap().getColorForPoint(ul).equals(Color.gray) && i<=10){
+							System.out.println("Move-Problem "+ i);
+							if(copy_dy > 0){
+								setVerticalSpeed(0);
+								y = y - 1;
+							}
+							if(copy_dx < 0){
+								setHorizontalSpeed(0);
+								x = x + 1;
+							}
+							
+							ul.setLocation((int)(getX()), (int)(getY() + (height - 1)));
+							i++;
+						}
+						
+					}
+					break;
+				case 4:
+					if(col.equals(Color.gray)){
+						while(parent.getMap().getColorForPoint(or).equals(Color.gray) && i<=10){
+							System.out.println("Move-Problem "+ i);
+							if(copy_dy < 0){
+								setVerticalSpeed(0);
+								y = y + 1;
+							}
+							
+							if(copy_dx > 0){
+								setHorizontalSpeed(0);
+								x = x - 1;
+							}
+							or.setLocation((int)(getX() + (width - 1)), (int)getY());
+							i++;
+						}
+					}
+					break;
+				}
+			
+		
+
+			if(col.equals(Color.green)){ //grün = 0, 255, 0
+				
+			}
+			
+			if(col.equals(Color.red)){ //rot = 255, 0, 0
+				if(canLoseHealth){
+					if(hasArmour > 0){
+						reduceHealth(10);
+					}else{
+						reduceHealth(20);
+					
+					}
+				}
+			}
+			
+			if(col.equals(Color.blue)){
+				System.out.println("Tür!");
+				if(parent.getRoom()+1 == 4){ //Levelwechsel
+					parent.doInitializations(parent.getLevel()+1, 1);
+				}else{
+					parent.doInitializations(parent.getLevel(), parent.getRoom()+1);
+				}
+				
+				
+			}
+			
+			if(col.equals(Color.yellow)){  //gelb = 255, 255, 0
+				parent.wonGame();
+			}
+		}
 	/**
 	 * Methode, die prueft, ob der Spieler mit dem uebergebenen Sprite kollidiert ist.
 	 * @param s		Sprite s, mit dem die Kollision geprueft wird.
@@ -741,6 +887,16 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 }
 /*#################################################Get- und Set- Methoden################################################################################*/	
 /*######################################################################################################################################################*/		
+	
+	/**
+	 * Setzt die aktuelle Spielerposition
+	 * @param x  x-Position
+	 * @param y  y-Position
+	 * **/
+	public void setPosition(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
 	/**
 	 * Setzt den Spieler in den Status "will attackieren"
 	 * **/
@@ -970,7 +1126,12 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 	public int getRange(){
 		return range;
 	}
-	
+	public boolean isRemote(){
+		return remote;
+	}
+	public void setRemote(boolean value){
+		remote = value;
+	}
 	public void setOldWeapon(int b){
 		oldHasWeapon = b;
 	}
@@ -1006,7 +1167,7 @@ public Effect getMagicEffect(){	//Liefert ein Effect-Objekt (erbt von Sprite), w
 		lifes--;
 
 		if(lifes == 0){
-			parent.lostGame();
+			parent.lostGame();	
 		}
 		if(parent.singleplayer){
 			parent.doInitializations(parent.level, 1); //Laden vom 1. Raum im jeweiligen Level
